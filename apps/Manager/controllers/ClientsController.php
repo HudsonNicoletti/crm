@@ -453,6 +453,10 @@ class ClientsController extends ControllerBase
 
         }
 
+        $name = $this->request->getPost("firstName")." ".$this->request->getPost("lastName");
+        # Log What Happend
+        $this->logManager($this->logs->create,"Cadastrou um novo cliente ({$name}).");
+
         $flags['status'] = true ;
         $flags['title']  = "Cadastrado com Sucesso!!";
         $flags['text']   = "Cliente Cadastrado com sucesso!";
@@ -478,7 +482,7 @@ class ClientsController extends ControllerBase
         'text'    => false
       ];
 
-      $u = Users::findFirstBy_($this->request->getPost("user_id"));
+      $u = Users::findFirst($this->request->getPost("user_id"));
 
       if(!$this->request->isPost()):
         $flags['status'] = false ;
@@ -575,6 +579,10 @@ class ClientsController extends ControllerBase
 
         }
 
+        $name = $this->request->getPost("firstName")." ".$this->request->getPost("lastName");
+        # Log What Happend
+        $this->logManager($this->logs->update,"Alterou informações de um cliente ({$name}).");
+
         $flags['status'] = true ;
         $flags['title']  = "Alterado com Sucesso!!";
         $flags['text']   = "Cliente Alterado com sucesso!";
@@ -618,8 +626,9 @@ class ClientsController extends ControllerBase
 
         if( $this->dispatcher->getParam("type") === "person" )
         {
-          $c = Clients::findFirstBy_($this->dispatcher->getParam("urlrequest"));
+          $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
           $u = Users::findFirstByEmail($c->email);
+          $n = "{$c->firstname} {$c->lastname}";
             $c->delete();
             $u->delete();
 
@@ -630,8 +639,9 @@ class ClientsController extends ControllerBase
         }
         else if( $this->dispatcher->getParam("type") === "company" )
         {
-          $c = Companies::findFirstBy_($this->dispatcher->getParam("urlrequest"));
+          $c = Companies::findFirst($this->dispatcher->getParam("urlrequest"));
           $u = Users::findFirstByEmail($c->email);
+          $n = "{$c->firstname} {$c->lastname}";
             $c->delete();
             $u->delete();
           foreach( ClientContacts::findByClient($this->dispatcher->getParam("urlrequest")) as $client )
@@ -643,6 +653,9 @@ class ClientsController extends ControllerBase
           $flags['redirect']  = "/clients";
           $flags['time']      = 3200;
         }
+
+        # Log What Happend
+        $this->logManager($this->logs->delete,"Removeu um cliente ({$n}).");
 
       endif;
 

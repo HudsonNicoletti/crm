@@ -3,6 +3,7 @@
 namespace Manager\Controllers;
 
 use Manager\Models\Users as Users,
+    Manager\Models\Logs as Logs,
     Manager\Models\Team as Team;
 
 use Phalcon\Mvc\Controller;
@@ -59,4 +60,13 @@ class ControllerBase extends Controller
         return preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i", $str );
     }
 
+    public function logManager($action,$desc)
+    {
+      $log = new Logs;
+        $log->user        = $this->session->get("secure_id");
+        $log->action      = $action;
+        $log->date        = (new \DateTime())->format("Y-m-d H:i:s");
+        $log->description = $desc;
+      return ($log->save() ? true : false);
+    }
 }

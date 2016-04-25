@@ -286,6 +286,10 @@ class TeamController extends ControllerBase
         $member->save();
       }
 
+      $name = $this->request->getPost("name");
+      # Log What Happend
+      $this->logManager($this->logs->create,"Cadastrou um novo membro de equipe ({$name}).");
+
       $flags['title']  = "Cadastrado com Sucesso!";
       $flags['text']   = "Membro cadastrado com sucesso!";
 
@@ -331,6 +335,10 @@ class TeamController extends ControllerBase
       $d = new Departments();
         $d->department = $this->request->getPost("department","string");
       $d->save();
+
+      $name = $this->request->getPost("department","string");
+      # Log What Happend
+      $this->logManager($this->logs->create,"Cadastrou um novo departamento ({$name}).");
 
       $flags['title']  = "Cadastrado com Sucesso!";
       $flags['text']   = "Departamento cadastrado com sucesso! A página irá atualizar.";
@@ -421,6 +429,10 @@ class TeamController extends ControllerBase
         $m->department_id = $this->request->getPost("department");
         $m->save();
 
+      $name = $this->request->getPost("name");
+      # Log What Happend
+      $this->logManager($this->logs->update,"Alterou informações de um membro ({$name}).");
+
       $flags['title']  = "Alterado com Sucesso!";
       $flags['text']   = "Informaçoes alteradas com sucesso!";
 
@@ -466,6 +478,10 @@ class TeamController extends ControllerBase
       $d = Departments::findFirst($this->dispatcher->getParam("urlrequest"));
         $d->department = $this->request->getPost("department","string");
       $d->save();
+
+      $name = $this->request->getPost("department");
+      # Log What Happend
+      $this->logManager($this->logs->update,"Alterou nome de um departamento para ({$name}).");
 
       $flags['title']  = "Alterado com Sucesso!";
       $flags['text']   = "Departamento alterado com sucesso! A página irá atualizar.";
@@ -523,6 +539,9 @@ class TeamController extends ControllerBase
       unlink("assets/manager/images/avtar/{$member->image}");
 
       # update projects table
+
+      # Log What Happend
+      $this->logManager($this->logs->delete,"Removeu um membro da equipe ({$member->name}).");
 
       $member->delete();
       $user->delete();
@@ -584,6 +603,9 @@ class TeamController extends ControllerBase
         $t->department_id = $this->request->getPost("departments");
         $t->save();
       }
+
+      # Log What Happend
+      $this->logManager($this->logs->delete,"Removeu um deparamento ({$d->department}).");
 
       $d->delete();
 

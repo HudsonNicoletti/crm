@@ -90,6 +90,11 @@ $di['permissions'] = function () use ($cf) {
     return $cf->permissions;
 };
 
+#   Configure system Logs
+$di['logs'] = function () use ($cf) {
+    return $cf->logs;
+};
+
 #    Registering a router
 $di['router'] = function () {
     $router = new Router();

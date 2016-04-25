@@ -39,3 +39,9 @@
 {
   width: 40px
 }
+
+.logo
+{
+  height: 200px;
+  display: inline-block;
+}

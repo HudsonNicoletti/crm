@@ -7,22 +7,20 @@
     <div class="panel panel-default" id="activities">
         <div class="panel-body">
           <ul class="activities-list list-unstyled nicescroll">
-
-            <?php $cl = [
-            "info-activity",
-            "warning-activity",
-            "default-activity",
-            "danger-activity",
-            "success-activity",
-            "primary-activity"
-            ];
+            <?php
+            foreach($logs as $log):
+              switch ($log->action) {
+                case $this->logs->create : $cl = "success-activity"; break;
+                case $this->logs->update : $cl = "warning-activity"; break;
+                case $this->logs->delete : $cl = "danger-activity"; break;
+                case $this->logs->info   : $cl = "info-activity"; break;
+              }
             ?>
-            <?php for( $i=0; $i < 20; $i++): ?>
-              <li class="<?php  $rd = rand(0,5); echo $cl[$rd]; ?>">
-                  <span class="time">23 min</span>
-                    <p><a href="#">Akshay</a> commented your post.</p>
+              <li class="<?php echo $cl; ?>">
+                  <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
+                    <p><a href="#"><?php echo $log->name; ?></a> <?php echo $log->description; ?></p>
                 </li>
-              <?php endfor; ?>
+              <?php endforeach; ?>
 
             </ul>
         </div>
