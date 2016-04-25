@@ -1,0 +1,356 @@
+<div class="warper container-fluid">
+
+    <div class="page-header">
+      <h1>Cadastramento de Clientes</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div role="alert" class="alert fade in hidden">
+          <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+          <h4 id="title"></h4>
+          <p id="desc"></p>
+        </div>
+      </div>
+    </div>
+
+    <ul class="nav nav-tabs" role="tablist">
+      <li class="active">
+        <a href="#person" role="tab" data-toggle="tab">Pessoa Física</a>
+      </li>
+      <li>
+        <a href="#company" role="tab" data-toggle="tab">Pessoa Jurídica</a>
+      </li>
+    </ul>
+
+    <div class="tab-content">
+
+      <div class="panel panel-default tab-pane tabs-up active" id="person">
+        <div class="panel-body">
+
+            <form method="post" class="form-horizontal validator-form" action="/clients/new/person" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+              <?php echo $form->render("security"); ?>
+              <div class="row">
+
+
+                <div class="col-md-6">
+                    <label class="control-label">Nome do responsável</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("firstName"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="control-label">Sobrenome do responsável</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("lastName"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="control-label">CPF</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("document"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="control-label">Email</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("email"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="control-label">Telefone</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("phone"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <label class="control-label">Domínio</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("domain"); ?>
+                    </div>
+                </div>
+
+              </div>
+
+              <hr class="dotted">
+
+              <div class="row">
+
+                <div class="col-md-4">
+                    <label class="control-label">Endereço</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("address"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="control-label">Bairro</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("district"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="control-label">CEP</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("zip"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="control-label">Cidade</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("city"); ?>
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="control-label">Estado (UF)</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("state"); ?>
+                    </div>
+                </div>
+
+              </div>
+
+              <hr class="dotted">
+
+              <div class="row">
+
+                <div class="col-md-3">
+                    <label class="control-label">Nome de Usuário</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("username"); ?>
+                    </div>
+                </div>
+
+                <div class="clearfix"></div>
+
+                <div class="col-md-3">
+                    <label class="control-label">Senha de Acesso</label>
+                    <div class="form-group has-feedback">
+                      <?php echo $form->render("password"); ?>
+                    </div>
+                </div>
+
+              </div>
+
+              <hr class="dotted">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Cadastrar</button>
+                </div>
+              </div>
+
+            </form>
+
+        </div>
+      </div>
+
+      <div class="panel panel-default tab-pane tabs-up" id="company">
+        <div class="panel-body">
+
+          <form method="post" class="form-horizontal validator-form" action="/clients/new/company" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+            <?php echo $form->render("security"); ?>
+            <div class="row">
+
+              <div class="col-md-3">
+                  <label class="control-label">Nome do responsável</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("firstName"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Sobrenome do responsável</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("lastName"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Razão Social</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("company"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Nome Fantasia</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("fantasy"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">CNPJ</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("document"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Email</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("email"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Inscrição Estadual</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("registration"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Cargo</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("role"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-6">
+                  <label class="control-label">Telefone</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("phone"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-6">
+                  <label class="control-label">Domínio</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("domain"); ?>
+                  </div>
+              </div>
+
+            </div>
+
+            <hr class="dotted">
+
+            <div class="row">
+
+              <div class="col-md-4">
+                  <label class="control-label">Endereço</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("address"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-2">
+                  <label class="control-label">Bairro</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("district"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-2">
+                  <label class="control-label">CEP</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("zip"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-2">
+                  <label class="control-label">Cidade</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("city"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-2">
+                  <label class="control-label">Estado (UF)</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("state"); ?>
+                  </div>
+              </div>
+
+            </div>
+
+            <hr class="dotted">
+
+            <div class="row">
+
+              <div class="col-md-3">
+                  <label class="control-label">Nome de Usuário</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("username"); ?>
+                  </div>
+              </div>
+
+              <div class="clearfix"></div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Senha de Acesso</label>
+                  <div class="form-group has-feedback">
+                  <?php echo $form->render("password"); ?>
+                  </div>
+              </div>
+
+            </div>
+
+            <hr class="dotted">
+
+            <div data-clones >
+              <button type="button" class="btn btn-success btn-lg pull-right" data-add>
+                <span class="fa fa-plus"></span>
+                Contato
+              </button>
+              <h2>Contatos</h2>
+
+              <div data-clone-tpl>
+                <div class="row" data-clone >
+
+                  <div class="col-md-4">
+                      <label class="control-label">Nome de Contato</label>
+                      <div class="form-group has-feedback">
+                        <?php echo $form->render("contact_name[]"); ?>
+                      </div>
+                  </div>
+
+                  <div class="col-md-4">
+                      <label class="control-label">Telefone de Contato</label>
+                      <div class="form-group has-feedback">
+                        <?php echo $form->render("contact_phone[]"); ?>
+                      </div>
+                  </div>
+
+                  <div class="col-md-4">
+                      <label class="control-label">Área</label>
+                      <div class="form-group has-feedback form-inline">
+                        <?php echo $form->render("contact_area[]"); ?>
+                          <?php echo $form->render("security"); ?>
+                          <button type="button" class="btn btn-danger" data-remove >
+                            <span class="fa fa-close"></span>
+                          </button>
+                      </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <div class="row" data-clone ></div>
+            </div>
+
+            <hr class="dotted">
+
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Cadastrar</button>
+              </div>
+            </div>
+
+          </form>
+
+        </div>
+      </div>
+
+    </div>
+
+</div>

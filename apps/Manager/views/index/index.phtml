@@ -1,0 +1,32 @@
+<div class="warper container-fluid">
+
+    <div class="page-header">
+      <h1>Atividades Recentes</h1>
+    </div>
+
+    <div class="panel panel-default" id="activities">
+        <div class="panel-body">
+          <ul class="activities-list list-unstyled nicescroll">
+
+            <?php $cl = [
+            "info-activity",
+            "warning-activity",
+            "default-activity",
+            "danger-activity",
+            "success-activity",
+            "primary-activity"
+            ];
+            ?>
+            <?php for( $i=0; $i < 20; $i++): ?>
+              <li class="<?php  $rd = rand(0,5); echo $cl[$rd]; ?>">
+                  <span class="time">23 min</span>
+                    <p><a href="#">Akshay</a> commented your post.</p>
+                </li>
+              <?php endfor; ?>
+
+            </ul>
+        </div>
+
+    </div>
+
+</div>

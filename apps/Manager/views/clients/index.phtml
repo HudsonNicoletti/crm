@@ -1,0 +1,82 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Gerenciamento de Clientes</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div role="alert" class="alert fade in hidden">
+        <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+        <h4 id="title"></h4>
+        <p id="desc"></p>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+    </div>
+  </div>
+
+  <hr class="dotted">
+
+  <div class="panel panel-default">
+    <table class="table table-striped no-margn">
+        <thead>
+          <tr>
+            <th>Responsável</th>
+            <th>N &deg; Documento</th>
+            <th>Domínio</th>
+            <th>Telefone</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($clients as $client): ?>
+            <tr data-searchable >
+
+                <td><?php echo $client->firstname; ?></td>
+                <td><?php echo $client->document; ?></td>
+                <td><?php echo $client->domain; ?></td>
+                <td><?php echo $client->phone; ?></td>
+                <td>
+                  <form method="post" class="validator-form" action="/clients/remove/person/<?php echo $client->_ ;?>" novalidate="novalidate">
+                    <a href="/clients/modify/person/<?php echo $client->_ ;?>">
+                      <button type="button" class="btn btn-info">
+                        <span class="fa fa-pencil"></span>
+                      </button>
+                    </a>
+                    <?php echo $form->render("security"); ?>
+                    <button type="submit" class="btn btn-danger">
+                      <span class="fa fa-close"></span>
+                    </button>
+                  </form>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+          <?php foreach ($companies as $company): ?>
+            <tr data-searchable >
+                <td><?php echo $company->firstname; ?></td>
+                <td><?php echo $company->document; ?></td>
+                <td><?php echo $company->domain; ?></td>
+                <td><?php echo $company->phone; ?></td>
+                <td>
+                  <form method="post" class="validator-form" action="/clients/remove/company/<?php echo $company->_ ;?>" novalidate="novalidate">
+                    <a href="/clients/modify/company/<?php echo $company->_ ;?>">
+                      <button type="button" class="btn btn-info">
+                        <span class="fa fa-pencil"></span>
+                      </button>
+                    </a>
+                    <?php echo $form->render("security"); ?>
+                    <button type="submit" class="btn btn-danger">
+                      <span class="fa fa-close"></span>
+                    </button>
+                  </form>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+  </div>
+
+</div>

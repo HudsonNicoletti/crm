@@ -1,0 +1,11 @@
+{
+    "config": {
+        "vendor-dir": "./"
+    },
+    
+    "require": {
+        "mustache/mustache"  : "2.*",
+        "phpmailer/phpmailer": "5.*"
+    }
+    
+}

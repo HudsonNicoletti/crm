@@ -1,0 +1,89 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Gerenciamento de Equipe</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert alert-info" role="alert">
+        <h4 id="title">Don't Forget</h4>
+        <p id="desc">Fix remove funcion !</p>
+      </div>
+    </div>
+    <div class="col-md-12">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+    </div>
+  </div>
+
+  <hr class="dotted">
+
+  <div class="panel panel-default">
+    <table class="table table-striped no-margn">
+        <thead>
+          <tr>
+            <th class="avtar"></th>
+            <th>Nome Completo</th>
+            <th>Departamento</th>
+            <th>Email</th>
+            <th>Telefone</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($members as $member): ?>
+            <tr data-searchable >
+                <td><img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" /</td>
+                <td><?php echo $member->name; ?></td>
+                <td><?php echo $member->department; ?></td>
+                <td><?php echo $member->email; ?></td>
+                <td><?php echo $member->phone; ?></td>
+                <td>
+                  <a href="/team/modify/<?php echo $member->_ ;?>">
+                    <button type="button" class="btn btn-info">
+                      <span class="fa fa-pencil"></span>
+                    </button>
+                  </a>
+                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm" data-form-action="/team/remove/<?php echo $member->_ ;?>">
+                    <span class="fa fa-close"></span>
+                  </button>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+  </div>
+
+</div>
+
+<!-- confirm -->
+<div class="modal fade" id="confirm" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Confirmação</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/team/remove/" class="validator-form" data-dynamic-action >
+        <div class="modal-body">
+
+          <div class="alert alert-info" role="alert">
+            <h4 id="title">Atenção!</h4>
+            <p id="desc">É necessário selecionar outro membro para assumir responsabilidade de todos os projetos relacionados ao membro a ser removido.</p>
+          </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Membros:</label>
+              <?php echo $form->render("select"); ?>
+              <?php echo $form->render("security"); ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>

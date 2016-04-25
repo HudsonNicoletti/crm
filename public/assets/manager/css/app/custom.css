@@ -1,0 +1,41 @@
+.container.login
+{
+  height: 98vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.user .user-login .btn {
+    color: #8E8C8E;
+    transition: all 0.4s;
+}
+
+.user .user-login .btn:hover {
+  background-color: #7A7E8A;
+  color: #FFF;
+}
+
+[data-clone-tpl]
+{
+  display: none;
+}
+
+.form-horizontal .form-group.has-feedback
+{
+  margin: 0 !important;
+}
+.form-horizontal .form-group.has-feedback .form-control-feedback
+{
+  right: 0;
+}
+
+.inline-block
+{
+  display: inline-block;
+}
+
+.avtar
+{
+  width: 40px
+}

@@ -1,0 +1,137 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Gerenciamento de Departamentos</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+    </div>
+  </div>
+
+  <hr class="dotted">
+
+  <div class="panel panel-default">
+    <table class="table table-striped no-margn">
+        <thead>
+          <tr>
+            <th>Departamento</th>
+            <th>
+              <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#create">
+                <span class="fa fa-plus"></span> Cadastrar
+              </button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach ($departments as $d): ?>
+            <tr data-searchable >
+                <td><?php echo $d->department; ?></td>
+                <td>
+                  <div class="pull-right">
+                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-form-action="/team/departments/update/<?php echo $d->_ ;?>">
+                      <span class="fa fa-pencil"></span>
+                    </button>
+                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove" data-form-action="/team/departments/remove/<?php echo $d->_ ;?>">
+                      <span class="fa fa-close"></span>
+                    </button>
+                  </div>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+  </div>
+
+</div>
+
+<!-- create -->
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="labl" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="labl">Cadastro</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/team/departments/new" class="validator-form" >
+        <div class="modal-body">
+          <div class="alert hidden" role="alert">
+            <h4 id="title"></h4>
+            <p id="desc"></p>
+          </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Título:</label>
+              <?php echo $form->render("department"); ?>
+              <?php echo $form->render("security"); ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- edit -->
+<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabell" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabell">Alteração</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/team/departments/" class="validator-form" data-dynamic-action >
+        <div class="modal-body">
+          <div class="alert hidden" role="alert">
+            <h4 id="title"></h4>
+            <p id="desc"></p>
+          </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Título:</label>
+              <?php echo $form->render("department"); ?>
+              <?php echo $form->render("security"); ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- remove -->
+<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="myModalLabel">Confirmação</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/team/remove/" class="validator-form" data-dynamic-action >
+        <div class="modal-body">
+
+          <div class="alert alert-info" role="alert">
+            <h4 id="title">Atenção!</h4>
+            <p id="desc">É necessário selecionar outro departamento para que os membros de equipe cadastrados sejam aterados.</p>
+          </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Departmentos:</label>
+              <?php echo $form->render("departments"); ?>
+              <?php echo $form->render("security"); ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Confirmar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
