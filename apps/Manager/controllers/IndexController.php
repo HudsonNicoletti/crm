@@ -19,6 +19,7 @@ class IndexController extends ControllerBase
       ];
       $builder = new Builder($params);
       $builder->innerJoin('Manager\Models\team', 'Manager\Models\Logs.user = Manager\Models\team.uid');
+      $builder->orderBy("date DESC");
 
       $this->view->logs = $this->modelsManager->executeQuery($builder->getPhql());
 

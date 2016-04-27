@@ -164,6 +164,7 @@
 
             </div>
 
+            <?php if($form->has("contact_name[]")): ?>
             <hr class="dotted">
 
             <div data-clones>
@@ -235,9 +236,8 @@
               </div>
             <?php endforeach; endif; ?>
           </div>
-
+          <?php endif;?>
           <hr class="dotted">
-
 
           <?php echo $form->render("security"); ?>
           <?php echo $form->render("user_id"); ?>

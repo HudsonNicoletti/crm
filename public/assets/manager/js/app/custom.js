@@ -152,6 +152,28 @@ $(function(){
   $('[data-search]').filtr({
     target : "[data-searchable]"
   });
+  /********************************
+  Filter
+  ********************************/
+  $('[data-filter]').on("click",function(){
+    $('[data-filter]').removeClass("active");
+    $(this).addClass("active");
+
+    var fl = $(this).data("filter");
+
+    $("[data-filter-index]").each(function(){
+      if($(this).data("filter-index") == fl || fl == 0 )
+      {
+        $(this).show();
+      }
+      else
+      {
+        $(this).hide();
+      }
+    });
+
+    return false;
+  });
 
   /********************************
 	CLoning

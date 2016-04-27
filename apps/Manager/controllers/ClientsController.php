@@ -176,7 +176,7 @@ class ClientsController extends ControllerBase
       $type = $this->dispatcher->getParam("type");
       $urlrequest = $this->dispatcher->getParam("urlrequest");
 
-      ( $type === 'person' ) ? $c = Clients::findFirstBy_($urlrequest) : $c = Companies::findFirstBy_($urlrequest);
+      ( $type === 'person' ) ? $c = Clients::findFirst($urlrequest) : $c = Companies::findFirst($urlrequest);
 
       $user = Users::findFirstByEmail($c->email);
 

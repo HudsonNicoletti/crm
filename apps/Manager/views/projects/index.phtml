@@ -1,0 +1,100 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Gerenciamento de Projetos</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert hidden" role="alert">
+        <h4 id="title"></h4>
+        <p id="desc"></p>
+      </div>
+    </div>
+    <div class="col-md-9 col-sm-12">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+    </div>
+    <div class="col-md-3 col-sm-12">
+      <div class="btn-group flex-center">
+        <button type="button" class="btn btn-default active" data-filter="0" >Todos</button>
+        <button type="button" class="btn btn-default" data-filter="1" >Abertos</button>
+        <button type="button" class="btn btn-default" data-filter="2" >Concluídos</button>
+        <button type="button" class="btn btn-default" data-filter="3" >Cancelados</button>
+      </div>
+    </div>
+  </div>
+
+  <hr class="dotted">
+
+  <div class="panel panel-default">
+    <table class="table table-striped no-margn">
+        <thead>
+          <tr>
+            <th>Projeto</th>
+            <th>Cliente</th>
+            <th>Deadline</th>
+            <th>Processo</th>
+            <th>Status</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          <?php foreach($companies as $company): ?>
+            <tr data-searchable data-filter-index="<?php echo $company->status; ?>" >
+                <td><?php echo $company->title; ?></td>
+                <td><?php echo $company->firstname; ?></td>
+                <td><?php echo (new \DateTime($company->deadline))->format("d-m-Y"); ?></td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($company->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($company->_); ?>%;">
+                      <?php echo $controller->TaskPercentage($company->_); ?>% Completo
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <?php echo $controller->ProjectStatus($company->status); ?>
+                </td>
+                <td>
+                  <a href="/projects/modify/<?php echo $company->_; ?>">
+                    <button type="button" class="btn btn-info">
+                      <span class="fa fa-pencil"></span>
+                    </button>
+                  </a>
+                  <button type="button" class="btn btn-danger">
+                    <span class="fa fa-close"></span>
+                  </button>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+          <?php foreach($clients as $client): ?>
+            <tr data-searchable data-filter-index="<?php echo $client->status; ?>" >
+                <td><?php echo $client->title; ?></td>
+                <td><?php echo $client->firstname; ?></td>
+                <td><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></td>
+                <td>
+                  <div class="progress">
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($company->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($client->_); ?>%;">
+                      <?php echo $controller->TaskPercentage($company->_); ?>% Completo
+                    </div>
+                  </div>
+                </td>
+                <td><?php echo $controller->ProjectStatus($client->status); ?>
+                </td>
+                <td>
+                  <a href="/projects/modify/<?php echo $client->_; ?>">
+                    <button type="button" class="btn btn-info">
+                      <span class="fa fa-pencil"></span>
+                    </button>
+                  </a>
+                  <button type="button" class="btn btn-danger">
+                    <span class="fa fa-close"></span>
+                  </button>
+                </td>
+            </tr>
+          <?php endforeach; ?>
+        </tbody>
+      </table>
+
+  </div>
+
+</div>
