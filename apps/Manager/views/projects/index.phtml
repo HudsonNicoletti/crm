@@ -31,17 +31,19 @@
         <thead>
           <tr>
             <th>Projeto</th>
+            <th>Categoria</th>
             <th>Cliente</th>
             <th>Deadline</th>
             <th>Processo</th>
             <th>Status</th>
-            <th></th>
+            <th><i class="fa fa-gears"></i></th>
           </tr>
         </thead>
         <tbody>
           <?php foreach($companies as $company): ?>
             <tr data-searchable data-filter-index="<?php echo $company->status; ?>" >
                 <td><?php echo $company->title; ?></td>
+                <td><span class="label label-primary"><?php echo $company->type; ?></span></td>
                 <td><?php echo $company->firstname; ?></td>
                 <td><?php echo (new \DateTime($company->deadline))->format("d-m-Y"); ?></td>
                 <td>

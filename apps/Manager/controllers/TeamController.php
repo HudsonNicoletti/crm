@@ -32,15 +32,18 @@ class TeamController extends ControllerBase
             'class' => "form-control"
       ]));
 
-    $params = [
-       'models'     => ['Manager\Models\Users'],
-       'columns'    => ['Manager\Models\Users._','email','name','image','department','phone'],
-    ];
-    $builder = new Builder($params);
-    $builder->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._');
-    $builder->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._');
-
-    $team = $this->modelsManager->executeQuery($builder->getPhql());
+      $team = Users::query()
+              ->columns([
+                'Manager\Models\Users._',
+                'Manager\Models\Users.email',
+                'Manager\Models\Team.name',
+                'Manager\Models\Team.image',
+                'Manager\Models\Departments.department',
+                'Manager\Models\Team.phone'
+              ])
+              ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
+              ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
+              ->execute();
 
     $this->view->form = $form;
     $this->view->members = $team;

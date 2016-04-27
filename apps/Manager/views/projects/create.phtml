@@ -1,0 +1,39 @@
+<div class="warper container-fluid">
+
+    <div class="page-header">
+      <h1>Cadastramento de Projetos</h1>
+    </div>
+
+    <div class="row">
+      <div class="col-md-12">
+        <div role="alert" class="alert fade in hidden">
+          <button data-dismiss="alert" class="close" type="button"><span aria-hidden="true">×</span><span class="sr-only">Close</span></button>
+          <h4 id="title"></h4>
+          <p id="desc"></p>
+        </div>
+      </div>
+    </div>
+
+    <div class="tab-content">
+
+      <div class="panel panel-default">
+        <div class="panel-body">
+
+            <form method="post" class="form-horizontal validator-form" action="/projects/new" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+              <?php echo $form->render("security"); ?>
+              
+              <hr class="dotted">
+
+              <div class="row">
+                <div class="col-sm-12">
+                  <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Cadastrar</button>
+                </div>
+              </div>
+
+            </form>
+
+        </div>
+      </div>
+
+  </div>
+</div>
