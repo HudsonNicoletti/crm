@@ -21,7 +21,42 @@
 
             <form method="post" class="form-horizontal validator-form" action="/projects/new" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
               <?php echo $form->render("security"); ?>
-              
+
+              <div class="row">
+
+                <div class="col-md-6">
+                  <label class="control-label">Título do Projeto</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("title"); ?>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="control-label">Cliente</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("client"); ?>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+
+                <div class="col-md-6">
+                  <label class="control-label">Deadline</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("deadline"); ?>
+                  </div>
+                </div>
+
+                <div class="col-md-6">
+                  <label class="control-label">Membros</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("members"); ?>
+                  </div>
+                </div>
+
+              </div>
+
               <hr class="dotted">
 
               <div class="row">

@@ -3,6 +3,7 @@
 namespace Manager\Controllers;
 
 use Manager\Models\Tasks as Tasks,
+    Manager\Models\Team as Team,
     Manager\Models\Clients as Clients,
     Manager\Models\Companies as Companies,
     Manager\Models\ProjectTypes as ProjectTypes,
@@ -68,6 +69,28 @@ class ProjectsController extends ControllerBase
         $form->add(new Hidden( "security" ,[
             'name'  => $this->security->getTokenKey(),
             'value' => $this->security->getToken(),
+        ]));
+
+        $form->add(new Text( "title" ,[
+            'class'         => "form-control",
+            'data-validate' => true,
+            'data-empty'    => "* Campo Obrigatório",
+        ]));
+
+        $form->add(new Select( "client" , $allclients ,
+        [
+            'using' =>  ['_','firstname'],
+            'multiple'         => true ,
+            'data-placeholder' => "Membros Participantes",
+            'class'            => "chosen-select"
+        ]));
+
+        $form->add(new Select( "members" , Team::find() ,
+        [
+            'using' =>  ['uid','name'],
+            'multiple'         => true ,
+            'data-placeholder' => "Membros Participantes",
+            'class'            => "chosen-select"
         ]));
 
       $this->view->form = $form;

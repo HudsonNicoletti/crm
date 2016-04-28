@@ -33,35 +33,13 @@
         <tbody>
           <?php foreach ($clients as $client): ?>
             <tr data-searchable >
-
-                <td><?php echo $client->firstname; ?></td>
+                <td><?php echo "{$client->firstname} {$client->lastname}".($client->fantasy != null ? " ( {$client->fantasy} ) " : ""); ?></td>
                 <td><?php echo $client->document; ?></td>
                 <td><?php echo $client->domain; ?></td>
                 <td><?php echo $client->phone; ?></td>
                 <td>
-                  <form method="post" class="validator-form" action="/clients/remove/person/<?php echo $client->_ ;?>" novalidate="novalidate">
-                    <a href="/clients/modify/person/<?php echo $client->_ ;?>">
-                      <button type="button" class="btn btn-info">
-                        <span class="fa fa-pencil"></span>
-                      </button>
-                    </a>
-                    <?php echo $form->render("security"); ?>
-                    <button type="submit" class="btn btn-danger">
-                      <span class="fa fa-close"></span>
-                    </button>
-                  </form>
-                </td>
-            </tr>
-          <?php endforeach; ?>
-          <?php foreach ($companies as $company): ?>
-            <tr data-searchable >
-                <td><?php echo $company->firstname; ?></td>
-                <td><?php echo $company->document; ?></td>
-                <td><?php echo $company->domain; ?></td>
-                <td><?php echo $company->phone; ?></td>
-                <td>
-                  <form method="post" class="validator-form" action="/clients/remove/company/<?php echo $company->_ ;?>" novalidate="novalidate">
-                    <a href="/clients/modify/company/<?php echo $company->_ ;?>">
+                  <form method="post" class="validator-form" action="/clients/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
+                    <a href="/clients/modify/<?php echo $client->_ ;?>">
                       <button type="button" class="btn btn-info">
                         <span class="fa fa-pencil"></span>
                       </button>

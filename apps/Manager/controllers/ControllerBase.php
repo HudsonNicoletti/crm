@@ -16,6 +16,8 @@ class ControllerBase extends Controller
         $this->assets
              ->addCss('http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300',false)
              ->addCss('assets/manager/css/bootstrap/bootstrap.css')
+             ->addCss('assets/manager/css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')
+             ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
              ->addCss('assets/manager/css/app/app.v1.css')
              ->addCss('assets/manager/css/app/custom.css');
 
@@ -29,6 +31,8 @@ class ControllerBase extends Controller
              ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
              ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
              ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+             ->addJs("assets/manager/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js")
+             ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js")
              ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
              ->addJs('assets/manager/js/app/custom.js');
 

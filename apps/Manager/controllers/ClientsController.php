@@ -16,6 +16,20 @@ class ClientsController extends ControllerBase
 {
     public function IndexAction()
     {
+
+      $clients = Clients::query()
+      ->columns([
+        'Manager\Models\Clients._',
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Clients.document',
+        'Manager\Models\Clients.phone',
+        'Manager\Models\Clients.domain',
+        'Manager\Models\Companies.fantasy',
+      ])
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = Manager\Models\Clients._')
+      ->execute();
+
       $form = new Form();
 
         $form->add(new Hidden( "security" ,[
@@ -24,8 +38,7 @@ class ClientsController extends ControllerBase
         ]));
 
       $this->view->form = $form;
-      $this->view->clients = Clients::find();
-      $this->view->companies = Companies::find();
+      $this->view->clients = $clients;
     }
 
     public function CreateAction()
@@ -54,15 +67,11 @@ class ClientsController extends ControllerBase
           $form->add(new Text( "document" ,[
               'class'         => "form-control",
               'id'            => "document",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
           ]));
 
           $form->add(new Text( "registration" ,[
               'class'         => "form-control",
               'id'            => "registration",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
           ]));
 
           $form->add(new Text( "company" ,[
@@ -99,7 +108,11 @@ class ClientsController extends ControllerBase
               'id'            => "phone",
               'data-validate' => true,
               'data-empty'    => "* Campo Obrigatório",
-              'data-inputmask'=> "'alias' : 'phone'"
+          ]));
+
+          $form->add(new Text( "cellphone" ,[
+              'class'         => "form-control",
+              'id'            => "cellphone",
           ]));
 
           $form->add(new Text( "domain" ,[
@@ -164,6 +177,14 @@ class ClientsController extends ControllerBase
               'class'         => "form-control",
           ]));
 
+          $form->add(new Text( "contact_cellphone[]" ,[
+              'class'         => "form-control",
+          ]));
+
+          $form->add(new Text( "contact_email[]" ,[
+              'class'         => "form-control",
+          ]));
+
           $form->add(new Text( "contact_area[]" ,[
               'class'         => "form-control",
           ]));
@@ -173,12 +194,33 @@ class ClientsController extends ControllerBase
 
     public function ModifyAction()
     {
-      $type = $this->dispatcher->getParam("type");
-      $urlrequest = $this->dispatcher->getParam("urlrequest");
+      $urlrequest = $this->dispatcher->getParam('urlrequest');
 
-      ( $type === 'person' ) ? $c = Clients::findFirst($urlrequest) : $c = Companies::findFirst($urlrequest);
-
-      $user = Users::findFirstByEmail($c->email);
+      $client = Clients::query()
+      ->columns([
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Clients.document',
+        'Manager\Models\Clients.phone',
+        'Manager\Models\Clients.cellphone',
+        'Manager\Models\Clients.domain',
+        'Manager\Models\Clients.address',
+        'Manager\Models\Clients.district',
+        'Manager\Models\Clients.zip',
+        'Manager\Models\Clients.city',
+        'Manager\Models\Clients.state',
+        'Manager\Models\Companies.client',
+        'Manager\Models\Companies.company',
+        'Manager\Models\Companies.fantasy',
+        'Manager\Models\Companies.registration',
+        'Manager\Models\Companies.role',
+        'Manager\Models\Users.email',
+        'Manager\Models\Users.username',
+      ])
+      ->where("Manager\Models\Clients._ = '{$urlrequest}'")
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = Manager\Models\Clients._')
+      ->innerJoin('Manager\Models\Users', 'Manager\Models\Users._ = Manager\Models\Clients.user')
+      ->execute();
 
       $form = new Form();
 
@@ -187,88 +229,77 @@ class ClientsController extends ControllerBase
             'value' => $this->security->getToken()
         ]));
 
-        $form->add(new Hidden( "user_id" ,[
-            'value' => $user->_
-        ]));
-
         $form->add(new Text( "firstName" ,[
             'class'         => "form-control",
-            'id'            => "firstName",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->firstname
+            'value'         => $client[0]->firstname
         ]));
 
         $form->add(new Text( "lastName" ,[
             'class'         => "form-control",
-            'id'            => "lastName",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->lastname
+            'value'         => $client[0]->lastname
         ]));
 
         $form->add(new Text( "document" ,[
             'class'         => "form-control",
-            'id'            => "document",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->document
+            'value'         => $client[0]->document
         ]));
 
         $form->add(new Text( "email" ,[
             'class'         => "form-control",
-            'id'            => "email",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
             'data-email'    => "* E-Mail Inválido",
-            'value'         => $c->email
+            'value'         => $client[0]->email
         ]));
 
         $form->add(new Text( "phone" ,[
             'class'         => "form-control",
-            'id'            => "phone",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
             'data-inputmask'=> "'alias' : 'phone'",
-            'value'         => $c->phone
+            'value'         => $client[0]->phone
+        ]));
+
+        $form->add(new Text( "cellphone" ,[
+            'class'         => "form-control",
+            'value'         => $client[0]->cellphone
         ]));
 
         $form->add(new Text( "domain" ,[
             'class'         => "form-control",
-            'id'            => "domain",
-            'value'         => $c->domain
+            'value'         => $client[0]->domain
         ]));
 
         $form->add(new Text( "address" ,[
             'class'         => "form-control",
-            'id'            => "address",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->address
+            'value'         => $client[0]->address
         ]));
 
         $form->add(new Text( "district" ,[
             'class'         => "form-control",
-            'id'            => "district",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->district
+            'value'         => $client[0]->district
         ]));
 
         $form->add(new Text( "zip" ,[
             'class'         => "form-control",
-            'id'            => "zip",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->zip
+            'value'         => $client[0]->zip
         ]));
 
         $form->add(new Text( "city" ,[
             'class'         => "form-control",
-            'id'            => "city",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->city
+            'value'         => $client[0]->city
         ]));
 
         $form->add(new Text( "state" ,[
@@ -276,13 +307,13 @@ class ClientsController extends ControllerBase
             'id'            => "state",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
-            'value'         => $c->state
+            'value'         => $client[0]->state
         ]));
 
         $form->add(new Text( "username" ,[
             'class'         => "form-control",
             'id'            => "username",
-            'value'         => $user->username
+            'value'         => $client[0]->username
         ]));
 
         $form->add(new Password( "password" ,[
@@ -290,39 +321,33 @@ class ClientsController extends ControllerBase
             'id'            => "password",
         ]));
 
-        if( $type === 'company')
+        if( $client[0]->client != null )
         {
 
           $form->add(new Text( "registration" ,[
               'class'         => "form-control",
-              'id'            => "registration",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-              'value'         => $c->registration
+              'value'         => $client[0]->registration
           ]));
 
           $form->add(new Text( "company" ,[
               'class'         => "form-control",
-              'id'            => "company",
               'data-validate' => true,
               'data-empty'    => "* Campo Obrigatório",
-              'value'         => $c->company
+              'value'         => $client[0]->company
           ]));
 
           $form->add(new Text( "fantasy" ,[
               'class'         => "form-control",
-              'id'            => "fantasy",
               'data-validate' => true,
               'data-empty'    => "* Campo Obrigatório",
-              'value'         => $c->fantasy
+              'value'         => $client[0]->fantasy
           ]));
 
           $form->add(new Text( "role" ,[
               'class'         => "form-control",
-              'id'            => "role",
               'data-validate' => true,
               'data-empty'    => "* Campo Obrigatório",
-              'value'         => $c->role
+              'value'         => $client[0]->role
           ]));
 
           $form->add(new Text( "contact_name[]" ,[
@@ -333,19 +358,26 @@ class ClientsController extends ControllerBase
               'class'         => "form-control",
           ]));
 
+          $form->add(new Text( "contact_cellphone[]" ,[
+              'class'         => "form-control",
+          ]));
+
+          $form->add(new Text( "contact_email[]" ,[
+              'class'         => "form-control",
+          ]));
+
           $form->add(new Text( "contact_area[]" ,[
               'class'         => "form-control",
           ]));
 
         }
 
-      switch ($type) {
-        case 'person':  $size = 6 ; break;
-        case 'company': $size = 3 ; break;
+      switch ($client[0]->client) {
+        case null:  $size = 6 ; break;
+        default: $size = 3 ; break;
       }
 
       $this->view->form = $form;
-      $this->view->type = $type;
       $this->view->uid  = $urlrequest;
       $this->view->size = $size;
       $this->view->contacts = ClientContacts::findByClient($urlrequest);
@@ -400,45 +432,40 @@ class ClientsController extends ControllerBase
           $user->permission = $this->permissions->client;
         $user->save();
 
-        if( $this->dispatcher->getParam("type") === "person" )
-        {
-          $person = new Clients;
-            $person->firstname = $this->request->getPost("firstName");
-            $person->lastname  = $this->request->getPost("lastName");
-            $person->document  = $this->request->getPost("document");
-            $person->email     = $this->request->getPost("email");
-            $person->phone     = $this->request->getPost("phone");
-            $person->domain    = $this->request->getPost("domain");
-            $person->address   = $this->request->getPost("address");
-            $person->district  = $this->request->getPost("district");
-            $person->zip       = $this->request->getPost("zip");
-            $person->city      = $this->request->getPost("city");
-            $person->state     = $this->request->getPost("state");
-          $person->save();
-        }
-        else if( $this->dispatcher->getParam("type") === "company" )
+        $client = new Clients;
+          $client->user      = $user->_;
+          $client->firstname = $this->request->getPost("firstName");
+          $client->lastname  = $this->request->getPost("lastName");
+          $client->document  = $this->request->getPost("document");
+          $client->phone     = $this->request->getPost("phone");
+          $client->cellphone = $this->request->getPost("cellphone");
+          $client->domain    = $this->request->getPost("domain");
+          $client->address   = $this->request->getPost("address");
+          $client->district  = $this->request->getPost("district");
+          $client->zip       = $this->request->getPost("zip");
+          $client->city      = $this->request->getPost("city");
+          $client->state     = $this->request->getPost("state");
+        $client->save();
+
+        if( $this->dispatcher->getParam("type") === "company" )
         {
           $company = new Companies;
-            $company->firstname = $this->request->getPost("firstName");
-            $company->lastname  = $this->request->getPost("lastName");
+            $company->client    = $client->_;
             $company->company   = $this->request->getPost("company");
             $company->fantasy   = $this->request->getPost("fantasy");
-            $company->document  = $this->request->getPost("document");
             $company->registration  = $this->request->getPost("registration");
             $company->role      = $this->request->getPost("role");
-            $company->email     = $this->request->getPost("email");
-            $company->phone     = $this->request->getPost("phone");
-            $company->domain    = $this->request->getPost("domain");
-            $company->address   = $this->request->getPost("address");
-            $company->district  = $this->request->getPost("district");
-            $company->zip       = $this->request->getPost("zip");
-            $company->city      = $this->request->getPost("city");
-            $company->state     = $this->request->getPost("state");
           $company->save();
 
           $m = array_combine(
-            ['name','phone','area'],
-            [$this->request->getPost('contact_name'),$this->request->getPost('contact_phone'),$this->request->getPost('contact_area')]
+            ['name','phone','cellphone','email','area'],
+            [
+              $this->request->getPost('contact_name'),
+              $this->request->getPost('contact_phone'),
+              $this->request->getPost('contact_cellphone'),
+              $this->request->getPost('contact_email'),
+              $this->request->getPost('contact_area')
+            ]
           );
 
           for($i=0; $i < count($m['name']); $i++)
@@ -447,6 +474,8 @@ class ClientsController extends ControllerBase
               $contact->client = $company->_;
               $contact->name  = $m['name'][$i];
               $contact->phone = $m['phone'][$i];
+              $contact->cellphone = $m['cellphone'][$i];
+              $contact->email = $m['email'][$i];
               $contact->area  = $m['area'][$i];
             $contact->save();
           }
@@ -482,7 +511,9 @@ class ClientsController extends ControllerBase
         'text'    => false
       ];
 
-      $u = Users::findFirst($this->request->getPost("user_id"));
+      $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
+      $company = Companies::findFirstByClient($c->_);
+      $u = Users::findFirst($c->user);
 
       if(!$this->request->isPost()):
         $flags['status'] = false ;
@@ -524,55 +555,48 @@ class ClientsController extends ControllerBase
           $u->permission = $this->permissions->client;
         $u->save();
 
-        if( $this->dispatcher->getParam("type") === "person" )
+          $c->firstname = $this->request->getPost("firstName");
+          $c->lastname  = $this->request->getPost("lastName");
+          $c->document  = $this->request->getPost("document");
+          $c->phone     = $this->request->getPost("phone");
+          $c->cellphone = $this->request->getPost("cellphone");
+          $c->domain    = $this->request->getPost("domain");
+          $c->address   = $this->request->getPost("address");
+          $c->district  = $this->request->getPost("district");
+          $c->zip       = $this->request->getPost("zip");
+          $c->city      = $this->request->getPost("city");
+          $c->state     = $this->request->getPost("state");
+        $c->save();
+
+        if( $company->_ != null )
         {
-          $person = Clients::findFirstBy_($this->dispatcher->getParam("urlrequest"));
-            $person->firstname = $this->request->getPost("firstName");
-            $person->lastname  = $this->request->getPost("lastName");
-            $person->document  = $this->request->getPost("document");
-            $person->email     = $this->request->getPost("email");
-            $person->phone     = $this->request->getPost("phone");
-            $person->domain    = $this->request->getPost("domain");
-            $person->address   = $this->request->getPost("address");
-            $person->district  = $this->request->getPost("district");
-            $person->zip       = $this->request->getPost("zip");
-            $person->city      = $this->request->getPost("city");
-            $person->state     = $this->request->getPost("state");
-          $person->save();
-        }
-        else if( $this->dispatcher->getParam("type") === "company" )
-        {
-          $company = Companies::findFirstBy_($this->dispatcher->getParam("urlrequest"));
-            $company->firstname = $this->request->getPost("firstName");
-            $company->lastname  = $this->request->getPost("lastName");
             $company->company   = $this->request->getPost("company");
             $company->fantasy   = $this->request->getPost("fantasy");
-            $company->document  = $this->request->getPost("document");
             $company->registration  = $this->request->getPost("registration");
             $company->role      = $this->request->getPost("role");
-            $company->email     = $this->request->getPost("email");
-            $company->phone     = $this->request->getPost("phone");
-            $company->domain    = $this->request->getPost("domain");
-            $company->address   = $this->request->getPost("address");
-            $company->district  = $this->request->getPost("district");
-            $company->zip       = $this->request->getPost("zip");
-            $company->city      = $this->request->getPost("city");
-            $company->state     = $this->request->getPost("state");
           $company->save();
 
-          foreach( ClientContacts::findByClient($this->dispatcher->getParam("urlrequest")) as $contact ): $contact->delete(); endforeach;
+          foreach( ClientContacts::findByClient($c->_) as $contact ): $contact->delete(); endforeach;
 
           $m = array_combine(
-            ['name','phone','area'],
-            [$this->request->getPost('contact_name'),$this->request->getPost('contact_phone'),$this->request->getPost('contact_area')]
+            ['name','phone','cellphone','email','area'],
+            [
+              $this->request->getPost('contact_name'),
+              $this->request->getPost('contact_phone'),
+              $this->request->getPost('contact_cellphone'),
+              $this->request->getPost('contact_email'),
+              $this->request->getPost('contact_area')
+            ]
           );
 
           for($i=0; $i < count($m['name']); $i++)
           {
             $contact = new ClientContacts;
-              $contact->client = $company->_;
+              $contact->client = $c->_;
               $contact->name  = $m['name'][$i];
               $contact->phone = $m['phone'][$i];
+              $contact->cellphone = $m['cellphone'][$i];
+              $contact->email = $m['email'][$i];
               $contact->area  = $m['area'][$i];
             $contact->save();
           }
@@ -624,38 +648,30 @@ class ClientsController extends ControllerBase
 
       if($flags['status']):
 
-        if( $this->dispatcher->getParam("type") === "person" )
-        {
-          $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
-          $u = Users::findFirstByEmail($c->email);
-          $n = "{$c->firstname} {$c->lastname}";
-            $c->delete();
-            $u->delete();
+        $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
+        $u = Users::findFirst($c->user);
+        $y = Companies::findFirstByClient($c->_);
+        $n = "{$c->firstname} {$c->lastname}";
+          $c->delete();
+          $u->delete();
 
-          $flags['title']     = "Removido Com Sucesso!";
-          $flags['text']      = "Cliente Removido com Sucesso.";
-          $flags['redirect']  = "/clients";
-          $flags['time']      = 3200;
-        }
-        else if( $this->dispatcher->getParam("type") === "company" )
+        if( $y->_ != null )
         {
-          $c = Companies::findFirst($this->dispatcher->getParam("urlrequest"));
-          $u = Users::findFirstByEmail($c->email);
-          $n = "{$c->firstname} {$c->lastname}";
-            $c->delete();
-            $u->delete();
-          foreach( ClientContacts::findByClient($this->dispatcher->getParam("urlrequest")) as $client )
+          $y->delete();
+
+          foreach( ClientContacts::findByClient($c->_) as $client )
           {
             $client->delete();
           }
-          $flags['title']     = "Removido Com Sucesso!";
-          $flags['text']      = "Cliente Removido com Sucesso.";
-          $flags['redirect']  = "/clients";
-          $flags['time']      = 3200;
         }
 
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu um cliente ({$n}).");
+
+        $flags['title']     = "Removido Com Sucesso!";
+        $flags['text']      = "Cliente Removido com Sucesso.";
+        $flags['redirect']  = "/clients";
+        $flags['time']      = 1000;
 
       endif;
 

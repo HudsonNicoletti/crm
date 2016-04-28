@@ -14,7 +14,7 @@
       </div>
     </div>
 
-    <form method="post" class="form-horizontal validator-form" action="/clients/update/<?php echo $type.'/'.$uid; ?>" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+    <form method="post" class="form-horizontal validator-form" action="/clients/update/<?php echo $uid; ?>" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
 
       <div class="panel panel-default">
         <div class="panel-body">
@@ -85,10 +85,17 @@
               </div>
               <?php endif; ?>
 
-              <div class="col-md-6">
+              <div class="col-md-3">
                   <label class="control-label">Telefone</label>
                   <div class="form-group has-feedback">
                   <?php echo $form->render("phone"); ?>
+                  </div>
+              </div>
+
+              <div class="col-md-3">
+                  <label class="control-label">Celular</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("cellphone"); ?>
                   </div>
               </div>
 
@@ -178,21 +185,35 @@
               <div data-clone-tpl>
                 <div class="row" data-clone >
 
-                  <div class="col-md-4">
-                      <label class="control-label">Nome de Contato</label>
+                  <div class="col-md-2">
+                      <label class="control-label">Nome Completo</label>
                       <div class="form-group has-feedback">
                         <?php echo $form->render("contact_name[]"); ?>
                       </div>
                   </div>
 
-                  <div class="col-md-4">
-                      <label class="control-label">Telefone de Contato</label>
+                  <div class="col-md-2">
+                      <label class="control-label">Telefone</label>
                       <div class="form-group has-feedback">
                         <?php echo $form->render("contact_phone[]"); ?>
                       </div>
                   </div>
 
-                  <div class="col-md-4">
+                  <div class="col-md-2">
+                      <label class="control-label">Celular</label>
+                      <div class="form-group has-feedback">
+                        <?php echo $form->render("contact_cellphone[]"); ?>
+                      </div>
+                  </div>
+
+                  <div class="col-md-2">
+                      <label class="control-label">E-Mail</label>
+                      <div class="form-group has-feedback">
+                        <?php echo $form->render("contact_email[]"); ?>
+                      </div>
+                  </div>
+
+                  <div class="col-md-3">
                       <label class="control-label">Área</label>
                       <div class="form-group has-feedback form-inline">
                         <?php echo $form->render("contact_area[]"); ?>
@@ -209,21 +230,35 @@
               <?php if(count($contacts) > 0): foreach ($contacts as $contact):  ?>
               <div class="row" data-clone >
 
-                <div class="col-md-4">
-                    <label class="control-label">Nome de Contato</label>
+                <div class="col-md-2">
+                    <label class="control-label">Nome Completo</label>
                     <div class="form-group has-feedback">
                       <input type="text" name="contact_name[]" class="form-control" value="<?php echo $contact->name; ?>">
                     </div>
                 </div>
 
-                <div class="col-md-4">
-                    <label class="control-label">Telefone de Contato</label>
+                <div class="col-md-2">
+                    <label class="control-label">Telefone</label>
                     <div class="form-group has-feedback">
                       <input type="text" name="contact_phone[]" class="form-control" value="<?php echo $contact->phone; ?>">
                     </div>
                 </div>
 
-                <div class="col-md-4">
+                <div class="col-md-2">
+                    <label class="control-label">Celular</label>
+                    <div class="form-group has-feedback">
+                      <input type="text" name="contact_cellphone[]" class="form-control" value="<?php echo $contact->cellphone; ?>">
+                    </div>
+                </div>
+
+                <div class="col-md-2">
+                    <label class="control-label">E-Mail</label>
+                    <div class="form-group has-feedback">
+                      <input type="text" name="contact_email[]" class="form-control" value="<?php echo $contact->email; ?>">
+                    </div>
+                </div>
+
+                <div class="col-md-3">
                     <label class="control-label">Área</label>
                     <div class="form-group has-feedback form-inline">
                       <input type="text" name="contact_area[]" class="form-control" value="<?php echo $contact->area; ?>">
@@ -240,7 +275,6 @@
           <hr class="dotted">
 
           <?php echo $form->render("security"); ?>
-          <?php echo $form->render("user_id"); ?>
 
           <div class="row">
             <div class="col-sm-12">

@@ -30,28 +30,29 @@ $router->add("/:controller/:action/:params", [
     'params'     => 3,
 ]);
 
-$router->add("/clients/new/{type:[a-zA-Z0-9\_\-]+}", [
-    'module'     => 'Manager',
-    'namespace'  => 'Manager\Controllers',
-    'controller' => 'clients',
-    'action'     => 'new',
-]);
 
-$router->add("/clients/remove/{type:[a-zA-Z0-9\_\-]+}/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/clients/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'clients',
     'action'     => 'remove',
 ]);
 
-$router->add("/clients/modify/{type:[a-zA-Z0-9\_\-]+}/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/clients/modify/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'clients',
     'action'     => 'modify',
 ]);
 
-$router->add("/clients/update/{type:[a-zA-Z0-9\_\-]+}/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/clients/new/{type:[a-zA-Z0-9\_\-]+}/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'clients',
+    'action'     => 'new',
+]);
+
+$router->add("/clients/update/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'clients',
