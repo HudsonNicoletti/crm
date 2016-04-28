@@ -40,43 +40,16 @@
           </tr>
         </thead>
         <tbody>
-          <?php foreach($companies as $company): ?>
-            <tr data-searchable data-filter-index="<?php echo $company->status; ?>" >
-                <td><?php echo $company->title; ?></td>
-                <td><span class="label label-primary"><?php echo $company->type; ?></span></td>
-                <td><?php echo $company->firstname; ?></td>
-                <td><?php echo (new \DateTime($company->deadline))->format("d-m-Y"); ?></td>
-                <td>
-                  <div class="progress">
-                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($company->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($company->_); ?>%;">
-                      <?php echo $controller->TaskPercentage($company->_); ?>% Completo
-                    </div>
-                  </div>
-                </td>
-                <td>
-                  <?php echo $controller->ProjectStatus($company->status); ?>
-                </td>
-                <td>
-                  <a href="/projects/modify/<?php echo $company->_; ?>">
-                    <button type="button" class="btn btn-info">
-                      <span class="fa fa-pencil"></span>
-                    </button>
-                  </a>
-                  <button type="button" class="btn btn-danger">
-                    <span class="fa fa-close"></span>
-                  </button>
-                </td>
-            </tr>
-          <?php endforeach; ?>
           <?php foreach($clients as $client): ?>
             <tr data-searchable data-filter-index="<?php echo $client->status; ?>" >
                 <td><?php echo $client->title; ?></td>
-                <td><?php echo $client->firstname; ?></td>
+                <td><span class="label label-primary"><?php echo $client->type; ?></span></td>
+                <td><?php echo ($client->fantasy ? $client->fantasy : "{$client->firstname} {$client->lastname}"); ?></td>
                 <td><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></td>
                 <td>
                   <div class="progress">
-                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($company->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($client->_); ?>%;">
-                      <?php echo $controller->TaskPercentage($company->_); ?>% Completo
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($client->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($client->_); ?>%;">
+                      <?php echo $controller->TaskPercentage($client->_); ?>% Completo
                     </div>
                   </div>
                 </td>

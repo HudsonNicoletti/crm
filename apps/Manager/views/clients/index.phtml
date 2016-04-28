@@ -33,7 +33,11 @@
         <tbody>
           <?php foreach ($clients as $client): ?>
             <tr data-searchable >
-                <td><?php echo "{$client->firstname} {$client->lastname}".($client->fantasy != null ? " ( {$client->fantasy} ) " : ""); ?></td>
+                <td>
+                  <?php echo "{$client->firstname} {$client->lastname}"; if($client->fantasy): ?>
+                    <br><span class="label label-primary bigger-text"><?php echo $client->fantasy ;?></span>
+                  <?php endif; ?>
+                </td>
                 <td><?php echo $client->document; ?></td>
                 <td><?php echo $client->domain; ?></td>
                 <td><?php echo $client->phone; ?></td>

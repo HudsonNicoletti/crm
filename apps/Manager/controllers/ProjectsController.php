@@ -25,38 +25,22 @@ class ProjectsController extends ControllerBase
     {
 
       $clients = Projects::query()
-                ->columns([
-                  'Manager\Models\Projects._',
-                  'Manager\Models\Projects.title',
-                  'Manager\Models\Projects.description',
-                  'Manager\Models\Projects.deadline',
-                  'Manager\Models\Projects.status',
-                  'Manager\Models\Clients.firstname',
-                  'Manager\Models\ProjectTypes.title as type',
-                ])
-                ->where('Manager\Models\Projects.client_type = 1')
-                ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = \Manager\Models\Projects.client')
-                ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
-                ->execute();
+      ->columns([
+        'Manager\Models\Projects._',
+        'Manager\Models\Projects.title',
+        'Manager\Models\Projects.description',
+        'Manager\Models\Projects.deadline',
+        'Manager\Models\Projects.status',
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Companies.fantasy',
+        'Manager\Models\ProjectTypes.title as type',
+      ])
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Projects.client')
+      ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = \Manager\Models\Projects.client')
+      ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
+      ->execute();
 
-      $companies = Projects::query()
-                ->columns([
-                  'Manager\Models\Projects._',
-                  'Manager\Models\Projects.title',
-                  'Manager\Models\Projects.description',
-                  'Manager\Models\Projects.deadline',
-                  'Manager\Models\Projects.status',
-                  'Manager\Models\Companies.firstname',
-                  'Manager\Models\Companies.fantasy',
-                  'Manager\Models\ProjectTypes.title as type',
-                ])
-                ->where('Manager\Models\Projects.client_type = 2')
-                ->innerJoin('Manager\Models\Companies', 'Manager\Models\Companies._ = \Manager\Models\Projects.client')
-                ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
-                ->execute();
-
-
-      $this->view->companies = $companies;
       $this->view->clients   = $clients;
       $this->view->controller = $this;
 
@@ -77,10 +61,15 @@ class ProjectsController extends ControllerBase
             'data-empty'    => "* Campo Obrigatório",
         ]));
 
-        $form->add(new Select( "client" , $allclients ,
+        $form->add(new Text( "deadline" ,[
+            'class'         => "form-control",
+            'data-validate' => true,
+            'data-empty'    => "* Campo Obrigatório",
+        ]));
+
+        $form->add(new Select( "client" , Clients::find() ,
         [
             'using' =>  ['_','firstname'],
-            'multiple'         => true ,
             'data-placeholder' => "Membros Participantes",
             'class'            => "chosen-select"
         ]));
