@@ -17,6 +17,7 @@ class ControllerBase extends Controller
              ->addCss('http://fonts.googleapis.com/css?family=Raleway:400,500,600,700,300',false)
              ->addCss('assets/manager/css/bootstrap/bootstrap.css')
              ->addCss('assets/manager/css/plugins/bootstrap-tagsinput/bootstrap-tagsinput.css')
+             ->addCss('assets/manager/css/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.css')
              ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
              ->addCss('assets/manager/css/app/app.v1.css')
              ->addCss('assets/manager/css/app/custom.css');
@@ -32,6 +33,9 @@ class ControllerBase extends Controller
              ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
              ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
              ->addJs("assets/manager/js/plugins/bootstrap-tagsinput/bootstrap-tagsinput.min.js")
+             ->addJs("assets/manager/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js")
+             ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
+             ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
              ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js")
              ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
              ->addJs('assets/manager/js/app/custom.js');

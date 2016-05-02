@@ -16,7 +16,6 @@
     </div>
     <div class="col-md-3 col-sm-12">
       <div class="btn-group flex-center">
-        <button type="button" class="btn btn-default active" data-filter="0" >Todos</button>
         <button type="button" class="btn btn-default" data-filter="1" >Abertos</button>
         <button type="button" class="btn btn-default" data-filter="2" >Concluídos</button>
         <button type="button" class="btn btn-default" data-filter="3" >Cancelados</button>
@@ -45,7 +44,10 @@
                 <td><?php echo $client->title; ?></td>
                 <td><span class="label label-primary"><?php echo $client->type; ?></span></td>
                 <td><?php echo ($client->fantasy ? $client->fantasy : "{$client->firstname} {$client->lastname}"); ?></td>
-                <td><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></td>
+                <td>
+                  <?php $label = ((new \DateTime()) > (new \DateTime($client->deadline)) ? "label-danger" : "label-primary"); ?>
+                  <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></span>
+                </td>
                 <td>
                   <div class="progress">
                     <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($client->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($client->_); ?>%;">

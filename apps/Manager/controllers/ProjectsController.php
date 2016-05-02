@@ -7,10 +7,12 @@ use Manager\Models\Tasks as Tasks,
     Manager\Models\Clients as Clients,
     Manager\Models\Companies as Companies,
     Manager\Models\ProjectTypes as ProjectTypes,
+    Manager\Models\Assignments as Assignments,
     Manager\Models\Projects as Projects;
 
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
+    Phalcon\Forms\Element\Textarea,
     Phalcon\Forms\Element\Password,
     Phalcon\Forms\Element\Select,
     Phalcon\Forms\Element\File,
@@ -48,6 +50,22 @@ class ProjectsController extends ControllerBase
 
     public function CreateAction()
     {
+      $clients = Clients::query()
+      ->columns([
+        'Manager\Models\Clients._',
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Companies.fantasy',
+      ])
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Clients._')
+      ->execute();
+
+      $clientOptions = [];
+
+      foreach ($clients as $client) {
+        $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
+      }
+
       $form = new Form();
 
         $form->add(new Hidden( "security" ,[
@@ -67,11 +85,14 @@ class ProjectsController extends ControllerBase
             'data-empty'    => "* Campo Obrigatório",
         ]));
 
-        $form->add(new Select( "client" , Clients::find() ,
-        [
-            'using' =>  ['_','firstname'],
-            'data-placeholder' => "Membros Participantes",
-            'class'            => "chosen-select"
+        $form->add(new Textarea( "description" ,[
+            'class'         => "wysihtml form-control",
+            'placeholder'   => "Breve Descrição ...",
+            'style'         => "height: 250px"
+        ]));
+
+        $form->add(new Select( "client" , $clientOptions , [
+          'class' => "chosen-select"
         ]));
 
         $form->add(new Select( "members" , Team::find() ,
@@ -79,10 +100,88 @@ class ProjectsController extends ControllerBase
             'using' =>  ['uid','name'],
             'multiple'         => true ,
             'data-placeholder' => "Membros Participantes",
+            'class'            => "chosen-select",
+            'data-validate' => true,
+            'data-empty'    => "* Campo Obrigatório",
+        ]));
+
+        $form->add(new Select( "type" , ProjectTypes::find() ,
+        [
+            'using' =>  ['_','title'],
+            'data-placeholder' => "Categoria do Projeto",
             'class'            => "chosen-select"
         ]));
 
       $this->view->form = $form;
+    }
+
+    public function ModifyAction()
+    {
+      $project = Projects::findFirst($this->dispatcher->getParam("urlrequest"));
+    }
+
+    public function NewAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = [
+        'status'  => true,
+        'title'   => false,
+        'text'    => false
+      ];
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $project = new Projects;
+          $project->title   = $this->request->getPost("title","string");
+          $project->type    = $this->request->getPost("type","int");
+          $project->client  = $this->request->getPost("client","int");
+          $project->created = (new \DateTime())->format("Y-m-d H:i:s");
+          $project->deadline = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
+          $project->status  = 1;
+          $project->description  = $this->request->getPost("description");
+        if($project->save())
+        {
+          # Assign team
+          foreach(explode(',' , $this->request->getPost("members")) as $member)
+          {
+            $assign = new Assignments;
+              $assign->project = $project->_;
+              $assign->member  = $member;
+            $assign->save();
+          }
+        }
+
+        # Log What Happend
+        $name = $this->request->getPost("title","string");
+        $this->logManager($this->logs->create,"Cadastrou um novo Projeto ( {$name} ).");
+
+        $flags['status'] = true ;
+        $flags['title']  = "Cadastrado com Sucesso!";
+        $flags['text']   = "Projeto Cadastrado com sucesso!";
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status" => $flags['status'] ,
+        "title"  => $flags['title'] ,
+        "text"   => $flags['text']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 
     public function TaskPercentage($project)

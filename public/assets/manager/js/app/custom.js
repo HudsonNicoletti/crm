@@ -110,7 +110,10 @@ $(function(){
 	********************************/
 	if( $.isFunction($.fn.datetimepicker) ){
 		$('#datetimepicker').datetimepicker();
-		$('#datepicker').datetimepicker({pickTime: false});
+		$('#datepicker').datetimepicker({
+      pickTime: false,
+      format: 'DD/MM/YYYY'
+    });
 		$('#timepicker').datetimepicker({pickDate: false});
 
 		$('#datetimerangepicker1').datetimepicker();
@@ -174,6 +177,7 @@ $(function(){
 
     return false;
   });
+  $('[data-filter=1]').trigger("click");
 
   /********************************
 	CLoning

@@ -31,6 +31,31 @@
                   </div>
                 </div>
 
+                <div class="col-md-3">
+                  <label class="control-label">Categoria</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("type"); ?>
+                  </div>
+                </div>
+
+                <div class="col-md-3">
+                  <label class="control-label">Deadline</label>
+                  <div class="form-group has-feedback input-group date" id="datepicker">
+                    <?php echo $form->render("deadline"); ?>
+                    <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                  </div>
+                </div>
+
+              </div>
+              <div class="row">
+
+                <div class="col-md-6">
+                  <label class="control-label">Membros</label>
+                  <div class="form-group has-feedback">
+                    <?php echo $form->render("members"); ?>
+                  </div>
+                </div>
+
                 <div class="col-md-6">
                   <label class="control-label">Cliente</label>
                   <div class="form-group has-feedback">
@@ -40,21 +65,10 @@
 
               </div>
               <div class="row">
-
-                <div class="col-md-6">
-                  <label class="control-label">Deadline</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("deadline"); ?>
-                  </div>
+                <div class="col-md-12">
+                  <br>
+                	<?php echo $form->render("description"); ?>
                 </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Membros</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("members"); ?>
-                  </div>
-                </div>
-
               </div>
 
               <hr class="dotted">
