@@ -45,7 +45,7 @@
                 <td><span class="label label-primary"><?php echo $client->type; ?></span></td>
                 <td><?php echo ($client->fantasy ? $client->fantasy : "{$client->firstname} {$client->lastname}"); ?></td>
                 <td>
-                  <?php $label = ((new \DateTime()) > (new \DateTime($client->deadline)) ? "label-danger" : "label-primary"); ?>
+                  <?php $label = ((new \DateTime("now")) > (new \DateTime($client->deadline)) ? "label-danger" : "label-primary"); ?>
                   <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></span>
                 </td>
                 <td>

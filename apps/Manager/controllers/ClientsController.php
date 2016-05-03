@@ -447,7 +447,7 @@ class ClientsController extends ControllerBase
           $client->state     = $this->request->getPost("state");
         $client->save();
 
-        if( $this->dispatcher->getParam("type") === "company" )
+        if( $this->dispatcher->getParam("type") == "company" )
         {
           $company = new Companies;
             $company->client    = $client->_;

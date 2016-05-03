@@ -200,6 +200,51 @@ $(function(){
          }
   });
 
+  /********************************
+	Charts
+	********************************/
+
+  $("[data-chart]").each(function(){
+    var $this = $(this),
+        action = $this.data("chart");
+
+    $.ajax({
+      url:  action,
+      type: "GET",
+      processData: false,
+      contentType: false,
+      dataType: "json",
+      cache: false,
+      success: function( response )
+      {
+        console.log(response);
+        $this.dxPieChart({
+          dataSource: [
+            { title : response.done , val : response.doneVal },
+            { title : response.open , val : response.openVal }
+          ],
+        	legend: {
+        		visible: false
+        	},
+        	palette: ["#2B2F3E","#FF404B","#6bb802", "#7c37c3", "#0861ce", "#fbd005", "#4fcdfc", "#00b19d", "#ff6264"],
+        	series: [{
+        		type: "doughnut",
+        		argumentField: "title",
+        		label: {
+        			visible: true,
+              customizeText: function(arg) {
+                return arg.argumentText + " ( " + arg.percentText + " ) ";
+              },
+        			connector: {
+        				visible: true
+        			}
+        		}
+        	}]
+        });
+      }
+    });
+
+  });
 
 	/********************************
 	Forms

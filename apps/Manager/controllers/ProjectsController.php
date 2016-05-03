@@ -101,8 +101,6 @@ class ProjectsController extends ControllerBase
             'multiple'         => true ,
             'data-placeholder' => "Membros Participantes",
             'class'            => "chosen-select",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
         ]));
 
         $form->add(new Select( "type" , ProjectTypes::find() ,
@@ -117,7 +115,29 @@ class ProjectsController extends ControllerBase
 
     public function ModifyAction()
     {
-      $project = Projects::findFirst($this->dispatcher->getParam("urlrequest"));
+      $urlrequest = $this->dispatcher->getParam("urlrequest");
+      $project = Projects::query()
+      ->columns([
+        'Manager\Models\Projects._',
+        'Manager\Models\Projects.title',
+        'Manager\Models\Projects.description',
+        'Manager\Models\Projects.created',
+        'Manager\Models\Projects.deadline',
+        'Manager\Models\Projects.finished',
+        'Manager\Models\Projects.status',
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Companies.fantasy',
+        'Manager\Models\ProjectTypes.title as type',
+      ])
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Projects.client')
+      ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = \Manager\Models\Projects.client')
+      ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
+      ->where("Manager\Models\Projects._ = '{$urlrequest}'")
+      ->limit(1)
+      ->execute();
+
+      $this->view->project = $project[0];
     }
 
     public function NewAction()
@@ -149,7 +169,7 @@ class ProjectsController extends ControllerBase
           $project->type    = $this->request->getPost("type","int");
           $project->client  = $this->request->getPost("client","int");
           $project->created = (new \DateTime())->format("Y-m-d H:i:s");
-          $project->deadline = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
+          $project->deadline = (new \DateTime($this->request->getPost("deadline")))->format("Y-m-d H:i:s");
           $project->status  = 1;
           $project->description  = $this->request->getPost("description");
         if($project->save())
@@ -209,4 +229,47 @@ class ProjectsController extends ControllerBase
       }
     }
 
+    public function ChartAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = [
+        'status'  => true,
+        'title'   => false,
+        'text'    => false ,
+        'done'    => "Tarefas Concluídas",
+        'open'    => "Tarefas em Aberto",
+        'doneVal' => 0,
+        'openVal' => 0,
+      ];
+
+      if(!$this->request->isGet()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $tasks = $this->TaskPercentage($this->dispatcher->getParam("urlrequest"));
+
+        $flags['status'] = true ;
+        $flags['doneVal']   = $tasks;
+        $flags['openVal']   = (100 - $tasks);
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $flags['status'] ,
+        "title"   => $flags['title'] ,
+        "text"    => $flags['text'] ,
+        "done"    => $flags['done'] ,
+        "open"    => $flags['open'] ,
+        "doneVal" => $flags['doneVal'] ,
+        "openVal" => $flags['openVal']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
 }

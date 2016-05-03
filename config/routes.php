@@ -45,7 +45,7 @@ $router->add("/clients/modify/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'modify',
 ]);
 
-$router->add("/clients/new/{type:[a-zA-Z0-9\_\-]+}/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/clients/new/{type:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'clients',
@@ -106,6 +106,13 @@ $router->add("/projects/modify/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'modify',
+]);
+
+$router->add("/projects/chart/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'chart',
 ]);
 
 #   FRONTEND - REQUEST API
