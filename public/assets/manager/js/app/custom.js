@@ -217,29 +217,27 @@ $(function(){
       cache: false,
       success: function( response )
       {
-        console.log(response);
         $this.dxPieChart({
           dataSource: [
-            { title : response.done , val : response.doneVal },
-            { title : response.open , val : response.openVal }
+            { title : response.done , val : (response.doneVal / 100) },
+            { title : response.open , val : (response.openVal / 100) }
           ],
-        	legend: {
-        		visible: false
-        	},
-        	palette: ["#2B2F3E","#FF404B","#6bb802", "#7c37c3", "#0861ce", "#fbd005", "#4fcdfc", "#00b19d", "#ff6264"],
-        	series: [{
-        		type: "doughnut",
-        		argumentField: "title",
-        		label: {
-        			visible: true,
-              customizeText: function(arg) {
-                return arg.argumentText + " ( " + arg.percentText + " ) ";
-              },
-        			connector: {
-        				visible: true
-        			}
-        		}
-        	}]
+          series: {
+            argumentField: 'title',
+            valueField: 'val',
+            type: "doughnut",
+          },
+          legend: {
+            horizontalAlignment: "right",
+            verticalAlignment: "top",
+            margin: 0
+          },
+          tooltip: {
+            enabled: true,
+            format: "percent",
+            precision : 0
+          },
+        	palette: ["#2B2F3E","#FF404B","#6bb802", "#7c37c3", "#0861ce", "#fbd005", "#4fcdfc", "#00b19d", "#ff6264"]
         });
       }
     });

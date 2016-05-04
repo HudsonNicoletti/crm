@@ -115,6 +115,9 @@ class ProjectsController extends ControllerBase
 
     public function ModifyAction()
     {
+
+      $this->assets->addCss("assets/manager/css/app/timeline.css");
+
       $urlrequest = $this->dispatcher->getParam("urlrequest");
       $project = Projects::query()
       ->columns([
@@ -236,8 +239,8 @@ class ProjectsController extends ControllerBase
         'status'  => true,
         'title'   => false,
         'text'    => false ,
-        'done'    => "Tarefas Concluídas",
-        'open'    => "Tarefas em Aberto",
+        'done'    => "Concluídos",
+        'open'    => "Em Aberto",
         'doneVal' => 0,
         'openVal' => 0,
       ];

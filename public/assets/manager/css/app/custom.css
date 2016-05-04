@@ -57,3 +57,8 @@
 {
   font-size: 80%;
 }
+
+.nav-tabs.transparent > li.active > a
+{
+  background-color: transparent;
+}
