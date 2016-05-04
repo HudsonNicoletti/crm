@@ -26,7 +26,7 @@ class ProjectsController extends ControllerBase
     public function IndexAction()
     {
 
-      $clients = Projects::query()
+      $projects = Projects::query()
       ->columns([
         'Manager\Models\Projects._',
         'Manager\Models\Projects.title',
@@ -43,7 +43,15 @@ class ProjectsController extends ControllerBase
       ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
       ->execute();
 
-      $this->view->clients   = $clients;
+      $form = new Form();
+
+        $form->add(new Hidden( "security" ,[
+            'name'  => $this->security->getTokenKey(),
+            'value' => $this->security->getToken(),
+        ]));
+
+      $this->view->form = $form;
+      $this->view->projects   = $projects;
       $this->view->controller = $this;
 
     }
@@ -201,6 +209,66 @@ class ProjectsController extends ControllerBase
         "status" => $flags['status'] ,
         "title"  => $flags['title'] ,
         "text"   => $flags['text']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function RemoveAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = [
+        'status'    => true,
+        'title'     => false,
+        'text'      => false,
+        'redirect'  => false,
+        'time'      => 0,
+      ];
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($flags['status']):
+
+        $p = Projects::findFirst($this->dispatcher->getParam("urlrequest"));
+
+          foreach(Tasks::findByProject($p->_) as $t)
+          {
+            $t->delete();
+          }
+          foreach(Assignments::findByProject($p->_) as $a)
+          {
+            $a->delete();
+          }
+
+        $p->delete();
+
+        # Log What Happend
+        $this->logManager($this->logs->delete,"Removeu um projeto ( {$p->title} ).");
+
+        $flags['title']     = "Removido Com Sucesso!";
+        $flags['text']      = "Projeto Removido com Sucesso.";
+        $flags['redirect']  = "/projects";
+        $flags['time']      = 1000;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    =>  $flags['status'],
+        "title"     =>  $flags['title'],
+        "text"      =>  $flags['text'],
+        "redirect"  =>  $flags['redirect'],
+        "time"      =>  $flags['time']
       ]);
 
       $this->response->send();

@@ -39,33 +39,36 @@
           </tr>
         </thead>
         <tbody>
-          <?php foreach($clients as $client): ?>
-            <tr data-searchable data-filter-index="<?php echo $client->status; ?>" >
-                <td><?php echo $client->title; ?></td>
-                <td><span class="label label-primary"><?php echo $client->type; ?></span></td>
-                <td><?php echo ($client->fantasy ? $client->fantasy : "{$client->firstname} {$client->lastname}"); ?></td>
+          <?php foreach($projects as $project): ?>
+            <tr data-searchable data-filter-index="<?php echo $project->status; ?>" >
+                <td><?php echo $project->title; ?></td>
+                <td><span class="label label-primary"><?php echo $project->type; ?></span></td>
+                <td><?php echo ($project->fantasy ? $project->fantasy : "{$project->firstname} {$project->lastname}"); ?></td>
                 <td>
-                  <?php $label = ((new \DateTime("now")) > (new \DateTime($client->deadline)) ? "label-danger" : "label-primary"); ?>
-                  <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($client->deadline))->format("d-m-Y"); ?></span>
+                  <?php $label = ((new \DateTime("now")) > (new \DateTime($project->deadline)) ? "label-danger" : "label-primary"); ?>
+                  <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($project->deadline))->format("d-m-Y"); ?></span>
                 </td>
                 <td>
                   <div class="progress">
-                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($client->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($client->_); ?>%;">
-                      <?php echo $controller->TaskPercentage($client->_); ?>% Completo
+                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($project->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($project->_); ?>%;">
+                      <?php echo $controller->TaskPercentage($project->_); ?>% Completo
                     </div>
                   </div>
                 </td>
-                <td><?php echo $controller->ProjectStatus($client->status); ?>
+                <td><?php echo $controller->ProjectStatus($project->status); ?>
                 </td>
                 <td>
-                  <a href="/projects/modify/<?php echo $client->_; ?>">
-                    <button type="button" class="btn btn-info">
-                      <span class="fa fa-pencil"></span>
+                  <form method="post" class="validator-form" action="/projects/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
+                    <a href="/projects/modify/<?php echo $project->_; ?>">
+                      <button type="button" class="btn btn-info">
+                        <span class="fa fa-pencil"></span>
+                      </button>
+                    </a>
+                    <?php echo $form->render("security"); ?>
+                    <button type="submit" class="btn btn-danger">
+                      <span class="fa fa-close"></span>
                     </button>
-                  </a>
-                  <button type="button" class="btn btn-danger">
-                    <span class="fa fa-close"></span>
-                  </button>
+                  </form>
                 </td>
             </tr>
           <?php endforeach; ?>

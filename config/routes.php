@@ -115,6 +115,13 @@ $router->add("/projects/chart/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'chart',
 ]);
 
+$router->add("/projects/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'remove',
+]);
+
 #   FRONTEND - REQUEST API
 
 $router->add("/request/:action", [
