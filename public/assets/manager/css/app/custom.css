@@ -62,3 +62,10 @@
 {
   background-color: transparent;
 }
+
+.space-between
+{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}

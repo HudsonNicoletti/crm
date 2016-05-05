@@ -106,7 +106,6 @@ class ProjectsController extends ControllerBase
         $form->add(new Select( "members" , Team::find() ,
         [
             'using' =>  ['uid','name'],
-            'multiple'         => true ,
             'data-placeholder' => "Membros Participantes",
             'class'            => "chosen-select",
         ]));
@@ -148,7 +147,47 @@ class ProjectsController extends ControllerBase
       ->limit(1)
       ->execute();
 
+      $members = Assignments::query()
+      ->columns([
+        'Manager\Models\Team._',
+        'Manager\Models\Team.name',
+        'Manager\Models\Team.image',
+        'Manager\Models\Departments.department',
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team._ = Manager\Models\Assignments.member')
+      ->innerJoin('Manager\Models\Departments', 'Manager\Models\Departments._ = Manager\Models\Team.department_id')
+      ->where("Manager\Models\Assignments.project = '{$urlrequest}'")
+      ->execute();
+
+      $clause = [];
+      $assign = Assignments::findByProject($urlrequest);
+
+      foreach($assign as $i => $a)
+      {
+        if ($i === (count($assign) - 1)):
+          array_push($clause, "_ != '{$a->member}'");
+        else:
+          array_push($clause, "_ != '{$a->member}' AND ");
+        endif;
+      }
+
+      $form = new Form();
+
+        $form->add(new Hidden( "security" ,[
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
+        ]));
+
+        $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
+        [
+          'using' =>  ['uid','name'],
+          'data-placeholder' => "Membros",
+          'class'            => "form-control",
+        ]));
+
       $this->view->project = $project[0];
+      $this->view->members = $members;
+      $this->view->form = $form;
     }
 
     public function NewAction()
@@ -275,6 +314,7 @@ class ProjectsController extends ControllerBase
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 
+
     public function TaskPercentage($project)
     {
       $done = 0;
@@ -338,6 +378,101 @@ class ProjectsController extends ControllerBase
         "open"    => $flags['open'] ,
         "doneVal" => $flags['doneVal'] ,
         "openVal" => $flags['openVal']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function AddMembersAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = [
+        'status'  => true,
+        'title'   => false,
+        'text'    => false ,
+        'redirect' => false,
+        'time'    => 0
+      ];
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $project = $this->dispatcher->getParam("urlrequest");
+
+        $assign = new Assignments;
+          $assign->project = $project;
+          $assign->member = $this->request->getPost("members");
+        $assign->save();
+
+        $flags['status'] = true ;
+        $flags['title']  = "Adicionado Com Sucesso!";
+        $flags['text']   = "Membro adicionado com sucesso ao projeto!";
+        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['time']   = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $flags['status'] ,
+        "title"   => $flags['title'] ,
+        "text"    => $flags['text'] ,
+        "redirect"    => $flags['redirect'] ,
+        "time"    => $flags['time']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function RemoveMemberAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = [
+        'status'  => true,
+        'title'   => false,
+        'text'    => false ,
+        'redirect'  => false,
+        'time'      => 0,
+      ];
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $project = $this->dispatcher->getParam("project");
+        $member = $this->dispatcher->getParam("member");
+
+        foreach(Assignments::find(["project = '{$project}' AND member = '{$member}'"]) as $assign)
+        {
+          $assign->delete();
+        }
+
+        $flags['status'] = true ;
+        $flags['title']  = "Removido Com Sucesso!";
+        $flags['text']   = "Membro removido com sucesso do projeto!";
+        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['time']   = 1800;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $flags['status'] ,
+        "title"   => $flags['title'] ,
+        "text"    => $flags['text'],
+        "redirect"    => $flags['redirect'] ,
+        "time"    => $flags['time']
       ]);
 
       $this->response->send();

@@ -53,12 +53,48 @@
                   <div data-chart="/projects/chart/<?php echo $project->_; ?>" style="height:250px;"></div>
                 </div>
 
+                <?php if($project->description): ?>
                 <div class="col-lg-12 col-md-12">
                   <div class="panel panel-default">
                     <div class="panel-heading">Descrição</div>
                     <div class="panel-body">
                       <?php echo $project->description; ?>
                     </div>
+                  </div>
+                </div>
+                <?php endif; ?>
+
+                <div class="col-lg-12 col-md-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading space-between">
+                      Membros do Projeto
+                      <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add" >
+                        <span class="fa fa-plus"></span> Adicionar Membro
+                      </button>
+                    </div>
+                      <table class="table table-striped no-margn">
+                        <tbody>
+                          <?php foreach ($members as $member): ?>
+                            <tr>
+                              <td class="avtar">
+                                <img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" />
+                              </td>
+                              <td>
+                                <?php echo $member->name; ?><br>
+                                <span class="label label-default"><?php echo $member->department; ?></span>
+                              </td>
+                              <td>
+                                <form method="post" class="validator-form" action="/projects/removemember/<?php echo "{$project->_}/{$member->_}" ;?>" novalidate="novalidate">
+                                  <?php echo $form->render("security"); ?>
+                                  <button type="submit" class="btn btn-danger pull-right">
+                                    <span class="fa fa-close"></span>
+                                  </button>
+                                </form>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
                   </div>
                 </div>
 
@@ -118,6 +154,51 @@
         </div>
       </div>
 
+      <div class="tab-pane active" id="tasks">
+        <div class="panel-body">
+
+        </div>
+      </div>
 
     </div>
+</div>
+
+<!-- add member -->
+<div class="modal fade" id="add" tabindex="-1" role="dialog" aria-labelledby="addLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="addLabel">Adicionar Membros ao Projeto</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/projects/addmembers/<?php echo $project->_; ?>" class="validator-form" >
+        <div class="modal-body">
+
+          <?php echo $form->render("security"); ?>
+
+          <div class="alert hidden " role="alert">
+            <h4 id="title"></h4>
+            <p id="desc"></p>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+
+              <label class="control-label">Membros</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("members"); ?>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

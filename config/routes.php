@@ -122,6 +122,20 @@ $router->add("/projects/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'remove',
 ]);
 
+$router->add("/projects/addmembers/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'addmembers',
+]);
+
+$router->add("/projects/removemember/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'removemember',
+]);
+
 #   FRONTEND - REQUEST API
 
 $router->add("/request/:action", [

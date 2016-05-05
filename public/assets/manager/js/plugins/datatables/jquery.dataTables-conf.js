@@ -6,30 +6,30 @@ $(document).ready(function() {
 	Basic Data Table
 	************************************/
     $('#basic-datatable').dataTable();
-	
-	
-	
-	
+
+
+
+
 	/************************************
 	Toggle Column
 	************************************/
 	var toggleColumnTable = $('#toggleColumn-datatable').DataTable();
- 
+
     $('a.toggle-vis').on( 'click', function (e) {
         e.preventDefault();
- 
+
         // Get the column API object
         var column = toggleColumnTable.column( $(this).attr('data-column') );
- 
+
         // Toggle the visibility
         column.visible( ! column.visible() );
     });
-	
-	
-	
-	
-	
-	
+
+
+
+
+
+
 	/* Formatting function for row details - modify as you need */
 	function format ( d ) {
 		// `d` is the original data object for the row
@@ -48,7 +48,7 @@ $(document).ready(function() {
 			'</tr>'+
 		'</table>';
 	}
- 
+
 
     var table = $('#hiddendta-datatable').DataTable( {
         "ajax": "assets/js/plugins/datatables/objects.txt",
@@ -66,12 +66,12 @@ $(document).ready(function() {
         ],
         "order": [[1, 'asc']]
     } );
-     
+
     // Add event listener for opening and closing details
     $('#hiddendta-datatable tbody').on('click', 'td.details-control', function () {
         var tr = $(this).closest('tr');
         var row = table.row( tr );
- 
+
         if ( row.child.isShown() ) {
             // This row is already open - close it
             row.child.hide();
@@ -84,7 +84,7 @@ $(document).ready(function() {
         }
     } );
 
-	
-	
-	
+
+
+
 });
