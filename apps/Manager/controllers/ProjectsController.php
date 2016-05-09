@@ -127,6 +127,8 @@ class ProjectsController extends ControllerBase
       $this->assets->addCss("assets/manager/css/app/timeline.css");
 
       $urlrequest = $this->dispatcher->getParam("urlrequest");
+
+      # Project Query
       $project = Projects::query()
       ->columns([
         'Manager\Models\Projects._',
@@ -144,10 +146,13 @@ class ProjectsController extends ControllerBase
       ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Projects.client')
       ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = \Manager\Models\Projects.client')
       ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
-      ->where("Manager\Models\Projects._ = '{$urlrequest}'")
-      ->limit(1)
+      ->where("Manager\Models\Projects._ = :project:")
+      ->bind([
+        "project" =>  $urlrequest
+      ])
       ->execute();
 
+      # Assigned Members Query
       $members = Assignments::query()
       ->columns([
         'Manager\Models\Team._',
@@ -157,10 +162,48 @@ class ProjectsController extends ControllerBase
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Team._ = Manager\Models\Assignments.member')
       ->innerJoin('Manager\Models\Departments', 'Manager\Models\Departments._ = Manager\Models\Team.department_id')
-      ->where("Manager\Models\Assignments.project = '{$urlrequest}'")
+      ->where("Manager\Models\Assignments.project = :project:")
+      ->bind([
+        "project" =>  $urlrequest
+      ])
       ->execute();
 
-      $clause = [];
+      # Project Task Query
+      $tasks = Tasks::query()
+      ->columns([
+        'Manager\Models\Tasks._',
+        'Manager\Models\Tasks.title',
+        'Manager\Models\Tasks.description',
+        'Manager\Models\Tasks.deadline',
+        'Manager\Models\Tasks.status',
+        'Manager\Models\Team.image',
+        'Manager\Models\Team.name',
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team._ = Manager\Models\Tasks.assigned')
+      ->where("Manager\Models\Tasks.project = :project:")
+      ->bind([
+        "project" =>  $urlrequest
+      ])
+      ->execute();
+
+      $projectMembers = Assignments::query()
+      ->columns([
+        'Manager\Models\Team._',
+        'Manager\Models\Team.name'
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Assignments.member = Manager\Models\Team._')
+      ->where("Manager\Models\Assignments.project = :project:")
+      ->bind([
+        "project" =>  $urlrequest
+      ])
+      ->execute();
+
+      #  Query method not working in Select , so heres a work around
+      foreach($projectMembers as $pm)
+      {
+        $availableMembers[$pm->_] = $pm->name;
+      }
+
       $assign = Assignments::findByProject($urlrequest);
 
       foreach($assign as $i => $a)
@@ -186,10 +229,35 @@ class ProjectsController extends ControllerBase
           'class'            => "form-control",
         ]));
 
+        $form->add(new Text( "new_title",[
+          'class'         => "form-control",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]));
+
+        $form->add(new Textarea( "new_description",[
+          'class'         => "form-control",
+        ]));
+
+        $form->add(new Select( "new_members" , $availableMembers ,
+        [
+          'using' =>  ['_','name'],
+          'data-placeholder' => "Membros",
+          'class'            => "form-control",
+        ]));
+
+        $form->add(new Textarea( "new_deadline",[
+          'class'         => "form-control",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]));
+
       $this->view->project = $project[0];
       $this->view->members = $members;
+      $this->view->tasks = $tasks;
       $this->view->logs = Logs::findByProject($urlrequest);
       $this->view->form = $form;
+      $this->view->controller = $this;
     }
 
     public function NewAction()
@@ -479,4 +547,5 @@ class ProjectsController extends ControllerBase
       $this->response->send();
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
+
 }

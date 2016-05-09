@@ -133,9 +133,63 @@
         </div>
       </div>
 
-      <div class="tab-pane active" id="tasks">
-        <div class="panel-body">
-
+      <div class="tab-pane" id="tasks">
+        <br>
+        <div class="col-lg-12 col-md-12">
+          <div class="panel panel-default">
+            <div class="panel-heading space-between">
+              &nbsp;
+              <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#addTask" >
+                <span class="fa fa-plus"></span> Adicionar Tarefa
+              </button>
+            </div>
+            <table class="table table-striped no-margn">
+                <thead>
+                  <tr>
+                    <th>Tarefa</th>
+                    <th>Deadline</th>
+                    <th>Designado à</th>
+                    <th>Status</th>
+                    <th><i class="fa fa-gears"></i></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <?php foreach($tasks as $task): ?>
+                    <tr data-searchable data-filter-index="<?php echo $task->status; ?>" >
+                      <td><?php echo $task->title; ?></td>
+                      <td>
+                        <?php $label = ((new \DateTime("now")) > (new \DateTime($task->deadline)) ? "label-danger" : "label-primary"); ?>
+                        <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($task->deadline))->format("d-m-Y"); ?></span>
+                      </td>
+                      <td>
+                        <img src="/assets/manager/images/avtar/<?php echo $task->image; ?>" alt="<?php echo $task->name; ?>" class="img-circle avtar" />
+                        <?php echo $task->name; ?><br>
+                      </td>
+                      <td><?php echo $controller->ProjectStatus($task->status); ?>
+                      </td>
+                      <td>
+                        <form method="post" class="validator-form" action="/projects/remove/<?php echo $task->_ ;?>" novalidate="novalidate">
+                          <a href="/projects/modify/<?php echo $task->_; ?>">
+                            <button type="button" class="btn btn-primary">
+                              <span class="fa fa-info-circle"></span>
+                            </button>
+                          </a>
+                          <a href="/projects/modify/<?php echo $task->_; ?>">
+                            <button type="button" class="btn btn-info">
+                              <span class="fa fa-pencil"></span>
+                            </button>
+                          </a>
+                          <?php echo $form->render("security"); ?>
+                          <button type="submit" class="btn btn-danger">
+                            <span class="fa fa-close"></span>
+                          </button>
+                        </form>
+                      </td>
+                    </tr>
+                  <?php endforeach; ?>
+                </tbody>
+              </table>
+          </div>
         </div>
       </div>
 
@@ -170,6 +224,66 @@
               </div>
 
             </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Adicionar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+<!-- add task -->
+<div class="modal fade" id="addTask" tabindex="-1" role="dialog" aria-labelledby="addTask" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="addTask">Adicionar Tarefa</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/projects/addtask/<?php echo $project->_; ?>" class="validator-form" >
+        <div class="modal-body">
+
+          <?php echo $form->render("security"); ?>
+
+          <div class="alert hidden" role="alert">
+            <h4 id="title"></h4>
+            <p id="desc"></p>
+          </div>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <label class="control-label">Título</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("new_title"); ?>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="control-label">Descrição</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("new_description"); ?>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="control-label">Designado à</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("new_members"); ?>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="control-label">Deadline</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("new_deadline"); ?>
+              </div>
+            </div>
+
           </div>
 
         </div>
