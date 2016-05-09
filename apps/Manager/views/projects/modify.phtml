@@ -100,53 +100,32 @@
 
               </div>
             </div>
-            <div class="col-lg-6 col-md-12">
+            <div class="col-lg-6 col-md-12 panel panel-default activities-list nicescroll" style="min-height: 653px">
                 <ul class="timeline list-unstyled">
+                  <?php
+                    foreach($logs as $log):
+                      switch ($log->action) {
+                        case $this->logs->create : $cl = "success"; $icon = "check";       $action = "Criação";     break;
+                        case $this->logs->update : $cl = "primary"; $icon = "retweet";     $action = "Alteração";   break;
+                        case $this->logs->delete : $cl = "danger";  $icon = "trash";       $action = "Remoção";     break;
+                        case $this->logs->info   : $cl = "info";    $icon = "info-circle"; $action = "Informação";  break;
+                      }
+                  ?>
                   <li class="clearfix">
                       <time class="tl-time">
-                          <h3 class="text-red">23:15</h3>
-                            <p>05th September 2013</p>
+                          <h3 class="text-<?php echo $cl; ?>"><?php echo $action ?></h3>
+                          <p><?php echo (new \DateTime($log->date))->format("d-m-Y \a\s H:i"); ?></p>
                         </time>
-                        <i class="fa fa-trash bg-red tl-icon text-white"></i>
+                        <i class="fa fa-<?php echo $icon; ?> bg-<?php echo $cl; ?> tl-icon text-white"></i>
                         <div class="tl-content">
-                          <div class="panel panel-danger">
-                                <div class="panel-heading">Events</div>
+                          <div class="panel panel-<?php echo $cl; ?>">
                                 <div class="panel-body">
-                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. Nam fermentum, massa sit amet pulvinar laoreet, sem mi viverra turpis, ac porta felis nisl eu odio.
+                                  <?php echo $log->description; ?>
                                 </div>
                             </div>
                         </div>
                     </li>
-                  <li class="clearfix">
-                      <time class="tl-time">
-                          <h3 class="text-success">23:15</h3>
-                            <p>05th September 2013</p>
-                        </time>
-                        <i class="fa fa-check bg-success tl-icon text-white"></i>
-                        <div class="tl-content">
-                          <div class="panel panel-success">
-                                <div class="panel-heading">Events</div>
-                                <div class="panel-body">
-                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. Nam fermentum, massa sit amet pulvinar laoreet, sem mi viverra turpis, ac porta felis nisl eu odio.
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                  <li class="clearfix">
-                      <time class="tl-time">
-                          <h3 class="text-info">23:15</h3>
-                            <p>05th September 2013</p>
-                        </time>
-                        <i class="fa fa-info-circle bg-info tl-icon text-white"></i>
-                        <div class="tl-content">
-                          <div class="panel panel-info">
-                                <div class="panel-heading">Events</div>
-                                <div class="panel-body">
-                                  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Aliquam laoreet tellus ut tincidunt euismod. Nam fermentum, massa sit amet pulvinar laoreet, sem mi viverra turpis, ac porta felis nisl eu odio.
-                                </div>
-                            </div>
-                        </div>
-                    </li>
+                    <?php endforeach; ?>
                 </ul>
             </div>
           </div>

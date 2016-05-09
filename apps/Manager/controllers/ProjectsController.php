@@ -2,13 +2,14 @@
 
 namespace Manager\Controllers;
 
-use Manager\Models\Tasks as Tasks,
-    Manager\Models\Team as Team,
-    Manager\Models\Clients as Clients,
-    Manager\Models\Companies as Companies,
+use Manager\Models\Logs         as Logs,
+    Manager\Models\Team         as Team,
+    Manager\Models\Tasks        as Tasks,
+    Manager\Models\Clients      as Clients,
+    Manager\Models\Companies    as Companies,
+    Manager\Models\Assignments  as Assignments,
     Manager\Models\ProjectTypes as ProjectTypes,
-    Manager\Models\Assignments as Assignments,
-    Manager\Models\Projects as Projects;
+    Manager\Models\Projects     as Projects;
 
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
@@ -187,6 +188,7 @@ class ProjectsController extends ControllerBase
 
       $this->view->project = $project[0];
       $this->view->members = $members;
+      $this->view->logs = Logs::findByProject($urlrequest);
       $this->view->form = $form;
     }
 
@@ -313,7 +315,6 @@ class ProjectsController extends ControllerBase
       $this->response->send();
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
-
 
     public function TaskPercentage($project)
     {

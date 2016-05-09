@@ -2,9 +2,11 @@
 
 namespace Manager\Controllers;
 
-use Manager\Models\Logs as Logs;
-
-use \Phalcon\Mvc\Model\Query\Builder as Builder;
+use Manager\Models\Logs as Logs,
+    Manager\Models\Team as Team,
+    Manager\Models\Tasks as Tasks,
+    Manager\Models\Clients as Clients,
+    Manager\Models\Assignments as Assignments;
 
 class IndexController extends ControllerBase
 {
@@ -13,15 +15,30 @@ class IndexController extends ControllerBase
     {
       // create a redirect for clients
 
-      $params = [
-         'models'     => ['Manager\Models\Logs'],
-         'columns'    => ['Manager\Models\team.name','action','date','description'],
-      ];
-      $builder = new Builder($params);
-      $builder->innerJoin('Manager\Models\team', 'Manager\Models\Logs.user = Manager\Models\team.uid');
-      $builder->orderBy("date DESC");
+      $user = $this->session->get("secure_id");
+      $logs = Logs::query()
+      ->columns([
+        "Manager\Models\Team.name",
+        "Manager\Models\Logs.action",
+        "Manager\Models\Logs.date",
+        "Manager\Models\Logs.description",
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
+      ->orderBy("date DESC")
+      ->execute();
 
-      $this->view->logs = $this->modelsManager->executeQuery($builder->getPhql());
+      $tasks = Assignments::query()
+      ->columns([
+        "Manager\Models\Tasks._",
+      ])
+      ->innerJoin('Manager\Models\Tasks', 'Manager\Models\Assignments.project = Manager\Models\Tasks.project')
+      ->where("Manager\Models\Assignments.member = '{$user}' AND Manager\Models\Tasks.status = 1")
+      ->execute();
+
+      $this->view->logs     = $logs;
+      $this->view->tasks    = count($tasks);
+      $this->view->clients  = Clients::find()->count();
+
 
     }
 

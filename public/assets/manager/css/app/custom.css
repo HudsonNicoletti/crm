@@ -69,3 +69,52 @@
   align-items: center;
   justify-content: space-between;
 }
+
+/****Dashboard Stats****/
+
+.stats.panel
+{
+	position:relative;
+	padding:10px 10px 10px 106px;
+}
+
+.stats i.fa.stats-icon
+{
+	width:80px;
+	padding:20px;
+	font-size:40px;
+	position:absolute;
+	margin-left:10px;
+	left:0px;
+	top:10px;
+	text-align:center;
+	z-index:1;
+	color:#fff;
+	height:80px;
+}
+
+.stats.rounded i.fa.stats-icon,
+.stats.rounded.panel
+{
+	border-radius:50px;
+}
+
+.stats .sparkline
+{
+	position:absolute;
+	left:30px;
+	top:20px;
+	opacity:0;
+}
+
+.stats h3
+{
+	margin-top:14px;
+}
+
+.stats small
+{
+	font-size:14px;
+	margin-left:6px;
+	opacity:0.8;
+}

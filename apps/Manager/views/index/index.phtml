@@ -1,30 +1,69 @@
 <div class="warper container-fluid">
 
     <div class="page-header">
-      <h1>Atividades Recentes</h1>
+      <h1>Visão Geral</h1>
     </div>
 
-    <div class="panel panel-default" id="activities">
-        <div class="panel-body">
-          <ul class="activities-list list-unstyled nicescroll">
-            <?php
-            foreach($logs as $log):
-              switch ($log->action) {
-                case $this->logs->create : $cl = "success-activity"; break;
-                case $this->logs->update : $cl = "warning-activity"; break;
-                case $this->logs->delete : $cl = "danger-activity"; break;
-                case $this->logs->info   : $cl = "info-activity"; break;
-              }
-            ?>
-              <li class="<?php echo $cl; ?>">
-                  <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
-                    <p><a href="#"><?php echo $log->name; ?></a> <?php echo $log->description; ?></p>
-                </li>
-              <?php endforeach; ?>
+    <div class="row">
 
-            </ul>
+      <div class="col-md-3 col-sm-6">
+      	<div class="panel panel-default stats rounded">
+          	<i class="fa fa-check-square-o bg-danger stats-icon"></i>
+              <h3><?php echo $tasks; ?><small class="text-green">8%</small></h3>
+              <p class="text-muted">Tarefas em Aberto</p>
+          </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+      	<div class="panel panel-default stats rounded">
+          	<i class="fa fa-briefcase bg-danger stats-icon"></i>
+              <h3><?php echo $clients; ?></h3>
+              <p class="text-muted">Clientes Cadastrados</p>
+          </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+      	<div class="panel panel-default stats rounded">
+          	<i class="fa fa-ticket bg-danger stats-icon"></i>
+              <h3>02 <small class="text-green">8%</small></h3>
+              <p class="text-muted">Chamados em Aberto</p>
+          </div>
+      </div>
+
+      <div class="col-md-3 col-sm-6">
+      	<div class="panel panel-default stats rounded">
+          	<i class="fa fa-archive bg-danger stats-icon"></i>
+              <h3>02 <small class="text-green">8%</small></h3>
+              <p class="text-muted">Projetos em Aberto</p>
+          </div>
+      </div>
+
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <div class="panel panel-default" id="activities">
+          <div class="panel-body">
+            <ul class="activities-list list-unstyled nicescroll">
+              <?php
+              foreach($logs as $log):
+                switch ($log->action) {
+                  case $this->logs->create : $cl = "success-activity"; break;
+                  case $this->logs->update : $cl = "warning-activity"; break;
+                  case $this->logs->delete : $cl = "danger-activity"; break;
+                  case $this->logs->info   : $cl = "info-activity"; break;
+                }
+              ?>
+                <li class="<?php echo $cl; ?>">
+                    <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
+                      <p><a href="#"><?php echo $log->name; ?></a> <?php echo $log->description; ?></p>
+                  </li>
+                <?php endforeach; ?>
+
+              </ul>
+          </div>
         </div>
-
+      </div>
     </div>
 
 </div>
