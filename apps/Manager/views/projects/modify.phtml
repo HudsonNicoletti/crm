@@ -84,7 +84,7 @@
                                 <span class="label label-default"><?php echo $member->department; ?></span>
                               </td>
                               <td>
-                                <form method="post" class="validator-form" action="/projects/removemember/<?php echo "{$project->_}/{$member->_}" ;?>" novalidate="novalidate">
+                                <form method="post" class="validator-form" action="/projects/member/remove/<?php echo "{$project->_}/{$member->_}" ;?>" novalidate="novalidate">
                                   <?php echo $form->render("security"); ?>
                                   <button type="submit" class="btn btn-danger pull-right">
                                     <span class="fa fa-close"></span>
@@ -165,21 +165,18 @@
                         <img src="/assets/manager/images/avtar/<?php echo $task->image; ?>" alt="<?php echo $task->name; ?>" class="img-circle avtar" />
                         <?php echo $task->name; ?><br>
                       </td>
-                      <td><?php echo $controller->ProjectStatus($task->status); ?>
+                      <td>
+                        <span class="label label-default"><?php echo $controller->ProjectStatus($task->status); ?></span>
                       </td>
                       <td>
-                        <form method="post" class="validator-form" action="/projects/remove/<?php echo $task->_ ;?>" novalidate="novalidate">
-                          <a href="/projects/modify/<?php echo $task->_; ?>">
-                            <button type="button" class="btn btn-primary">
-                              <span class="fa fa-info-circle"></span>
-                            </button>
-                          </a>
-                          <a href="/projects/modify/<?php echo $task->_; ?>">
-                            <button type="button" class="btn btn-info">
-                              <span class="fa fa-pencil"></span>
-                            </button>
-                          </a>
+                        <form method="post" class="validator-form" action="/projects/task/remove/<?php echo "{$project->_}/{$task->_}"?>" novalidate="novalidate">
                           <?php echo $form->render("security"); ?>
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskInfo-<?php echo $task->_; ?>">
+                            <span class="fa fa-info-circle"></span>
+                          </button>
+                          <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editTask">
+                            <span class="fa fa-pencil"></span>
+                          </button>
                           <button type="submit" class="btn btn-danger">
                             <span class="fa fa-close"></span>
                           </button>
@@ -205,7 +202,7 @@
         <h4 class="modal-title" id="addLabel">Adicionar Membros ao Projeto</h4>
       </div>
 
-      <form role="form" method="post" accept-charset="utf8" action="/projects/addmembers/<?php echo $project->_; ?>" class="validator-form" >
+      <form role="form" method="post" accept-charset="utf8" action="/projects/member/new/<?php echo $project->_; ?>" class="validator-form" >
         <div class="modal-body">
 
           <?php echo $form->render("security"); ?>
@@ -244,7 +241,7 @@
         <h4 class="modal-title" id="addTask">Adicionar Tarefa</h4>
       </div>
 
-      <form role="form" method="post" accept-charset="utf8" action="/projects/addtask/<?php echo $project->_; ?>" class="validator-form" >
+      <form role="form" method="post" accept-charset="utf8" action="/projects/task/new/<?php echo $project->_; ?>" class="validator-form" >
         <div class="modal-body">
 
           <?php echo $form->render("security"); ?>
@@ -295,3 +292,39 @@
     </div>
   </div>
 </div>
+
+<!-- task info -->
+<?php foreach($tasks as $task): ?>
+<div class="modal fade" id="taskInfo-<?php echo $task->_;?>" tabindex="-1" role="dialog" aria-labelledby="taskInfo-<?php echo $task->_;?>" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="taskInfo-<?php echo $task->_;?>"><?php echo $task->title;?></h4>
+      </div>
+
+        <div class="modal-body">
+          <dl class="dl-horizontal">
+            <dt>Criação &mdash; Deadline:</dt>
+            <dd>
+              <span class="label label-primary"><?php echo (new \DateTime($task->created))->format("d-m-Y"); ?></span>
+              <span class="label label-danger"><?php echo (new \DateTime($task->deadline))->format("d-m-Y"); ?></span>
+            </dd>
+            <hr>
+            <dt>Designado à</dt>
+            <dd>
+              <img src="/assets/manager/images/avtar/<?php echo $task->image; ?>" alt="<?php echo $task->name; ?>" class="img-circle avtar" />
+              <?php echo $task->name; ?><br>
+            </dd>
+            <hr>
+            <dt>Descrição</dt>
+            <dd><?php echo $task->description;?></dd>
+          </dl>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
+        </div>
+    </div>
+  </div>
+</div>
+<?php endforeach; ?>

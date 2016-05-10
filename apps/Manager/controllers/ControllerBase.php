@@ -36,6 +36,7 @@ class ControllerBase extends Controller
              ->addJs("assets/manager/js/plugins/bootstrap-datetimepicker/bootstrap-datetimepicker.js")
              ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
              ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
+             ->addJs("assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js")
              ->addJs("assets/manager/js/plugins/DevExpressChartJS/dx.chartjs.js")
              ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js")
              ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")

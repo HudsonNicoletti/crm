@@ -101,39 +101,53 @@ $router->add("/team/departments/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'removedepartment',
 ]);
 
-$router->add("/projects/modify/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/projects/modify/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'modify',
 ]);
 
-$router->add("/projects/chart/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/projects/chart/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'chart',
 ]);
 
-$router->add("/projects/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/projects/remove/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'remove',
 ]);
 
-$router->add("/projects/addmembers/{urlrequest:[a-zA-Z0-9\_\-]+}", [
+$router->add("/projects/member/new/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
-    'action'     => 'addmembers',
+    'action'     => 'newmember',
 ]);
 
-$router->add("/projects/removemember/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
+$router->add("/projects/member/remove/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'removemember',
+]);
+
+$router->add("/projects/task/new/{project:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'newtask',
+]);
+
+$router->add("/projects/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'removetask',
 ]);
 
 #   FRONTEND - REQUEST API
