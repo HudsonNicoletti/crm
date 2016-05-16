@@ -228,6 +228,7 @@ class ProjectsController extends ControllerBase
         $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
         [
           'using' =>  ['uid','name'],
+          'id'               => false,
           'data-placeholder' => "Membros",
           'class'            => "form-control",
         ]));
@@ -259,7 +260,7 @@ class ProjectsController extends ControllerBase
       $this->view->project = $project[0];
       $this->view->members = $members;
       $this->view->tasks = $tasks;
-      $this->view->logs = Logs::findByProject($urlrequest);
+      $this->view->logs = Logs::find([ "project = '{$urlrequest}'", "order" => "_ DESC" ]);
       $this->view->form = $form;
       $this->view->controller = $this;
     }
@@ -494,7 +495,7 @@ class ProjectsController extends ControllerBase
         $name = Projects::findFirst($project)->title;
 
         # Log What Happend
-        $this->logManager($this->logs->update,"Adicionou {$member} ao projeto {$name}.");
+        $this->logManager($this->logs->update,"Adicionou {$member} ao projeto {$name}.",$project);
 
         $flags['status'] = true ;
         $flags['title']  = "Adicionado Com Sucesso!";
@@ -554,7 +555,7 @@ class ProjectsController extends ControllerBase
         $name = Projects::findFirst($project)->title;
 
         # Log What Happend
-        $this->logManager($this->logs->delete,"Removeu {$member} do projeto {$name}.");
+        $this->logManager($this->logs->delete,"Removeu {$member} do projeto {$name}.",$project);
 
         $flags['status'] = true ;
         $flags['title']  = "Removido Com Sucesso!";
@@ -603,10 +604,11 @@ class ProjectsController extends ControllerBase
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
+        $title = $this->request->getPost("new_title");
 
         $task = new Tasks;
           $task->project      = $project;
-          $task->title        = $this->request->getPost("new_title");
+          $task->title        = $title;
           $task->description  = $this->request->getPost("new_description");
           $task->deadline     = (new \DateTime($this->request->getPost("new_deadline")))->format("Y-m-d H:i:s");
           $task->created      = (new \DateTime())->format("Y-m-d H:i:s");
@@ -616,11 +618,65 @@ class ProjectsController extends ControllerBase
 
         $name = Projects::findFirst($project)->title;
         # Log What Happend
-        $this->logManager($this->logs->create,"Cadastrou uma nova tarefa ao projeto {$name}.");
+        $this->logManager($this->logs->create,"Cadastrou uma nova tarefa ( {$title} ) ao projeto {$name}.",$project);
 
         $flags['status'] = true ;
         $flags['title']  = "Adicionado Com Sucesso!";
         $flags['text']   = "Tarefa adicionada com sucesso ao projeto!";
+        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['time']   = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $flags['status'] ,
+        "title"   => $flags['title'] ,
+        "text"    => $flags['text'] ,
+        "redirect"    => $flags['redirect'] ,
+        "time"    => $flags['time']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function UpdateTaskAction( $flags = ['status' => true] )
+    {
+      $this->response->setContentType("application/json");
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $title = $this->request->getPost("title");
+        $project = $this->dispatcher->getParam("project");
+        $task = $this->dispatcher->getParam("task");
+
+        $task = Tasks::findFirst($task);
+          $task->title        = $title;
+          $task->description  = $this->request->getPost("description");
+          $task->deadline     = (new \DateTime($this->request->getPost("deadline")))->format("Y-m-d H:i:s");
+          $task->assigned     = $this->request->getPost("members");
+        $task->save();
+
+        $name = Projects::findFirst($project)->title;
+        # Log What Happend
+        $this->logManager($this->logs->update,"Alterou informações de uma tarefa ( {$title} ) do projeto {$name}.",$project);
+
+        $flags['status'] = true ;
+        $flags['title']  = "Alterado Com Sucesso!";
+        $flags['text']   = "Tarefa alterada com sucesso!";
         $flags['redirect']   = "/projects/modify/{$project}";
         $flags['time']   = 1200;
 
@@ -665,13 +721,13 @@ class ProjectsController extends ControllerBase
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
-
         $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $task->delete();
-
         $name = Projects::findFirst($project)->title;
+
         # Log What Happend
-        $this->logManager($this->logs->delete,"Removeu uma nova tarefa do projeto {$name}.");
+        $this->logManager($this->logs->delete,"Removeu uma tarefa ( {$task->title} ) do projeto {$name}.",$project);
+
+        $task->delete();
 
         $flags['status'] = true ;
         $flags['title']  = "Removido Com Sucesso!";

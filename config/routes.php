@@ -143,6 +143,13 @@ $router->add("/projects/task/new/{project:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'newtask',
 ]);
 
+$router->add("/projects/task/update/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'updatetask',
+]);
+
 $router->add("/projects/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',

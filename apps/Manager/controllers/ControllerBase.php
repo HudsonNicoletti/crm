@@ -70,10 +70,11 @@ class ControllerBase extends Controller
         return preg_match("/^[_\.0-9a-zA-Z-]+@([0-9a-zA-Z][0-9a-zA-Z-]+\.)+[a-zA-Z]{2,6}$/i", $str );
     }
 
-    public function logManager($action,$desc)
+    public function logManager($action,$desc,$project = null)
     {
       $log = new Logs;
         $log->user        = $this->session->get("secure_id");
+        $log->project     = $project;
         $log->action      = $action;
         $log->date        = (new \DateTime())->format("Y-m-d H:i:s");
         $log->description = $desc;
