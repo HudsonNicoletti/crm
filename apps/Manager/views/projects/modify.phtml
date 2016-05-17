@@ -194,6 +194,64 @@
         <br>
         <div class="col-lg-12 col-md-12">
           <div class="panel panel-default">
+            <div class="panel-body">
+
+              <form method="post" class="form-horizontal validator-form" action="/projects/update/<?php echo $project->_; ?>" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+                <?php echo $form->render("security"); ?>
+
+                <div class="row">
+
+                  <div class="col-md-6">
+                    <div class="row">
+
+                      <div class="col-md-6">
+                        <label class="control-label">Título do Projeto</label>
+                        <div class="form-group has-feedback">
+                          <?php echo $form->render("project_title"); ?>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="control-label">Categoria</label>
+                        <div class="form-group has-feedback">
+                          <?php echo $form->render("project_type"); ?>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="control-label">Deadline</label>
+                        <div class="form-group has-feedback">
+                          <?php echo $form->render("project_deadline"); ?>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6">
+                        <label class="control-label">Cliente</label>
+                        <div class="form-group has-feedback">
+                          <?php echo $form->render("project_client"); ?>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="col-md-6">
+                    <label class="control-label">Descrição</label>
+                    <?php echo $form->render("project_description"); ?>
+                  </div>
+
+                </div>
+
+                <hr class="dotted">
+
+                <div class="row">
+                  <div class="col-sm-12">
+                    <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Alterar</button>
+                  </div>
+                </div>
+              </form>
+
+            </div>
           </div>
         </div>
       </div>
@@ -367,7 +425,7 @@
             <dd>
               <div class="col-md-12">
                 <div class="form-group has-feedback">
-                  <?php echo $form->render("members"); ?>
+                  <?php echo $form->render("new_members"); ?>
                 </div>
               </div>
             </dd>

@@ -9,6 +9,7 @@
   font-size: 14px;
   position: relative;
   vertical-align: middle;
+  min-width: 100%;
 }
 .chosen-container .chosen-drop {
   background: #ffffff;

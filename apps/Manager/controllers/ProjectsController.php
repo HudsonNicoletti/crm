@@ -109,7 +109,8 @@ class ProjectsController extends ControllerBase
         [
             'using' =>  ['uid','name'],
             'data-placeholder' => "Membros Participantes",
-            'class'            => "chosen-select",
+            'multiple'         => true,
+            'class'            => "chosen-select form-control",
         ]));
 
         $form->add(new Select( "type" , ProjectTypes::find() ,
@@ -139,6 +140,8 @@ class ProjectsController extends ControllerBase
         'Manager\Models\Projects.deadline',
         'Manager\Models\Projects.finished',
         'Manager\Models\Projects.status',
+        'Manager\Models\Projects.client',
+        'Manager\Models\Projects.type as filter',
         'Manager\Models\Clients.firstname',
         'Manager\Models\Clients.lastname',
         'Manager\Models\Companies.fantasy',
@@ -201,10 +204,27 @@ class ProjectsController extends ControllerBase
       ])
       ->execute();
 
+      $availableMembers = [];
       #  Query method not working in Select , so heres a work around
       foreach($projectMembers as $pm)
       {
         $availableMembers[$pm->_] = $pm->name;
+      }
+
+      $clients = Clients::query()
+      ->columns([
+        'Manager\Models\Clients._',
+        'Manager\Models\Clients.firstname',
+        'Manager\Models\Clients.lastname',
+        'Manager\Models\Companies.fantasy',
+      ])
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Clients._')
+      ->execute();
+
+      $clientOptions = [];
+
+      foreach ($clients as $client) {
+        $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
       }
 
       $assign = Assignments::findByProject($urlrequest);
@@ -223,6 +243,7 @@ class ProjectsController extends ControllerBase
         $form->add(new Hidden( "security" ,[
           'name'  => $this->security->getTokenKey(),
           'value' => $this->security->getToken(),
+          'id'    => false
         ]));
 
         $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
@@ -230,7 +251,7 @@ class ProjectsController extends ControllerBase
           'using' =>  ['uid','name'],
           'id'               => false,
           'data-placeholder' => "Membros",
-          'class'            => "form-control",
+          'class'            => "chosen-select",
         ]));
 
         $form->add(new Text( "new_title",[
@@ -247,7 +268,7 @@ class ProjectsController extends ControllerBase
         [
           'using' =>  ['_','name'],
           'data-placeholder' => "Membros",
-          'class'            => "form-control",
+          'class'            => "chosen-select",
         ]));
 
         $form->add(new Text( "new_deadline",[
@@ -255,6 +276,41 @@ class ProjectsController extends ControllerBase
           'data-validate' => true,
           'data-empty'    => "* Campo Obrigatório",
           'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+        ]));
+
+        $form->add(new Text( "project_title" ,[
+            'class'         => "form-control",
+            'data-validate' => true,
+            'data-empty'    => "* Campo Obrigatório",
+            'value'         => $project[0]->title
+        ]));
+
+        $form->add(new Text( "project_deadline" ,[
+            'class'         => "form-control inputmask",
+            'data-validate' => true,
+            'data-empty'    => "* Campo Obrigatório",
+            'data-inputmask'=> "'alias': 'dd-mm-yyyy'",
+            'value'         => (new \DateTime($project[0]->deadline))->format("d-m-Y")
+        ]));
+
+        $form->add(new Textarea( "project_description" ,[
+            'class'         => " form-control",
+            'placeholder'   => "Breve Descrição ...",
+            'style'         => "height: 250px",
+            'value'         => $project[0]->description
+        ]));
+
+        $form->add(new Select( "project_client" , $clientOptions , [
+          'class' => "chosen-select",
+          'value' => $project[0]->client,
+        ]));
+
+        $form->add(new Select( "project_type" , ProjectTypes::find() ,
+        [
+            'using' =>  ['_','title'],
+            'data-placeholder' => "Categoria do Projeto",
+            'class'            => "chosen-select form-control",
+            'value'         => $project[0]->filter
         ]));
 
       $this->view->project = $project[0];
@@ -323,6 +379,59 @@ class ProjectsController extends ControllerBase
         "status" => $flags['status'] ,
         "title"  => $flags['title'] ,
         "text"   => $flags['text']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function UpdateAction()
+    {
+      $this->response->setContentType("application/json");
+      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
+
+      if(!$this->request->isPost()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro!";
+        $flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $flags['status'] = false ;
+        $flags['title']  = "Erro ao Cadastrar!";
+        $flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $id    = $this->dispatcher->getParam("project");
+        $title = $this->request->getPost("project_title","string");
+
+        $project = Projects::findFirst($id);
+          $project->title   = $title;
+          $project->type    = $this->request->getPost("project_type","int");
+          $project->client  = $this->request->getPost("project_client","int");
+          $project->deadline  = (new \DateTime($this->request->getPost("project_deadline","string")))->format("Y-m-d H:i:s");
+          $project->description  = $this->request->getPost("project_description","string");
+        $project->save();
+        # Log What Happend
+        $this->logManager($this->logs->update,"Alterou os dados do projeto {$name}.",$id);
+
+        $flags['status'] = true ;
+        $flags['title']  = "Alterado Com Sucesso!";
+        $flags['text']   = "Projeto alterado com sucesso!";
+        $flags['redirect']   = "/projects/modify/{$id}";
+        $flags['time']   = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $flags['status'] ,
+        "title"   => $flags['title'] ,
+        "text"    => $flags['text'] ,
+        "redirect"   => $flags['redirect'] ,
+        "time"    => $flags['time']
       ]);
 
       $this->response->send();
@@ -640,9 +749,10 @@ class ProjectsController extends ControllerBase
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 
-    public function UpdateTaskAction( $flags = ['status' => true] )
+    public function UpdateTaskAction()
     {
       $this->response->setContentType("application/json");
+      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
 
       if(!$this->request->isPost()):
         $flags['status'] = false ;
@@ -667,7 +777,7 @@ class ProjectsController extends ControllerBase
           $task->title        = $title;
           $task->description  = $this->request->getPost("description");
           $task->deadline     = (new \DateTime($this->request->getPost("deadline")))->format("Y-m-d H:i:s");
-          $task->assigned     = $this->request->getPost("members");
+          $task->assigned     = $this->request->getPost("new_members");
         $task->save();
 
         $name = Projects::findFirst($project)->title;
@@ -697,13 +807,7 @@ class ProjectsController extends ControllerBase
     public function RemoveTaskAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false ,
-        'redirect'  => false,
-        'time'      => 0,
-      ];
+      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
 
       if(!$this->request->isPost()):
         $flags['status'] = false ;

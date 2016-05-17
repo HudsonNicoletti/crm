@@ -115,6 +115,13 @@ $router->add("/projects/chart/{project:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'chart',
 ]);
 
+$router->add("/projects/update/{project:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'update',
+]);
+
 $router->add("/projects/remove/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',

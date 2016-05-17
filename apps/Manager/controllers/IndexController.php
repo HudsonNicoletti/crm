@@ -25,6 +25,7 @@ class IndexController extends ControllerBase
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
       ->orderBy("date DESC")
+      ->limit(120)
       ->execute();
 
       $tasks = Assignments::query()
