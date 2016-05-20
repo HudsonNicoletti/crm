@@ -14,13 +14,17 @@
       </div>
     </div>
 
-    <div class="btn-group btn-group-justified">
-      <a role="button" class="btn btn-default" href="/project/overview/<?php echo $project->_; ?>" >Visão Geral</a>
-      <a role="button" class="btn btn-default active" href="/project/tasks/<?php echo $project->_; ?>" >Tarefas</a>
-      <a role="button" class="btn btn-default" href="/project/settings/<?php echo $project->_; ?>" >Configurações</a>
-    </div>
-
     <div class="panel-body">
+
+      <div class="btn-group btn-group-justified">
+        <a role="button" class="btn btn-default" href="/project/overview/<?php echo $project->_; ?>" >Visão Geral</a>
+        <a role="button" class="btn btn-primary" href="/project/tasks/<?php echo $project->_; ?>" >Tarefas</a>
+        <a role="button" class="btn btn-default" href="/project/settings/<?php echo $project->_; ?>" >Configurações</a>
+        <a role="button" class="btn btn-default" href="/project/feedback/<?php echo $project->_; ?>" >Feedback</a>
+        <a role="button" class="btn btn-default" href="/project/invoices/<?php echo $project->_; ?>" >Faturas</a>
+      </div>
+      <br>
+
       <div class="row">
         <div class="col-lg-12 col-md-12">
           <div class="panel panel-default">

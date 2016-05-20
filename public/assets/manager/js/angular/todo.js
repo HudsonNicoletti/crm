@@ -2,17 +2,17 @@
 
     function TodoCtrl($scope) {
     $scope.todos = [
-    {text:'Angular Application', done:true},
-	{text:'In eget pretium nisi', done:true},
+      {text:'Angular Application', done:true},
+	    {text:'In eget pretium nisi', done:true},
 	{text:'Developed by Akshay', done:true},
 	{text:'Sed ac scelerisque ipsum', done:true},
     {text:'build an angular app', done:false}];
-     
+
     $scope.addTodo = function() {
     $scope.todos.push({text:$scope.todoText, done:false});
     $scope.todoText = '';
     };
-     
+
     $scope.remaining = function() {
     var count = 0;
     angular.forEach($scope.todos, function(todo) {
@@ -20,7 +20,7 @@
     });
     return count;
     };
-     
+
     $scope.archive = function() {
     var oldTodos = $scope.todos;
     $scope.todos = [];
@@ -29,4 +29,3 @@
     });
     };
     }
-

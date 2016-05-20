@@ -26,7 +26,6 @@ class ProjectsController extends ControllerBase
 
     public function IndexAction()
     {
-
       $projects = Projects::query()
       ->columns([
         'Manager\Models\Projects._',
