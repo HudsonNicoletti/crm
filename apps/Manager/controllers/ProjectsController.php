@@ -123,7 +123,7 @@ class ProjectsController extends ControllerBase
       $this->view->form = $form;
     }
 
-    public function ModifyAction()
+    public function OverviewAction()
     {
 
       $this->assets->addCss("assets/manager/css/app/timeline.css");
@@ -172,6 +172,46 @@ class ProjectsController extends ControllerBase
       ])
       ->execute();
 
+      $assign = Assignments::findByProject($urlrequest);
+      $clause = [];
+      foreach($assign as $i => $a)
+      {
+        if ($i === (count($assign) - 1)):
+          array_push($clause, "_ != '{$a->member}'");
+        else:
+          array_push($clause, "_ != '{$a->member}' AND ");
+        endif;
+      }
+
+      $form = new Form();
+
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+        'id'    => false
+      ]));
+
+      $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
+      [
+        'using' =>  ['uid','name'],
+        'id'               => false,
+        'data-placeholder' => "Membros",
+        'class'            => "chosen-select",
+      ]));
+
+      $this->view->project = $project[0];
+      $this->view->members = $members;
+      $this->view->logs = Logs::find([ "project = '{$urlrequest}'", "order" => "_ DESC" ]);
+      $this->view->form = $form;
+      $this->view->controller = $this;
+    }
+
+    public function TasksAction()
+    {
+
+      $form = new Form();
+      $urlrequest = $this->dispatcher->getParam("project");
+
       # Project Task Query
       $tasks = Tasks::query()
       ->columns([
@@ -192,7 +232,7 @@ class ProjectsController extends ControllerBase
       ->orderBy("status ASC , created DESC")
       ->execute();
 
-      $projectMembers = Assignments::query()
+      $members = Assignments::query()
       ->columns([
         'Manager\Models\Team._',
         'Manager\Models\Team.name'
@@ -204,13 +244,54 @@ class ProjectsController extends ControllerBase
       ])
       ->execute();
 
-      $availableMembers = [];
       #  Query method not working in Select , so heres a work around
-      foreach($projectMembers as $pm)
+      foreach($members as $pm)
       {
         $availableMembers[$pm->_] = $pm->name;
       }
 
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+        'id'    => false
+      ]));
+
+      $form->add(new Text( "new_title",[
+        'class'         => "form-control",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
+
+      $form->add(new Textarea( "new_description",[
+        'class'         => "form-control",
+      ]));
+
+      $form->add(new Select( "new_members" , $availableMembers ,
+      [
+        'using' =>  ['_','name'],
+        'data-placeholder' => "Membros",
+        'class'            => "chosen-select",
+      ]));
+
+      $form->add(new Text( "new_deadline",[
+        'class'         => "form-control inputmask",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+      ]));
+
+      $this->view->form = $form;
+      $this->view->tasks = $tasks;
+      $this->view->controller = $this;
+      $this->view->project = Projects::findFirst($urlrequest);
+
+    }
+
+    public function SettingsAction()
+    {
+      $form = new Form();
+
+      $project = Projects::findFirst($this->dispatcher->getParam("project"));
       $clients = Clients::query()
       ->columns([
         'Manager\Models\Clients._',
@@ -221,104 +302,54 @@ class ProjectsController extends ControllerBase
       ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Clients._')
       ->execute();
 
-      $clientOptions = [];
-
       foreach ($clients as $client) {
         $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
       }
 
-      $assign = Assignments::findByProject($urlrequest);
-      $clause = [];
-      foreach($assign as $i => $a)
-      {
-        if ($i === (count($assign) - 1)):
-          array_push($clause, "_ != '{$a->member}'");
-        else:
-          array_push($clause, "_ != '{$a->member}' AND ");
-        endif;
-      }
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+        'id'    => false
+      ]));
 
-      $form = new Form();
+      $form->add(new Text( "project_title" ,[
+        'class'         => "form-control",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'value'         => $project->title
+      ]));
 
-        $form->add(new Hidden( "security" ,[
-          'name'  => $this->security->getTokenKey(),
-          'value' => $this->security->getToken(),
-          'id'    => false
-        ]));
+      $form->add(new Text( "project_deadline" ,[
+        'class'         => "form-control inputmask",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'data-inputmask'=> "'alias': 'dd-mm-yyyy'",
+        'value'         => (new \DateTime($project->deadline))->format("d-m-Y")
+      ]));
 
-        $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
-        [
-          'using' =>  ['uid','name'],
-          'id'               => false,
-          'data-placeholder' => "Membros",
-          'class'            => "chosen-select",
-        ]));
+      $form->add(new Textarea( "project_description" ,[
+        'class'         => "wysihtml form-control",
+        'placeholder'   => "Breve Descrição ...",
+        'style'         => "height: 250px",
+        'value'         => $project->description
+      ]));
 
-        $form->add(new Text( "new_title",[
-          'class'         => "form-control",
-          'data-validate' => true,
-          'data-empty'    => "* Campo Obrigatório",
-        ]));
+      $form->add(new Select( "project_client" , $clientOptions , [
+        'class' => "chosen-select",
+        'value' => $project->client,
+      ]));
 
-        $form->add(new Textarea( "new_description",[
-          'class'         => "form-control",
-        ]));
+      $form->add(new Select( "project_type" , ProjectTypes::find() ,
+      [
+        'using' =>  ['_','title'],
+        'data-placeholder' => "Categoria do Projeto",
+        'class'            => "chosen-select form-control",
+        'value'         => $project->filter
+      ]));
 
-        $form->add(new Select( "new_members" , $availableMembers ,
-        [
-          'using' =>  ['_','name'],
-          'data-placeholder' => "Membros",
-          'class'            => "chosen-select",
-        ]));
-
-        $form->add(new Text( "new_deadline",[
-          'class'         => "form-control inputmask",
-          'data-validate' => true,
-          'data-empty'    => "* Campo Obrigatório",
-          'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
-        ]));
-
-        $form->add(new Text( "project_title" ,[
-            'class'         => "form-control",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
-            'value'         => $project[0]->title
-        ]));
-
-        $form->add(new Text( "project_deadline" ,[
-            'class'         => "form-control inputmask",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
-            'data-inputmask'=> "'alias': 'dd-mm-yyyy'",
-            'value'         => (new \DateTime($project[0]->deadline))->format("d-m-Y")
-        ]));
-
-        $form->add(new Textarea( "project_description" ,[
-            'class'         => " form-control",
-            'placeholder'   => "Breve Descrição ...",
-            'style'         => "height: 250px",
-            'value'         => $project[0]->description
-        ]));
-
-        $form->add(new Select( "project_client" , $clientOptions , [
-          'class' => "chosen-select",
-          'value' => $project[0]->client,
-        ]));
-
-        $form->add(new Select( "project_type" , ProjectTypes::find() ,
-        [
-            'using' =>  ['_','title'],
-            'data-placeholder' => "Categoria do Projeto",
-            'class'            => "chosen-select form-control",
-            'value'         => $project[0]->filter
-        ]));
-
-      $this->view->project = $project[0];
-      $this->view->members = $members;
-      $this->view->tasks = $tasks;
-      $this->view->logs = Logs::find([ "project = '{$urlrequest}'", "order" => "_ DESC" ]);
       $this->view->form = $form;
-      $this->view->controller = $this;
+      $this->view->project = $project;
+
     }
 
     public function NewAction()
@@ -413,7 +444,7 @@ class ProjectsController extends ControllerBase
           $project->type    = $this->request->getPost("project_type","int");
           $project->client  = $this->request->getPost("project_client","int");
           $project->deadline  = (new \DateTime($this->request->getPost("project_deadline","string")))->format("Y-m-d H:i:s");
-          $project->description  = $this->request->getPost("project_description","string");
+          $project->description  = $this->request->getPost("project_description");
         $project->save();
         # Log What Happend
         $this->logManager($this->logs->update,"Alterou os dados do projeto {$name}.",$id);
@@ -421,7 +452,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Alterado Com Sucesso!";
         $flags['text']   = "Projeto alterado com sucesso!";
-        $flags['redirect']   = "/projects/modify/{$id}";
+        $flags['redirect']   = "/project/overview/{$id}";
         $flags['time']   = 1200;
 
       endif;
@@ -609,7 +640,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Adicionado Com Sucesso!";
         $flags['text']   = "Membro adicionado com sucesso ao projeto!";
-        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['redirect']   = "/project/overview/{$project}";
         $flags['time']   = 1200;
 
       endif;
@@ -669,7 +700,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Removido Com Sucesso!";
         $flags['text']   = "Membro removido com sucesso do projeto!";
-        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['redirect']   = "/project/overview/{$project}";
         $flags['time']   = 1800;
 
       endif;
@@ -732,7 +763,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Adicionado Com Sucesso!";
         $flags['text']   = "Tarefa adicionada com sucesso ao projeto!";
-        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['redirect']   = "/project/tasks/{$project}";
         $flags['time']   = 1200;
 
       endif;
@@ -787,7 +818,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Alterado Com Sucesso!";
         $flags['text']   = "Tarefa alterada com sucesso!";
-        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['redirect']   = "/project/tasks/{$project}";
         $flags['time']   = 1200;
 
       endif;
@@ -836,7 +867,7 @@ class ProjectsController extends ControllerBase
         $flags['status'] = true ;
         $flags['title']  = "Removido Com Sucesso!";
         $flags['text']   = "Tarefa removida com sucesso do projeto!";
-        $flags['redirect']   = "/projects/modify/{$project}";
+        $flags['redirect']   = "/project/tasks/{$project}";
         $flags['time']   = 1800;
 
       endif;

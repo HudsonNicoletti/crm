@@ -43,7 +43,7 @@ $(document).ready(function() {
 	          action  = $this.attr("action"),
 	          method  = $this.attr("method"),
 	          $alert  = $("div[role='alert']"),
-	          inputs  = $this.find("input:not(:file):not(:submit) , textarea, select"),
+	          inputs  = $this.find("input:not(:file):not(:submit) , textarea, select, input[type='hidden']"),
 	          files   = $this.find("input:file"),
 	          content = new FormData( $this );
 

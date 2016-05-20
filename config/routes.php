@@ -101,63 +101,77 @@ $router->add("/team/departments/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'removedepartment',
 ]);
 
-$router->add("/projects/modify/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/overview/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
-    'action'     => 'modify',
+    'action'     => 'overview',
 ]);
 
-$router->add("/projects/chart/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/tasks/{project:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'tasks',
+]);
+
+$router->add("/project/settings/{project:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'settings',
+]);
+
+$router->add("/project/chart/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'chart',
 ]);
 
-$router->add("/projects/update/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/update/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'update',
 ]);
 
-$router->add("/projects/remove/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/remove/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'remove',
 ]);
 
-$router->add("/projects/member/new/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/member/new/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'newmember',
 ]);
 
-$router->add("/projects/member/remove/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/member/remove/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'removemember',
 ]);
 
-$router->add("/projects/task/new/{project:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/task/new/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'newtask',
 ]);
 
-$router->add("/projects/task/update/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/task/update/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
     'action'     => 'updatetask',
 ]);
 
-$router->add("/projects/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+$router->add("/project/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'projects',
