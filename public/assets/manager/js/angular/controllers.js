@@ -29,3 +29,18 @@
     });
     };
     }
+
+    function ClientsController($scope,$http)
+    {
+      $http({  method: "GET", url: "/clients/test" })
+      .success(function(data, status, headers, config){
+        $scope.clients = data;
+      });
+
+      $scope.remove = function(client,entity)
+      {
+        console.log(client);
+        console.log(entity);
+      }
+
+    }

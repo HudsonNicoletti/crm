@@ -40,6 +40,8 @@ class ControllerBase extends Controller
              ->addJs("assets/manager/js/plugins/DevExpressChartJS/dx.chartjs.js")
              ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js")
              ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+             ->addJs("assets/manager/js/angular/angular.min.js")
+             ->addJs("assets/manager/js/angular/controllers.js")
              ->addJs('assets/manager/js/app/custom.js');
 
         # if session then set accessible vars

@@ -64,6 +64,37 @@
           </div>
         </div>
       </div>
+      <div class="col-md-6">
+
+        <div class="panel panel-default" data-ng-controller="TodoCtrl">
+            <div class="panel-heading un-bold"><h4>Anotações <a href="" data-ng-click="remove()" class="pull-right"><small>Apagar Selecionados</small></a></h4></div>
+              <div class="panel-body">
+               <ul class="list-group no-margn nicescroll todo-list" style="height:205px; overflow:auto;">
+                  <li data-ng-repeat="todo in todos" class="list-group-item">
+                  <label class="cr-styled">
+                    <input type="checkbox" data-ng-model="todo.done">
+                      <i class="fa"></i>
+                  </label>
+                  <span class="done-{{todo.done}}">{{todo.text}}</span>
+                  </li>
+               </ul>
+              </div>
+
+              <div class="panel-footer">
+                  <form data-ng-submit="addTodo()" role="form">
+                  <div class="input-group">
+                    <input type="text" data-ng-model="todoText" class="form-control" placeholder="add new todo here">
+                    <span class="input-group-btn">
+                      <button class="btn-primary btn" type="submit" >Add</button>
+                    </span>
+                  </div>
+                  </form>
+              </div>
+
+
+          </div>
+
+      </div>
     </div>
 
 </div>
