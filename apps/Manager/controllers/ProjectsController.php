@@ -26,6 +26,9 @@ class ProjectsController extends ControllerBase
 
     public function IndexAction()
     {
+      # Verify All Tasks First
+      $this->VerifyTasks();
+
       $projects = Projects::query()
       ->columns([
         'Manager\Models\Projects._',
@@ -54,6 +57,26 @@ class ProjectsController extends ControllerBase
       $this->view->projects   = $projects;
       $this->view->controller = $this;
 
+    }
+
+    private function VerifyTasks()
+    {
+      $tasks = Tasks::find(["group"=>"project"]);
+      foreach($tasks as $task)
+      {
+        $project = Projects::findFirst($task->project);
+
+        if( ($this->TaskPercentage($task->project) - 100) == 0 )
+        {
+          $project->status = 2;
+        }
+        else
+        {
+          $project->status = 1;
+        }
+        $project->save();
+        
+      }
     }
 
     public function CreateAction()

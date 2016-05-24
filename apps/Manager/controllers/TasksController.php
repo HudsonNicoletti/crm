@@ -81,7 +81,7 @@ class TasksController extends ControllerBase
       {
         $task->status = 1;
         $task->completed = null;
-        
+
         $this->flags['title']  = "Tarefa Aberta!";
         $this->flags['text']   = "Tarefa foi aberta e homologada.";
         $description = "Abriu a tarefa ({$task->title}).";
