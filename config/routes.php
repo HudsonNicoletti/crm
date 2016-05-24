@@ -178,8 +178,14 @@ $router->add("/project/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_
     'action'     => 'removetask',
 ]);
 
-#   FRONTEND - REQUEST API
+$router->add("/tasks/status/{type:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tasks',
+    'action'     => 'status',
+]);
 
+#   FRONTEND - REQUEST API
 $router->add("/request/:action", [
     'module'     => 'Manager',
     'controller' => 'request',
