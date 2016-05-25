@@ -2,6 +2,8 @@
 
 namespace Manager\Controllers;
 
+use Mustache_Engine as Mustache;
+
 use Manager\Models\Users as Users,
     Manager\Models\Logs as Logs,
     Manager\Models\Team as Team;
@@ -46,8 +48,35 @@ class ControllerBase extends Controller
 
         # if session then set accessible vars
         if ($this->session->has("secure_id")):
-          $this->view->user = Users::findFirst($this->session->get("secure_id"));
-          $this->view->uinfo = Team::findFirstByUid($this->session->get("secure_id"));
+
+          $id = $this->session->get("secure_id");
+          $user = Users::findFirst($id);
+          $info = ( $user->permission == $this->permissions->client ? Clients::findFirstByUser($id) : Team::findFirstByUid($id) );
+
+          if($user->permission >= $this->permissions->team)
+          {
+            $nav = [
+              ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
+              ["active" => ($this->router->getControllerName() == "tasks"    ? "active" : ""), "href" => "/tasks",    "icon" => "check-square-o", "label" => "Tarefas"],
+              ["active" => ($this->router->getControllerName() == "tickets"  ? "active" : ""), "href" => "/tickets",  "icon" => "ticket",         "label" => "Chamados"],
+              ["active" => ($this->router->getControllerName() == "team"     ? "active" : ""), "href" => "/team",     "icon" => "users",          "label" => "Equipe"],
+              ["active" => ($this->router->getControllerName() == "clients"  ? "active" : ""), "href" => "/clients",  "icon" => "briefcase",      "label" => "Clientes"],
+              ["active" => ($this->router->getControllerName() == "projects" ? "active" : ""), "href" => "/projects", "icon" => "archive",        "label" => "Projetos"],
+              ["active" => ($this->router->getControllerName() == "finance"  ? "active" : ""), "href" => "/finance",  "icon" => "credit-card",    "label" => "Financeiro"],
+              ["active" => ($this->router->getControllerName() == "settings" ? "active" : ""), "href" => "/settings", "icon" => "wrench",         "label" => "Configurações"],
+            ];
+          }
+          else
+          {
+
+          }
+
+          $navigation = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/navigation.tpl"),[ 'nav' => $nav ]);
+
+          $this->view->user = $user;
+          $this->view->uinfo = $info;
+          $this->view->navigation  = $navigation;
+
         else:
           if($this->router->getControllerName() != 'login')
           {

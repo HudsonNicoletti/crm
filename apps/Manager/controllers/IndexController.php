@@ -28,8 +28,7 @@ class IndexController extends ControllerBase
       ->limit(120)
       ->execute();
 
-      $tasks = Assignments::query()
-      ->columns([
+      $tasks = Assignments::query()->columns([
         "Manager\Models\Tasks._",
       ])
       ->innerJoin('Manager\Models\Tasks', 'Manager\Models\Assignments.project = Manager\Models\Tasks.project')
@@ -39,7 +38,6 @@ class IndexController extends ControllerBase
       $this->view->logs     = $logs;
       $this->view->tasks    = count($tasks);
       $this->view->clients  = Clients::find()->count();
-
 
     }
 

@@ -4,6 +4,8 @@ namespace Manager\Controllers;
 
 use \Manager\Models\Team as Team,
     \Manager\Models\Users as Users,
+    \Manager\Models\Tasks        as Tasks,
+    \Manager\Models\Assignments  as Assignments,
     \Manager\Models\Departments as Departments;
 
 use Phalcon\Forms\Form,
@@ -33,17 +35,18 @@ class TeamController extends ControllerBase
       ]));
 
       $team = Users::query()
-              ->columns([
-                'Manager\Models\Users._',
-                'Manager\Models\Users.email',
-                'Manager\Models\Team.name',
-                'Manager\Models\Team.image',
-                'Manager\Models\Departments.department',
-                'Manager\Models\Team.phone'
-              ])
-              ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
-              ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
-              ->execute();
+      ->columns([
+        'Manager\Models\Users._',
+        'Manager\Models\Users.email',
+        'Manager\Models\Team.name',
+        'Manager\Models\Team.uid',
+        'Manager\Models\Team.image',
+        'Manager\Models\Departments.department',
+        'Manager\Models\Team.phone'
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
+      ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
+      ->execute();
 
     $this->view->form = $form;
     $this->view->members = $team;
@@ -541,7 +544,16 @@ class TeamController extends ControllerBase
       # remove image from server
       unlink("assets/manager/images/avtar/{$member->image}");
 
-      # update projects table
+      # update projects assignments table
+      foreach (Assignments::findByMember($member->_) as $assign)
+      {
+        $assign->delete();
+      }
+      foreach (Tasks::findByAssinged($member->_) as $task)
+      {
+        $task->assigned = $this->request->getPost("select");
+        $task->save();
+      }
 
       # Log What Happend
       $this->logManager($this->logs->delete,"Removeu um membro da equipe ({$member->name}).");

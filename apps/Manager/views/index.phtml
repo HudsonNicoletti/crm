@@ -44,51 +44,7 @@
       <nav class="navigation">
         <ul class="list-unstyled">
 
-          <li class="<?php echo ($this->router->getControllerName() === 'index' ? 'active' : ''); ?>" >
-            <a href="/"><i class="fa fa-bookmark-o"></i><span class="nav-label">Visão Geral</span></a>
-          </li>
-
-          <li class="<?php echo ($this->router->getControllerName() === 'tasks' ? 'active' : ''); ?>">
-            <a href="/tasks"><i class="fa fa-check-square-o"></i><span class="nav-label">Tarefas</span></a>
-          </li>
-
-          <li class="<?php echo ($this->router->getControllerName() === 'tickets' ? 'active' : ''); ?>">
-            <a href="/tickets"><i class="fa fa-ticket"></i><span class="nav-label">Chamados</span></a>
-          </li>
-
-          <li class="has-submenu <?php echo ($this->router->getControllerName() === 'team' ? 'active' : ''); ?> "><a href="#"><i class="fa fa-users"></i> <span class="nav-label">Equipe</span></a>
-            <ul class="list-unstyled">
-              <li class="<?php echo ($this->router->getControllerName() === 'team' && $this->router->getActionName() === 'index' ? 'active' : ''); ?>" ><a href="/team/">Gerenciamento</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'team' && $this->router->getActionName() === 'create' ? 'active' : ''); ?>" ><a href="/team/create">Cadastramento</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'team' && $this->router->getActionName() === 'departments' ? 'active' : ''); ?>" ><a href="/team/departments">Departamentos</a></li>
-            </ul>
-          </li>
-
-          <li class="has-submenu <?php echo ($this->router->getControllerName() === 'clients' ? 'active' : ''); ?> "><a href="#"><i class="fa fa-briefcase"></i> <span class="nav-label">Clientes</span></a>
-            <ul class="list-unstyled">
-              <li class="<?php echo ($this->router->getControllerName() === 'clients' && $this->router->getActionName() === 'index' ? 'active' : ''); ?>" ><a href="/clients/">Gerenciamento</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'clients' && $this->router->getActionName() === 'create' ? 'active' : ''); ?>" ><a href="/clients/create">Cadastramento</a></li>
-            </ul>
-          </li>
-
-          <li class="has-submenu <?php echo ($this->router->getControllerName() === 'projects' ? 'active' : ''); ?> "><a href="#"><i class="fa fa-archive"></i> <span class="nav-label">Projetos</span></a>
-            <ul class="list-unstyled">
-              <li class="<?php echo ($this->router->getControllerName() === 'projects' && $this->router->getActionName() === 'index' ? 'active' : ''); ?>" ><a href="/projects/">Gerenciamento</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'projects' && $this->router->getActionName() === 'create' ? 'active' : ''); ?>" ><a href="/projects/create">Cadastramento</a></li>
-            </ul>
-          </li>
-
-          <li class="has-submenu <?php echo ($this->router->getControllerName() === 'finance' ? 'active' : ''); ?> "><a href="#"><i class="fa fa-credit-card"></i> <span class="nav-label">Financeiro</span></a>
-            <ul class="list-unstyled">
-              <li class="<?php echo ($this->router->getControllerName() === 'finance' && $this->router->getActionName() === 'index' ? 'active' : ''); ?>" ><a href="/clients/">Faturas</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'finance' && $this->router->getActionName() === 'create' ? 'active' : ''); ?>" ><a href="/clients/create">Pagamentos</a></li>
-              <li class="<?php echo ($this->router->getControllerName() === 'finance' && $this->router->getActionName() === 'create' ? 'active' : ''); ?>" ><a href="/clients/create">Despesas</a></li>
-            </ul>
-          </li>
-
-          <li class="<?php echo ($this->router->getControllerName() === 'settings' ? 'active' : ''); ?>">
-            <a href="/"><i class="fa fa-wrench"></i><span class="nav-label">Configurações</span></a>
-          </li>
+          <?php echo $navigation; ?>
 
         </ul>
       </nav>

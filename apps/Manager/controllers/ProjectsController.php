@@ -23,6 +23,13 @@ use \Phalcon\Mvc\Model\Query\Builder as Builder;
 
 class ProjectsController extends ControllerBase
 {
+    private $flags = [
+      'status'    => true,
+      'title'     => false,
+      'text'      => false,
+      'redirect'  => false,
+      'time'      => false
+    ];
 
     public function IndexAction()
     {
@@ -75,12 +82,13 @@ class ProjectsController extends ControllerBase
           $project->status = 1;
         }
         $project->save();
-        
+
       }
     }
 
     public function CreateAction()
     {
+      $form = new Form();
       $clients = Clients::query()
       ->columns([
         'Manager\Models\Clients._',
@@ -97,57 +105,54 @@ class ProjectsController extends ControllerBase
         $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
       }
 
-      $form = new Form();
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+      ]));
 
-        $form->add(new Hidden( "security" ,[
-            'name'  => $this->security->getTokenKey(),
-            'value' => $this->security->getToken(),
-        ]));
+      $form->add(new Text( "title" ,[
+        'class'         => "form-control",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-        $form->add(new Text( "title" ,[
-            'class'         => "form-control",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
-        ]));
+      $form->add(new Text( "deadline" ,[
+        'class'         => "form-control inputmask",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+      ]));
 
-        $form->add(new Text( "deadline" ,[
-            'class'         => "form-control inputmask",
-            'data-validate' => true,
-            'data-empty'    => "* Campo Obrigatório",
-            'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
-        ]));
+      $form->add(new Textarea( "description" ,[
+        'class'         => "wysihtml form-control",
+        'placeholder'   => "Breve Descrição ...",
+        'style'         => "height: 250px"
+      ]));
 
-        $form->add(new Textarea( "description" ,[
-            'class'         => "wysihtml form-control",
-            'placeholder'   => "Breve Descrição ...",
-            'style'         => "height: 250px"
-        ]));
+      $form->add(new Select( "client" , $clientOptions , [
+        'class' => "chosen-select"
+      ]));
 
-        $form->add(new Select( "client" , $clientOptions , [
-          'class' => "chosen-select"
-        ]));
+      $form->add(new Select( "members" , Team::find() ,
+      [
+        'using' =>  ['uid','name'],
+        'data-placeholder' => "Membros Participantes",
+        'multiple'         => true,
+        'class'            => "chosen-select form-control",
+      ]));
 
-        $form->add(new Select( "members" , Team::find() ,
-        [
-            'using' =>  ['uid','name'],
-            'data-placeholder' => "Membros Participantes",
-            'multiple'         => true,
-            'class'            => "chosen-select form-control",
-        ]));
-
-        $form->add(new Select( "type" , ProjectTypes::find() ,
-        [
-            'using' =>  ['_','title'],
-            'data-placeholder' => "Categoria do Projeto",
-            'class'            => "chosen-select"
-        ]));
+      $form->add(new Select( "type" , ProjectTypes::find() ,
+      [
+        'using' =>  ['_','title'],
+        'data-placeholder' => "Categoria do Projeto",
+        'class'            => "chosen-select"
+      ]));
 
       $this->view->form = $form;
     }
 
     public function OverviewAction()
     {
-
       $this->assets->addCss("assets/manager/css/app/timeline.css");
 
       $urlrequest = $this->dispatcher->getParam("project");
@@ -182,11 +187,12 @@ class ProjectsController extends ControllerBase
       $members = Assignments::query()
       ->columns([
         'Manager\Models\Team._',
+        'Manager\Models\Team.uid',
         'Manager\Models\Team.name',
         'Manager\Models\Team.image',
         'Manager\Models\Departments.department',
       ])
-      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team._ = Manager\Models\Assignments.member')
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Assignments.member')
       ->innerJoin('Manager\Models\Departments', 'Manager\Models\Departments._ = Manager\Models\Team.department_id')
       ->where("Manager\Models\Assignments.project = :project:")
       ->bind([
@@ -246,7 +252,7 @@ class ProjectsController extends ControllerBase
         'Manager\Models\Team.image',
         'Manager\Models\Team.name',
       ])
-      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team._ = Manager\Models\Tasks.assigned')
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Tasks.assigned')
       ->where("Manager\Models\Tasks.project = :project:")
       ->bind([
         "project" =>  $urlrequest
@@ -257,9 +263,10 @@ class ProjectsController extends ControllerBase
       $members = Assignments::query()
       ->columns([
         'Manager\Models\Team._',
+        'Manager\Models\Team.uid',
         'Manager\Models\Team.name'
       ])
-      ->innerJoin('Manager\Models\Team', 'Manager\Models\Assignments.member = Manager\Models\Team._')
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Assignments.member = Manager\Models\Team.uid')
       ->where("Manager\Models\Assignments.project = :project:")
       ->bind([
         "project" =>  $urlrequest
@@ -269,7 +276,7 @@ class ProjectsController extends ControllerBase
       #  Query method not working in Select , so heres a work around
       foreach($members as $pm)
       {
-        $availableMembers[$pm->_] = $pm->name;
+        $availableMembers[$pm->uid] = $pm->name;
       }
 
       $form->add(new Hidden( "security" ,[
@@ -366,7 +373,7 @@ class ProjectsController extends ControllerBase
         'using' =>  ['_','title'],
         'data-placeholder' => "Categoria do Projeto",
         'class'            => "chosen-select form-control",
-        'value'         => $project->filter
+        'value'            => $project->type
       ]));
 
       $this->view->form = $form;
@@ -377,25 +384,20 @@ class ProjectsController extends ControllerBase
     public function NewAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $project = new Projects;
@@ -422,16 +424,16 @@ class ProjectsController extends ControllerBase
         $name = $this->request->getPost("title","string");
         $this->logManager($this->logs->create,"Cadastrou um novo Projeto ( {$name} ).");
 
-        $flags['status'] = true ;
-        $flags['title']  = "Cadastrado com Sucesso!";
-        $flags['text']   = "Projeto Cadastrado com sucesso!";
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Cadastrado com Sucesso!";
+        $this->flags['text']   = "Projeto Cadastrado com sucesso!";
 
       endif;
 
       return $this->response->setJsonContent([
-        "status" => $flags['status'] ,
-        "title"  => $flags['title'] ,
-        "text"   => $flags['text']
+        "status" => $this->flags['status'] ,
+        "title"  => $this->flags['title'] ,
+        "text"   => $this->flags['text']
       ]);
 
       $this->response->send();
@@ -441,21 +443,20 @@ class ProjectsController extends ControllerBase
     public function UpdateAction()
     {
       $this->response->setContentType("application/json");
-      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $id    = $this->dispatcher->getParam("project");
@@ -471,20 +472,20 @@ class ProjectsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->update,"Alterou os dados do projeto {$name}.",$id);
 
-        $flags['status'] = true ;
-        $flags['title']  = "Alterado Com Sucesso!";
-        $flags['text']   = "Projeto alterado com sucesso!";
-        $flags['redirect']   = "/project/overview/{$id}";
-        $flags['time']   = 1200;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Alterado Com Sucesso!";
+        $this->flags['text']   = "Projeto alterado com sucesso!";
+        $this->flags['redirect']   = "/project/overview/{$id}";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'] ,
-        "redirect"   => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "redirect"   => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
@@ -494,27 +495,20 @@ class ProjectsController extends ControllerBase
     public function RemoveAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'    => true,
-        'title'     => false,
-        'text'      => false,
-        'redirect'  => false,
-        'time'      => 0,
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
 
         $p = Projects::findFirst($this->dispatcher->getParam("project"));
 
@@ -532,19 +526,19 @@ class ProjectsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu um projeto ( {$p->title} ).");
 
-        $flags['title']     = "Removido Com Sucesso!";
-        $flags['text']      = "Projeto Removido com Sucesso.";
-        $flags['redirect']  = "/projects";
-        $flags['time']      = 1000;
+        $this->flags['title']     = "Removido Com Sucesso!";
+        $this->flags['text']      = "Projeto Removido com Sucesso.";
+        $this->flags['redirect']  = "/projects";
+        $this->flags['time']      = 1000;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"    =>  $flags['status'],
-        "title"     =>  $flags['title'],
-        "text"      =>  $flags['text'],
-        "redirect"  =>  $flags['redirect'],
-        "time"      =>  $flags['time']
+        "status"    =>  $this->flags['status'],
+        "title"     =>  $this->flags['title'],
+        "text"      =>  $this->flags['text'],
+        "redirect"  =>  $this->flags['redirect'],
+        "time"      =>  $this->flags['time']
       ]);
 
       $this->response->send();
@@ -579,41 +573,32 @@ class ProjectsController extends ControllerBase
     public function ChartAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false ,
-        'done'    => "Concluídos",
-        'open'    => "Em Aberto",
-        'doneVal' => 0,
-        'openVal' => 0,
-      ];
 
       if(!$this->request->isGet()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $tasks = $this->TaskPercentage($this->dispatcher->getParam("project"));
 
-        $flags['status'] = true ;
-        $flags['doneVal']   = $tasks;
-        $flags['openVal']   = (100 - $tasks);
+        $this->flags['status'] = true ;
+        $this->flags['doneVal']   = $tasks;
+        $this->flags['openVal']   = (100 - $tasks);
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'] ,
-        "done"    => $flags['done'] ,
-        "open"    => $flags['open'] ,
-        "doneVal" => $flags['doneVal'] ,
-        "openVal" => $flags['openVal']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "done"    => "Concluídos" ,
+        "open"    => "Em Aberto" ,
+        "doneVal" => $this->flags['doneVal'] ,
+        "openVal" => $this->flags['openVal']
       ]);
 
       $this->response->send();
@@ -623,27 +608,20 @@ class ProjectsController extends ControllerBase
     public function NewMemberAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false ,
-        'redirect' => false,
-        'time'    => 0
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
@@ -653,26 +631,26 @@ class ProjectsController extends ControllerBase
           $assign->member = $this->request->getPost("members");
         $assign->save();
 
-        $member = Team::findFirst($this->request->getPost("members"))->name;
+        $member = Team::findFirstByUid($this->request->getPost("members"))->name;
         $name = Projects::findFirst($project)->title;
 
         # Log What Happend
         $this->logManager($this->logs->update,"Adicionou {$member} ao projeto {$name}.",$project);
 
-        $flags['status'] = true ;
-        $flags['title']  = "Adicionado Com Sucesso!";
-        $flags['text']   = "Membro adicionado com sucesso ao projeto!";
-        $flags['redirect']   = "/project/overview/{$project}";
-        $flags['time']   = 1200;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Adicionado Com Sucesso!";
+        $this->flags['text']   = "Membro adicionado com sucesso ao projeto!";
+        $this->flags['redirect']   = "/project/overview/{$project}";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'] ,
-        "redirect"    => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "redirect"    => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
@@ -682,27 +660,20 @@ class ProjectsController extends ControllerBase
     public function RemoveMemberAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false ,
-        'redirect'  => false,
-        'time'      => 0,
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
@@ -713,26 +684,26 @@ class ProjectsController extends ControllerBase
           $assign->delete();
         }
 
-        $member = Team::findFirst($member)->name;
+        $member = Team::findFirstByUid($member)->name;
         $name = Projects::findFirst($project)->title;
 
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu {$member} do projeto {$name}.",$project);
 
-        $flags['status'] = true ;
-        $flags['title']  = "Removido Com Sucesso!";
-        $flags['text']   = "Membro removido com sucesso do projeto!";
-        $flags['redirect']   = "/project/overview/{$project}";
-        $flags['time']   = 1800;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Removido Com Sucesso!";
+        $this->flags['text']   = "Membro removido com sucesso do projeto!";
+        $this->flags['redirect']   = "/project/overview/{$project}";
+        $this->flags['time']   = 1800;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'],
-        "redirect"    => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'],
+        "redirect"    => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
@@ -742,27 +713,20 @@ class ProjectsController extends ControllerBase
     public function NewTaskAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false ,
-        'redirect' => false,
-        'time'    => 0
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
@@ -782,20 +746,20 @@ class ProjectsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->create,"Cadastrou uma nova tarefa ( {$title} ) ao projeto {$name}.",$project);
 
-        $flags['status'] = true ;
-        $flags['title']  = "Adicionado Com Sucesso!";
-        $flags['text']   = "Tarefa adicionada com sucesso ao projeto!";
-        $flags['redirect']   = "/project/tasks/{$project}";
-        $flags['time']   = 1200;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Adicionado Com Sucesso!";
+        $this->flags['text']   = "Tarefa adicionada com sucesso ao projeto!";
+        $this->flags['redirect']   = "/project/tasks/{$project}";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'] ,
-        "redirect"    => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "redirect"    => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
@@ -805,21 +769,20 @@ class ProjectsController extends ControllerBase
     public function UpdateTaskAction()
     {
       $this->response->setContentType("application/json");
-      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $title = $this->request->getPost("title");
@@ -837,20 +800,20 @@ class ProjectsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->update,"Alterou informações de uma tarefa ( {$title} ) do projeto {$name}.",$project);
 
-        $flags['status'] = true ;
-        $flags['title']  = "Alterado Com Sucesso!";
-        $flags['text']   = "Tarefa alterada com sucesso!";
-        $flags['redirect']   = "/project/tasks/{$project}";
-        $flags['time']   = 1200;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Alterado Com Sucesso!";
+        $this->flags['text']   = "Tarefa alterada com sucesso!";
+        $this->flags['redirect']   = "/project/tasks/{$project}";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'] ,
-        "redirect"    => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "redirect"    => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
@@ -860,21 +823,20 @@ class ProjectsController extends ControllerBase
     public function RemoveTaskAction()
     {
       $this->response->setContentType("application/json");
-      $flags = ['status' => true, 'title' => true, 'text' => true, 'redirect' => null, 'time' => null];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
@@ -886,20 +848,20 @@ class ProjectsController extends ControllerBase
 
         $task->delete();
 
-        $flags['status'] = true ;
-        $flags['title']  = "Removido Com Sucesso!";
-        $flags['text']   = "Tarefa removida com sucesso do projeto!";
-        $flags['redirect']   = "/project/tasks/{$project}";
-        $flags['time']   = 1800;
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Removido Com Sucesso!";
+        $this->flags['text']   = "Tarefa removida com sucesso do projeto!";
+        $this->flags['redirect']   = "/project/tasks/{$project}";
+        $this->flags['time']   = 1800;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $flags['status'] ,
-        "title"   => $flags['title'] ,
-        "text"    => $flags['text'],
-        "redirect"    => $flags['redirect'] ,
-        "time"    => $flags['time']
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'],
+        "redirect"    => $this->flags['redirect'] ,
+        "time"    => $this->flags['time']
       ]);
 
       $this->response->send();
