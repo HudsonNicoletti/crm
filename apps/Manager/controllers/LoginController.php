@@ -55,7 +55,7 @@ class LoginController extends ControllerBase
       if(!$this->request->isPost()):
         $this->flags['status']    = false ;
         $this->flags['title']     = "Erro ao Cadastrar!";
-        $this->flags['text']      = "Metodo Inválido.";
+        $this->flags['text']      = "Metodo Introduzido Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
