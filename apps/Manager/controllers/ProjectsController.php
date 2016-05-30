@@ -33,6 +33,11 @@ class ProjectsController extends ControllerBase
 
     public function IndexAction()
     {
+      $this->assets
+      ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+
       # Verify All Tasks First
       $this->VerifyTasks();
 
@@ -88,6 +93,15 @@ class ProjectsController extends ControllerBase
 
     public function CreateAction()
     {
+      $this->assets
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
+
       $form = new Form();
       $clients = Clients::query()
       ->columns([
@@ -153,7 +167,13 @@ class ProjectsController extends ControllerBase
 
     public function OverviewAction()
     {
-      $this->assets->addCss("assets/manager/css/app/timeline.css");
+      $this->assets
+      ->addCss("assets/manager/css/app/timeline.css")
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs("assets/manager/js/plugins/DevExpressChartJS/dx.chartjs.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
       $urlrequest = $this->dispatcher->getParam("project");
 
@@ -205,9 +225,9 @@ class ProjectsController extends ControllerBase
       foreach($assign as $i => $a)
       {
         if ($i === (count($assign) - 1)):
-          array_push($clause, "_ != '{$a->member}'");
+          array_push($clause, "uid != '{$a->member}'");
         else:
-          array_push($clause, "_ != '{$a->member}' AND ");
+          array_push($clause, "uid != '{$a->member}' AND ");
         endif;
       }
 
@@ -236,6 +256,13 @@ class ProjectsController extends ControllerBase
 
     public function TasksAction()
     {
+      $this->assets
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+      ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+      ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
       $form = new Form();
       $urlrequest = $this->dispatcher->getParam("project");
@@ -318,6 +345,15 @@ class ProjectsController extends ControllerBase
 
     public function SettingsAction()
     {
+      $this->assets
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
+
       $form = new Form();
 
       $project = Projects::findFirst($this->dispatcher->getParam("project"));

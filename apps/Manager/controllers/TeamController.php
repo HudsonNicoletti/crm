@@ -30,7 +30,9 @@ class TeamController extends ControllerBase
   public function IndexAction()
   {
     $this->assets
-    ->addJs("assets/manager/js/plugins/jquery.filtr.min.js");
+    ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
     $form = new Form();
 
@@ -218,7 +220,7 @@ class TeamController extends ControllerBase
   public function DepartmentsAction()
   {
     $this->assets
-    ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")    
+    ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
@@ -548,7 +550,7 @@ class TeamController extends ControllerBase
       {
         $assign->delete();
       }
-      foreach (Tasks::findByAssinged($member->_) as $task)
+      foreach (Tasks::findByAssigned($member->_) as $task)
       {
         $task->assigned = $this->request->getPost("select");
         $task->save();

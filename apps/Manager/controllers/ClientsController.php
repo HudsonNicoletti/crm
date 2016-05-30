@@ -14,8 +14,20 @@ use Phalcon\Forms\Form,
 
 class ClientsController extends ControllerBase
 {
+    private  $flags = [
+      'status'    => true,
+      'title'     => false,
+      'text'      => false,
+      'redirect'  => false,
+      'time'      => null
+    ];
+
     public function IndexAction()
     {
+      $this->assets
+      ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
       $clients = Clients::query()
       ->columns([
@@ -43,157 +55,165 @@ class ClientsController extends ControllerBase
 
     public function CreateAction()
     {
+      $this->assets
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+
       $form = new Form();
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken()
+      ]));
 
-          $form->add(new Hidden( "security" ,[
-              'name'  => $this->security->getTokenKey(),
-              'value' => $this->security->getToken()
-          ]));
+      $form->add(new Text( "firstName" ,[
+        'class'         => "form-control",
+        'id'            => "firstName",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "firstName" ,[
-              'class'         => "form-control",
-              'id'            => "firstName",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "lastName" ,[
+        'class'         => "form-control",
+        'id'            => "lastName",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "lastName" ,[
-              'class'         => "form-control",
-              'id'            => "lastName",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "document" ,[
+        'class'         => "form-control",
+        'id'            => "document",
+      ]));
 
-          $form->add(new Text( "document" ,[
-              'class'         => "form-control",
-              'id'            => "document",
-          ]));
+      $form->add(new Text( "registration" ,[
+        'class'         => "form-control",
+        'id'            => "registration",
+      ]));
 
-          $form->add(new Text( "registration" ,[
-              'class'         => "form-control",
-              'id'            => "registration",
-          ]));
+      $form->add(new Text( "company" ,[
+        'class'         => "form-control",
+        'id'            => "company",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "company" ,[
-              'class'         => "form-control",
-              'id'            => "company",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "fantasy" ,[
+        'class'         => "form-control",
+        'id'            => "fantasy",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "fantasy" ,[
-              'class'         => "form-control",
-              'id'            => "fantasy",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "role" ,[
+        'class'         => "form-control",
+        'id'            => "role",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "role" ,[
-              'class'         => "form-control",
-              'id'            => "role",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "email" ,[
+        'class'         => "form-control",
+        'id'            => "email",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'data-email'    => "* E-Mail Inválido",
+      ]));
 
-          $form->add(new Text( "email" ,[
-              'class'         => "form-control",
-              'id'            => "email",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-              'data-email'    => "* E-Mail Inválido",
-          ]));
+      $form->add(new Text( "phone" ,[
+        'class'         => "form-control",
+        'id'            => "phone",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "phone" ,[
-              'class'         => "form-control",
-              'id'            => "phone",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "cellphone" ,[
+        'class'         => "form-control",
+        'id'            => "cellphone",
+      ]));
 
-          $form->add(new Text( "cellphone" ,[
-              'class'         => "form-control",
-              'id'            => "cellphone",
-          ]));
+      $form->add(new Text( "domain" ,[
+        'class'         => "form-control",
+        'id'            => "domain",
+      ]));
 
-          $form->add(new Text( "domain" ,[
-              'class'         => "form-control",
-              'id'            => "domain",
-          ]));
+      $form->add(new Text( "address" ,[
+        'class'         => "form-control",
+        'id'            => "address",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "address" ,[
-              'class'         => "form-control",
-              'id'            => "address",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "district" ,[
+        'class'         => "form-control",
+        'id'            => "district",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "district" ,[
-              'class'         => "form-control",
-              'id'            => "district",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "zip" ,[
+        'class'         => "form-control",
+        'id'            => "zip",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "zip" ,[
-              'class'         => "form-control",
-              'id'            => "zip",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "city" ,[
+        'class'         => "form-control",
+        'id'            => "city",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "city" ,[
-              'class'         => "form-control",
-              'id'            => "city",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "state" ,[
+        'class'         => "form-control",
+        'id'            => "state",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "state" ,[
-              'class'         => "form-control",
-              'id'            => "state",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "username" ,[
+        'class'         => "form-control",
+        'id'            => "username",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Text( "username" ,[
-              'class'         => "form-control",
-              'id'            => "username",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Password( "password" ,[
+        'class'         => "form-control",
+        'id'            => "password",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
 
-          $form->add(new Password( "password" ,[
-              'class'         => "form-control",
-              'id'            => "password",
-              'data-validate' => true,
-              'data-empty'    => "* Campo Obrigatório",
-          ]));
+      $form->add(new Text( "contact_name[]" ,[
+        'class'         => "form-control",
+      ]));
 
-          $form->add(new Text( "contact_name[]" ,[
-              'class'         => "form-control",
-          ]));
+      $form->add(new Text( "contact_phone[]" ,[
+        'class'         => "form-control",
+      ]));
 
-          $form->add(new Text( "contact_phone[]" ,[
-              'class'         => "form-control",
-          ]));
+      $form->add(new Text( "contact_cellphone[]" ,[
+        'class'         => "form-control",
+      ]));
 
-          $form->add(new Text( "contact_cellphone[]" ,[
-              'class'         => "form-control",
-          ]));
+      $form->add(new Text( "contact_email[]" ,[
+        'class'         => "form-control",
+      ]));
 
-          $form->add(new Text( "contact_email[]" ,[
-              'class'         => "form-control",
-          ]));
-
-          $form->add(new Text( "contact_area[]" ,[
-              'class'         => "form-control",
-          ]));
+      $form->add(new Text( "contact_area[]" ,[
+        'class'         => "form-control",
+      ]));
 
       $this->view->form = $form;
     }
 
     public function ModifyAction()
     {
+
+      $this->assets
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+
       $urlrequest = $this->dispatcher->getParam('urlrequest');
 
       $client = Clients::query()
@@ -393,36 +413,36 @@ class ClientsController extends ControllerBase
       ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
       if(!$this->isEmail($this->request->getPost("email"))):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Endereço de E-Mail inválido!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Endereço de E-Mail inválido!";
       endif;
 
       if( Users::findFirstByEmail($this->request->getPost("email"))->_ != NULL ):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Endereço de E-Mail já cadastrado!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Endereço de E-Mail já cadastrado!";
       endif;
 
       if( Users::findFirstByUsername($this->request->getPost("username"))->_ != NULL ):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Nome de usuário já cadastrado!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Nome de usuário já cadastrado!";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
         $user = new Users;
@@ -486,16 +506,18 @@ class ClientsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->create,"Cadastrou um novo cliente ({$name}).");
 
-        $flags['status'] = true ;
-        $flags['title']  = "Cadastrado com Sucesso!!";
-        $flags['text']   = "Cliente Cadastrado com sucesso!";
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Cadastrado com Sucesso!!";
+        $this->flags['text']   = "Cliente Cadastrado com sucesso!";
+        $this->flags['redirect']   = "/clients";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status" => $flags['status'] ,
-        "title"  => $flags['title'] ,
-        "text"   => $flags['text']
+        "status" => $this->flags['status'] ,
+        "title"  => $this->flags['title'] ,
+        "text"   => $this->flags['text']
       ]);
 
       $this->response->send();
@@ -505,47 +527,42 @@ class ClientsController extends ControllerBase
     public function UpdateAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'  => true,
-        'title'   => false,
-        'text'    => false
-      ];
 
       $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
       $company = Companies::findFirstByClient($c->_);
       $u = Users::findFirst($c->user);
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
       if(!$this->isEmail($this->request->getPost("email"))):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Endereço de E-Mail inválido!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Endereço de E-Mail inválido!";
       endif;
 
       if( $this->request->getPost("email") != $u->email && Users::findFirstByEmail($this->request->getPost("email"))->_ != NULL ):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Endereço de E-Mail já cadastrado!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Endereço de E-Mail já cadastrado!";
       endif;
 
       if( $this->request->getPost("username") != $u->username && Users::findFirstByusername($this->request->getPost("username"))->_ != NULL ):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Nome de usuário já cadastrado!";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Nome de usuário já cadastrado!";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
         $this->response->setStatusCode(200,"OK");
 
           $u->username   = $this->request->getPost("username");
@@ -607,16 +624,18 @@ class ClientsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->update,"Alterou informações de um cliente ({$name}).");
 
-        $flags['status'] = true ;
-        $flags['title']  = "Alterado com Sucesso!!";
-        $flags['text']   = "Cliente Alterado com sucesso!";
+        $this->flags['status'] = true ;
+        $this->flags['title']  = "Alterado com Sucesso!!";
+        $this->flags['text']   = "Cliente Alterado com sucesso!";
+        $this->flags['redirect']   = "/clients";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status" => $flags['status'] ,
-        "title"  => $flags['title'] ,
-        "text"   => $flags['text']
+        "status" => $this->flags['status'] ,
+        "title"  => $this->flags['title'] ,
+        "text"   => $this->flags['text']
       ]);
 
       $this->response->send();
@@ -626,27 +645,20 @@ class ClientsController extends ControllerBase
     public function RemoveAction()
     {
       $this->response->setContentType("application/json");
-      $flags = [
-        'status'    => true,
-        'title'     => false,
-        'text'      => false,
-        'redirect'  => false,
-        'time'      => 0,
-      ];
 
       if(!$this->request->isPost()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Metodo Inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
       endif;
 
       if(!$this->security->checkToken()):
-        $flags['status'] = false ;
-        $flags['title']  = "Erro ao Cadastrar!";
-        $flags['text']   = "Token de segurança inválido.";
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
       endif;
 
-      if($flags['status']):
+      if($this->flags['status']):
 
         $c = Clients::findFirst($this->dispatcher->getParam("urlrequest"));
         $u = Users::findFirst($c->user);
@@ -668,19 +680,19 @@ class ClientsController extends ControllerBase
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu um cliente ({$n}).");
 
-        $flags['title']     = "Removido Com Sucesso!";
-        $flags['text']      = "Cliente Removido com Sucesso.";
-        $flags['redirect']  = "/clients";
-        $flags['time']      = 1000;
+        $this->flags['title']     = "Removido Com Sucesso!";
+        $this->flags['text']      = "Cliente Removido com Sucesso.";
+        $this->flags['redirect']  = "/clients";
+        $this->flags['time']      = 1000;
 
       endif;
 
       return $this->response->setJsonContent([
-        "status"    =>  $flags['status'],
-        "title"     =>  $flags['title'],
-        "text"      =>  $flags['text'],
-        "redirect"  =>  $flags['redirect'],
-        "time"      =>  $flags['time']
+        "status"    =>  $this->flags['status'],
+        "title"     =>  $this->flags['title'],
+        "text"      =>  $this->flags['text'],
+        "redirect"  =>  $this->flags['redirect'],
+        "time"      =>  $this->flags['time']
       ]);
 
       $this->response->send();
