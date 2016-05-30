@@ -152,9 +152,11 @@ $(function(){
   /********************************
   Filter
   ********************************/
-  $('[data-search]').filtr({
-    target : "[data-searchable]"
-  });
+  if( $.isFunction($.fn.filtr) ){
+    $('[data-search]').filtr({
+      target : "[data-searchable]"
+    });
+  }
   /********************************
   Filter
   ********************************/

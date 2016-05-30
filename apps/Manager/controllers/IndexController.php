@@ -40,13 +40,4 @@ class IndexController extends ControllerBase
       $this->view->clients  = Clients::find()->count();
 
     }
-
-    public function AuthAction()
-    {
-      if ($this->session->has("secure_id")):
-        return $this->response->redirect("/index");
-      else:
-        return $this->response->redirect("/login");
-      endif;
-    }
 }

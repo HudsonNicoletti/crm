@@ -11,29 +11,38 @@ use Phalcon\Forms\Form,
 
 class LoginController extends ControllerBase
 {
+    private $flags = [
+      "status"    =>  true,
+      "title"     =>  null,
+      "text"      =>  null,
+      "redirect"  =>  false,
+      "time"      =>  null,
+    ];
+
     public function IndexAction()
     {
-
-      if ($this->session->has("secure_id")): return $this->response->redirect("index"); endif;
+      $this->assets
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
       $form = new Form();
 
-          $form->add(new Hidden( "security" ,[
-              'name'  => $this->security->getTokenKey(),
-              'value' => $this->security->getToken()
-          ]));
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken()
+      ]));
 
-          $form->add(new Text( "username" ,[
-              'placeholder'  => "Usuário | E-Mail",
-              'class'        => "form-control",
-              'id'           => "username",
-          ]));
+      $form->add(new Text( "username" ,[
+        'placeholder'  => "Usuário | E-Mail",
+        'class'        => "form-control",
+        'id'           => "username",
+      ]));
 
-          $form->add(new Password( "password" ,[
-              'placeholder'  => "Senha",
-              'class'        => "form-control",
-              'id'           => "password",
-          ]));
+      $form->add(new Password( "password" ,[
+        'placeholder'  => "Senha",
+        'class'        => "form-control",
+        'id'           => "password",
+      ]));
 
       $this->view->form = $form;
     }
@@ -41,82 +50,71 @@ class LoginController extends ControllerBase
     public function AuthAction()
     {
 
-        $this->response->setContentType("application/json");
+      $this->response->setContentType("application/json");
 
-        if( $this->request->isPost() )
+      if(!$this->request->isPost()):
+        $this->flags['status']    = false ;
+        $this->flags['title']     = "Erro ao Cadastrar!";
+        $this->flags['text']      = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $this->flags['status']    = false ;
+        $this->flags['title']     = "Erro ao Cadastrar!";
+        $this->flags['text']      = "Token de segurança inválido.";
+      endif;
+
+      if( $this->flags['status'] )
+      {
+
+        $username = preg_replace('/\s+/', '', $this->request->getPost("username","string"));
+        $password = preg_replace('/\s+/', '', $this->request->getPost("password","string"));
+
+        ( $this->isEmail( $username ) == false ) ? $user = Users::findFirstByUsername($username) : $user = Users::findFirstByEmail($username);
+
+        #   check if user permission level is between team & dev values
+        if($user->_ != NULL && in_array( $user->permission , range( $this->permissions->client, $this->permissions->dev )) === true )
         {
-            if ($this->security->checkToken()):
-                $this->response->setStatusCode(200,"OK");
+          if(password_verify( $password , $user->password ) == true)
+          {
+              $this->session->set("secure_id", $user->_);
 
-                $username = preg_replace('/\s+/', '', $this->request->getPost("username","string"));
-                $password = preg_replace('/\s+/', '', $this->request->getPost("password","string"));
-
-                ( $this->isEmail( $username ) == false ) ? $user = Users::findFirstByUsername($username) : $user = Users::findFirstByEmail($username);
-
-                #   check if user permission level is between team & dev values
-                if($user->_ != NULL && in_array( $user->permission , range( $this->permissions->client, $this->permissions->dev )) === true )
-                {
-                    if(password_verify( $password , $user->password ) == true){
-
-                        $this->session->set("secure_id", $user->_);
-                        return $this->response->setJsonContent([
-                            "status"    => true,
-                            "redirect"  => '/',
-                            "time"      => 0
-                        ]);
-
-                    }
-                    else{
-
-                        return $this->response->setJsonContent([
-                            "status"  =>    false ,
-                            "message" =>    "Unauthorized, Invalid passowrd.",
-                            "title"   =>    "Erro ao Acessar Painel!",
-                            "text"    =>    "Senha Fornecida Inválida !"
-                        ]);
-
-                    }
-                }
-                else
-                {
-                    return $this->response->setJsonContent([
-                        "status"  =>    false ,
-                        "message" =>    "",
-                        "title"   =>    "Erro ao Acessar Painel!",
-                        "text"    =>    "Você não tem permissão para acessar esta área ou seu nome de usuário está incorreto!"
-                    ]);
-                }
-
-            else:
-                $this->response->setStatusCode(401,"Unauthorized");
-                 return $this->response->setJsonContent([
-                    "status"  =>    false ,
-                    "message" =>    "Unauthorized , CSRF Token or Key invalid.",
-                    "title"   =>    "Erro ao remover a postagem!",
-                    "text"    =>    "Ocorreu um erro durante a operação."
-                ]);
-            endif;
+              $this->flags['title']     = "Bem Vindo(a)!";
+              $this->flags['text']      = "";
+              $this->flags['redirect']  = "/";
+              $this->flags['time']      = 800;
+          }
+          else
+          {
+            $this->flags['title']     = "Erro ao Acessar Painel!";
+            $this->flags['text']      = "Senha Fornecida Inválida !";
+          }
         }
         else
         {
-            $this->response->setStatusCode(403,"Forbidden");
-            return $this->response->setJsonContent([
-                "status"  =>    false ,
-                "message" =>    "Request method must be valid."
-            ]);
+          $this->flags['status']    = false;
+          $this->flags['title']     = "Erro ao Acessar Painel!";
+          $this->flags['text']      = "Você não tem permissão para acessar esta área ou seu nome de usuário está incorreto!";
         }
+      }
 
-        $this->response->send();
-        $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+      return $this->response->setJsonContent([
+          "status"    =>  $this->flags['status'],
+          "title"     =>  $this->flags['title'],
+          "text"      =>  $this->flags['text'],
+          "redirect"  =>  $this->flags['redirect'],
+          "time"      =>  $this->flags['time']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
 
     }
 
     public function LogoutAction()
     {
-
-        $this->session->destroy();
-        return $this->response->redirect();
-
+      $this->session->destroy();
+      return $this->response->redirect();
     }
 
 

@@ -6,7 +6,6 @@ $router->add("/", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'index',
-    'action'     => 'auth',
 ]);
 
 $router->add("/:controller", [

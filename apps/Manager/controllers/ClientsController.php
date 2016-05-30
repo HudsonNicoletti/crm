@@ -33,8 +33,8 @@ class ClientsController extends ControllerBase
       $form = new Form();
 
         $form->add(new Hidden( "security" ,[
-            'name'  => $this->security->getTokenKey(),
-            'value' => $this->security->getToken(),
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
         ]));
 
       $this->view->form = $form;
