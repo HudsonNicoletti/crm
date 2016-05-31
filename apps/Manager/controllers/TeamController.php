@@ -118,16 +118,6 @@ class TeamController extends ControllerBase
       'data-empty'    => "* Campo Obrigatório",
     ]));
 
-    $form->add(new Select("permission",[
-      $this->permissions->team  => "Equipe",
-      $this->permissions->admin => "Administrador",
-    ],
-    [
-      'class'         => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
     $form->add(new File("image",[
       'class' => "form-control",
       'data-validate' => true,
@@ -196,17 +186,6 @@ class TeamController extends ControllerBase
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $member->department_id
-    ]));
-
-    $form->add(new Select("permission",[
-      $this->permissions->team  => "Equipe",
-      $this->permissions->admin => "Administrador",
-    ],
-    [
-      'class'         => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $user->permission
     ]));
 
     $form->add(new File("image",[
@@ -299,7 +278,7 @@ class TeamController extends ControllerBase
         $user->username   = $this->request->getPost("username");
         $user->password   = password_hash($this->request->getPost("password"), PASSWORD_BCRYPT );
         $user->email      = $this->request->getPost("email");
-        $user->permission = $this->request->getPost("permission");
+        $user->permission = $this->permissions->team;
       if($user->save())
       {
         $member = new Team;
@@ -318,7 +297,7 @@ class TeamController extends ControllerBase
       $this->flags['title']  = "Cadastrado com Sucesso!";
       $this->flags['text']   = "Membro cadastrado com sucesso!";
       $this->flags['redirect']   = "/team";
-      $this->flags['text']   = 1200;
+      $this->flags['time']   = 1200;
 
     endif;
 
@@ -326,6 +305,8 @@ class TeamController extends ControllerBase
       "status"    =>  $this->flags['status'],
       "title"     =>  $this->flags['title'],
       "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'],
     ]);
 
     $this->response->send();
@@ -438,7 +419,7 @@ class TeamController extends ControllerBase
         $u->username   = $this->request->getPost("username");
         $u->password   = ($this->request->getPost("password") != null ) ? password_hash($this->request->getPost("password"), PASSWORD_BCRYPT ) : $u->password;
         $u->email      = $this->request->getPost("email");
-        $u->permission = $this->request->getPost("permission");
+        $u->permission = $this->permissions->team;
         $u->save();
 
         $m->name          = $this->request->getPost("name");
@@ -453,7 +434,7 @@ class TeamController extends ControllerBase
       $this->flags['title']  = "Alterado com Sucesso!";
       $this->flags['text']   = "Informaçoes alteradas com sucesso!";
       $this->flags['redirect']   = "/team";
-      $this->flags['text']   = 1200;
+      $this->flags['time']   = 1200;
 
     endif;
 
@@ -461,6 +442,8 @@ class TeamController extends ControllerBase
       "status"    =>  $this->flags['status'],
       "title"     =>  $this->flags['title'],
       "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'],
     ]);
 
     $this->response->send();
