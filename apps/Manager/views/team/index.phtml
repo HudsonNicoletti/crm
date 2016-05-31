@@ -12,59 +12,65 @@
         <p id="desc"></p>
       </div>
     </div>
+  </div>
 
-    <div class="col-md-12">
-      <div class="btn-group btn-group-justified">
-        <a role="button" class="btn btn-primary" href="/team/" >Membros Cadastrados</a>
-        <a role="button" class="btn btn-default" href="/team/create" >Cadastrar Novo Membro</a>
-        <a role="button" class="btn btn-default" href="/team/departments" >Departamentos</a>
-      </div><br>
-    </div>
-    <div class="col-md-12">
+  <div class="row">
+    <div class="col-md-2">
       <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+      <hr class="sm">
+      <div class="panel panel-default">
+        <div class="panel-heading clean">Navegação</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <a href="/team" class="list-group-item on">Membros Cadastrados</a>
+            <a href="/team/create" class="list-group-item">Cadastrar Novo Membro</a>
+            <a href="/team/departments" class="list-group-item">Departamentos</a>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <div class="col-md-10">
+      <div class="panel panel-default">
+
+        <table class="table table-striped no-margn">
+            <thead>
+              <tr>
+                <th class="avtar"></th>
+                <th>Nome Completo</th>
+                <th>Departamento</th>
+                <th>Email</th>
+                <th>Telefone</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($members as $member): ?>
+                <tr data-searchable >
+                    <td><img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" /</td>
+                    <td><?php echo $member->name; ?></td>
+                    <td><?php echo $member->department; ?></td>
+                    <td><?php echo $member->email; ?></td>
+                    <td><?php echo $member->phone; ?></td>
+                    <td>
+                      <a href="/team/modify/<?php echo $member->_ ;?>">
+                        <button type="button" class="btn btn-info">
+                          <span class="fa fa-pencil"></span>
+                        </button>
+                      </a>
+                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm" data-form-action="/team/remove/<?php echo $member->uid ;?>">
+                        <span class="fa fa-close"></span>
+                      </button>
+                    </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+
+      </div>
+    </div>
+
   </div>
-
-  <hr class="dotted">
-
-  <div class="panel panel-default">
-
-    <table class="table table-striped no-margn">
-        <thead>
-          <tr>
-            <th class="avtar"></th>
-            <th>Nome Completo</th>
-            <th>Departamento</th>
-            <th>Email</th>
-            <th>Telefone</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($members as $member): ?>
-            <tr data-searchable >
-                <td><img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" /</td>
-                <td><?php echo $member->name; ?></td>
-                <td><?php echo $member->department; ?></td>
-                <td><?php echo $member->email; ?></td>
-                <td><?php echo $member->phone; ?></td>
-                <td>
-                  <a href="/team/modify/<?php echo $member->_ ;?>">
-                    <button type="button" class="btn btn-info">
-                      <span class="fa fa-pencil"></span>
-                    </button>
-                  </a>
-                  <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm" data-form-action="/team/remove/<?php echo $member->uid ;?>">
-                    <span class="fa fa-close"></span>
-                  </button>
-                </td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
-
-  </div>
-
 </div>
 
 <!-- confirm -->

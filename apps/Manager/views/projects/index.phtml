@@ -11,76 +11,84 @@
         <p id="desc"></p>
       </div>
     </div>
-    <div class="col-md-12">
-      <div class="btn-group btn-group-justified">
-        <a role="button" class="btn btn-primary" href="/projects/" >Projetos Cadastrados</a>
-        <a role="button" class="btn btn-default" href="/projects/create" >Cadastrar Novo Projeto</a>
-      </div><br>
-    </div>
-    <div class="col-md-9 col-sm-12">
-      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search ><br>
-    </div>
-    <div class="col-md-3 col-sm-12">
+  </div>
+
+  <div class="row">
+    <div class="col-md-2">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+      <hr class="sm">
       <div class="btn-group btn-group-justified">
         <a role="button" class="btn btn-warning" data-filter="1" >Abertos</a>
         <a role="button" class="btn btn-warning" data-filter="2" >Concluídos</a>
-        <a role="button" class="btn btn-warning" data-filter="3" >Cancelados</a>
+        <!-- <a role="button" class="btn btn-warning" data-filter="3" >Cancelados</a> -->
+      </div>
+      <hr class="sm">
+      <div class="panel panel-default">
+        <div class="panel-heading clean">Navegação</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <a href="/projects" class="list-group-item on">Projetos Cadastrados</a>
+            <a href="/projects/create" class="list-group-item">Cadastrar Projeto</a>
+          </div>
+        </div>
       </div>
     </div>
-  </div>
 
-  <hr class="dotted">
+    <div class="col-md-10">
 
-  <div class="panel panel-default">
-    <table class="table table-striped no-margn">
-        <thead>
-          <tr>
-            <th width="25%">Projeto</th>
-            <th>Categoria</th>
-            <th>Cliente</th>
-            <th>Deadline</th>
-            <th>Processo</th>
-            <th>Status</th>
-            <th><i class="fa fa-gears"></i></th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach($projects as $project): ?>
-            <tr data-searchable data-filter-index="<?php echo $project->status; ?>" >
-                <td><?php echo $project->title; ?></td>
-                <td><span class="label label-primary"><?php echo $project->type; ?></span></td>
-                <td><?php echo ($project->fantasy ? $project->fantasy : "{$project->firstname} {$project->lastname}"); ?></td>
-                <td>
-                  <?php $label = ((new \DateTime("now")) > (new \DateTime($project->deadline)) ? "label-danger" : "label-primary"); ?>
-                  <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($project->deadline))->format("d-m-Y"); ?></span>
-                </td>
-                <td>
-                  <div class="progress">
-                    <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($project->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($project->_); ?>%;">
-                      <?php echo $controller->TaskPercentage($project->_); ?>% Completo
-                    </div>
-                  </div>
-                </td>
-                <td><?php echo $controller->ProjectStatus($project->status); ?>
-                </td>
-                <td>
-                  <form method="post" class="validator-form" action="/projects/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
-                    <a href="/project/overview/<?php echo $project->_; ?>">
-                      <button type="button" class="btn btn-info">
-                        <span class="fa fa-pencil"></span>
-                      </button>
-                    </a>
-                    <?php echo $form->render("security"); ?>
-                    <button type="submit" class="btn btn-danger">
-                      <span class="fa fa-close"></span>
-                    </button>
-                  </form>
-                </td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
 
+      <div class="panel panel-default">
+        <table class="table table-striped no-margn">
+            <thead>
+              <tr>
+                <th width="25%">Projeto</th>
+                <th>Categoria</th>
+                <th>Cliente</th>
+                <th>Deadline</th>
+                <th>Processo</th>
+                <th>Status</th>
+                <th><i class="fa fa-gears"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($projects as $project): ?>
+                <tr data-searchable data-filter-index="<?php echo $project->status; ?>" >
+                    <td><?php echo $project->title; ?></td>
+                    <td><span class="label label-primary"><?php echo $project->type; ?></span></td>
+                    <td><?php echo ($project->fantasy ? $project->fantasy : "{$project->firstname} {$project->lastname}"); ?></td>
+                    <td>
+                      <?php $label = ((new \DateTime("now")) > (new \DateTime($project->deadline)) ? "label-danger" : "label-primary"); ?>
+                      <span class="label <?php echo $label; ?>"><?php echo (new \DateTime($project->deadline))->format("d-m-Y"); ?></span>
+                    </td>
+                    <td>
+                      <div class="progress">
+                        <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="<?php echo $controller->TaskPercentage($project->_); ?>" aria-valuemin="0" aria-valuemax="100" style="width: <?php echo $controller->TaskPercentage($project->_); ?>%;">
+                          <?php echo $controller->TaskPercentage($project->_); ?>% Completo
+                        </div>
+                      </div>
+                    </td>
+                    <td><?php echo $controller->ProjectStatus($project->status); ?>
+                    </td>
+                    <td>
+                      <form method="post" class="validator-form" action="/projects/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
+                        <a href="/project/overview/<?php echo $project->_; ?>">
+                          <button type="button" class="btn btn-info">
+                            <span class="fa fa-pencil"></span>
+                          </button>
+                        </a>
+                        <?php echo $form->render("security"); ?>
+                        <button type="submit" class="btn btn-danger">
+                          <span class="fa fa-close"></span>
+                        </button>
+                      </form>
+                    </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+
+      </div>
+    </div>
   </div>
 
 </div>

@@ -34,6 +34,7 @@ class ProjectsController extends ControllerBase
     public function IndexAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
@@ -60,10 +61,10 @@ class ProjectsController extends ControllerBase
 
       $form = new Form();
 
-        $form->add(new Hidden( "security" ,[
-            'name'  => $this->security->getTokenKey(),
-            'value' => $this->security->getToken(),
-        ]));
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+      ]));
 
       $this->view->form = $form;
       $this->view->projects   = $projects;
@@ -94,6 +95,7 @@ class ProjectsController extends ControllerBase
     public function CreateAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
@@ -168,6 +170,7 @@ class ProjectsController extends ControllerBase
     public function OverviewAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addCss("assets/manager/css/app/timeline.css")
       ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
@@ -257,6 +260,7 @@ class ProjectsController extends ControllerBase
     public function TasksAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
       ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
       ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
@@ -346,6 +350,7 @@ class ProjectsController extends ControllerBase
     public function SettingsAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")

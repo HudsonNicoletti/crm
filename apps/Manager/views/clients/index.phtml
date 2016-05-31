@@ -12,59 +12,66 @@
         <p id="desc"></p>
       </div>
     </div>
-    <div class="col-md-12">
-      <div class="btn-group btn-group-justified">
-        <a role="button" class="btn btn-primary" href="/clients/" >Clientes Cadastrados</a>
-        <a role="button" class="btn btn-default" href="/clients/create" >Cadastrar Novo Cliente</a>
-      </div><br>
-    </div>
-    <div class="col-md-12">
-      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
-    </div>
   </div>
 
-  <hr class="dotted">
+  <div class="row">
+    <div class="col-md-2">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+      <hr class="sm">
+      <div class="panel panel-default">
+        <div class="panel-heading clean">Navegação</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <a href="/clients" class="list-group-item on">Clientes Cadastrados</a>
+            <a href="/clients/create" class="list-group-item">Cadastrar Cliente</a>
+          </div>
+        </div>
+      </div>
+    </div>
 
-  <div class="panel panel-default">
-    <table class="table table-striped no-margn">
-        <thead>
-          <tr>
-            <th>Responsável</th>
-            <th>N &deg; Documento</th>
-            <th>Domínio</th>
-            <th>Telefone</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          <?php foreach ($clients as $client): ?>
-            <tr data-searchable >
-                <td>
-                  <?php echo "{$client->firstname} {$client->lastname}"; if($client->fantasy): ?>
-                    <br><span class="label label-primary bigger-text"><?php echo $client->fantasy ;?></span>
-                  <?php endif; ?>
-                </td>
-                <td><?php echo $client->document; ?></td>
-                <td><?php echo $client->domain; ?></td>
-                <td><?php echo $client->phone; ?></td>
-                <td>
-                  <form method="post" class="validator-form" action="/clients/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
-                    <a href="/clients/modify/<?php echo $client->_ ;?>">
-                      <button type="button" class="btn btn-info">
-                        <span class="fa fa-pencil"></span>
-                      </button>
-                    </a>
-                    <?php echo $form->render("security"); ?>
-                    <button type="submit" class="btn btn-danger">
-                      <span class="fa fa-close"></span>
-                    </button>
-                  </form>
-                </td>
-            </tr>
-          <?php endforeach; ?>
-        </tbody>
-      </table>
+    <div class="col-md-10">
+      <div class="panel panel-default">
+        <table class="table table-striped no-margn">
+            <thead>
+              <tr>
+                <th>Responsável</th>
+                <th>N &deg; Documento</th>
+                <th>Domínio</th>
+                <th>Telefone</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($clients as $client): ?>
+                <tr data-searchable >
+                    <td>
+                      <?php echo "{$client->firstname} {$client->lastname}"; if($client->fantasy): ?>
+                        <br><span class="label label-primary bigger-text"><?php echo $client->fantasy ;?></span>
+                      <?php endif; ?>
+                    </td>
+                    <td><?php echo $client->document; ?></td>
+                    <td><?php echo $client->domain; ?></td>
+                    <td><?php echo $client->phone; ?></td>
+                    <td>
+                      <form method="post" class="validator-form" action="/clients/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
+                        <a href="/clients/modify/<?php echo $client->_ ;?>">
+                          <button type="button" class="btn btn-info">
+                            <span class="fa fa-pencil"></span>
+                          </button>
+                        </a>
+                        <?php echo $form->render("security"); ?>
+                        <button type="submit" class="btn btn-danger">
+                          <span class="fa fa-close"></span>
+                        </button>
+                      </form>
+                    </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
 
+      </div>
+    </div>
   </div>
 
 </div>

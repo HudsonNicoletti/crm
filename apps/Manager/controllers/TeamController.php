@@ -30,6 +30,7 @@ class TeamController extends ControllerBase
   public function IndexAction()
   {
     $this->assets
+    ->addCss("assets/manager/css/app/email.css")
     ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
@@ -67,6 +68,7 @@ class TeamController extends ControllerBase
   public function CreateAction()
   {
     $this->assets
+    ->addCss("assets/manager/css/app/email.css")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
@@ -130,6 +132,7 @@ class TeamController extends ControllerBase
   public function ModifyAction()
   {
     $this->assets
+    ->addCss("assets/manager/css/app/email.css")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
@@ -199,6 +202,7 @@ class TeamController extends ControllerBase
   public function DepartmentsAction()
   {
     $this->assets
+    ->addCss("assets/manager/css/app/email.css")
     ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");

@@ -14,117 +14,127 @@
       </div>
     </div>
 
-    <div class="panel-body">
-
-      <div class="btn-group btn-group-justified">
-        <a role="button" class="btn btn-default" href="/projects/" >Projetos Cadastrados</a>
-        <a role="button" class="btn btn-primary" href="/project/overview/<?php echo $project->_; ?>" >Visão Geral</a>
-        <a role="button" class="btn btn-default" href="/project/tasks/<?php echo $project->_; ?>" >Tarefas</a>
-        <a role="button" class="btn btn-default" href="/project/settings/<?php echo $project->_; ?>" >Configurações</a>
-        <a role="button" class="btn btn-default" href="/project/feedback/<?php echo $project->_; ?>" >Feedback</a>
-        <a role="button" class="btn btn-default" href="/project/invoices/<?php echo $project->_; ?>" >Faturas</a>
-      </div>
-      <br>
-
-      <div class="row">
-        <div class="col-lg-6 col-md-12">
-          <div class="row">
-
-            <div class="col-lg-6 col-md-6">
-            	<div class="panel panel-info">
-                  <div class="panel-body">
-                    <strong>Criado:</strong> <?php echo (new \DateTime($project->created))->format("d-m-Y"); ?>
-                    <hr>
-                    <strong>Deadline:</strong> <?php echo (new \DateTime($project->deadline))->format("d-m-Y"); ?>
-                    <hr>
-                    <strong>Concluído:</strong> <?php echo ($project->finished != null ? (new \DateTime($project->finished))->format("d-m-Y") : "n/a"); ?>
-                    <hr>
-                    <strong>Cliente:</strong> <?php echo "{$project->firstname} {$project->lastname}".($project->fantasy ? " ( {$project->fantasy} ) " : ""); ?>
-                  </div>
-                </div>
+    <div class="row">
+      <div class="col-sm-2">
+        <div class="panel panel-default">
+          <div class="panel-heading clean">Navegação</div>
+          <div class="panel-body no-padd">
+            <div class="list-group no-margn mail-nav">
+              <a href="/projects" class="list-group-item">Projetos Cadastrados</a>
+              <a href="/project/overview/<?php echo $project->_; ?>" class="list-group-item on">Visão Geral</a>
+              <a href="/project/tasks/<?php echo $project->_; ?>"    class="list-group-item">Tarefas</a>
+              <a href="/project/settings/<?php echo $project->_; ?>" class="list-group-item">Configurações</a>
+              <a href="/project/feedback/<?php echo $project->_; ?>" class="list-group-item">Feedback</a>
+              <a href="/project/invoices/<?php echo $project->_; ?>" class="list-group-item">Faturas</a>
             </div>
-
-            <div class="col-lg-6 col-md-6">
-              <div data-chart="/project/chart/<?php echo $project->_; ?>" style="height:250px;"></div>
-            </div>
-
-            <?php if($project->description): ?>
-            <div class="col-lg-12 col-md-12">
-              <div class="panel panel-default">
-                <div class="panel-heading">Descrição</div>
-                <div class="panel-body">
-                  <?php echo $project->description; ?>
-                </div>
-              </div>
-            </div>
-            <?php endif; ?>
-
-            <div class="col-lg-12 col-md-12">
-              <div class="panel panel-default">
-                <div class="panel-heading space-between">
-                  Membros do Projeto
-                  <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add" >
-                    <span class="fa fa-plus"></span> Adicionar Membro
-                  </button>
-                </div>
-                  <table class="table table-striped no-margn">
-                    <tbody>
-                      <?php foreach ($members as $member): ?>
-                        <tr>
-                          <td class="avtar">
-                            <img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" />
-                          </td>
-                          <td>
-                            <?php echo $member->name; ?><br>
-                            <span class="label label-default"><?php echo $member->department; ?></span>
-                          </td>
-                          <td>
-                            <form method="post" class="validator-form" action="/project/member/remove/<?php echo "{$project->_}/{$member->uid}" ;?>" novalidate="novalidate">
-                              <?php echo $form->render("security"); ?>
-                              <button type="submit" class="btn btn-danger pull-right">
-                                <span class="fa fa-close"></span>
-                              </button>
-                            </form>
-                          </td>
-                        </tr>
-                      <?php endforeach; ?>
-                    </tbody>
-                  </table>
-              </div>
-            </div>
-
           </div>
         </div>
-        <div class="col-lg-6 col-md-12 panel panel-default activities-list nicescroll" style="min-height: 653px">
-            <ul class="timeline list-unstyled">
-              <?php
-                foreach($logs as $log):
-                  switch ($log->action) {
-                    case $this->logs->create : $cl = "success"; $icon = "check";       $action = "Criação";     break;
-                    case $this->logs->update : $cl = "primary"; $icon = "retweet";     $action = "Alteração";   break;
-                    case $this->logs->delete : $cl = "danger";  $icon = "trash";       $action = "Remoção";     break;
-                    case $this->logs->info   : $cl = "info";    $icon = "info-circle"; $action = "Informação";  break;
-                  }
-              ?>
-              <li class="clearfix">
-                  <time class="tl-time">
-                      <h3 class="text-<?php echo $cl; ?>"><?php echo $action ?></h3>
-                      <p><?php echo (new \DateTime($log->date))->format("d-m-Y \a\s H:i"); ?></p>
-                    </time>
-                    <i class="fa fa-<?php echo $icon; ?> bg-<?php echo $cl; ?> tl-icon text-white"></i>
-                    <div class="tl-content">
-                      <div class="panel panel-<?php echo $cl; ?>">
-                            <div class="panel-body">
-                              <?php echo $log->description; ?>
-                            </div>
-                        </div>
-                    </div>
-                </li>
-                <?php endforeach; ?>
-            </ul>
-        </div>
       </div>
 
+      <div class="col-md-10">
+        <div class="panel-body">
+
+          <div class="row">
+            <div class="col-lg-6 col-md-12">
+              <div class="row">
+
+                <div class="col-lg-6 col-md-6">
+                  <div class="panel panel-info">
+                      <div class="panel-body">
+                        <strong>Criado:</strong> <?php echo (new \DateTime($project->created))->format("d-m-Y"); ?>
+                        <hr>
+                        <strong>Deadline:</strong> <?php echo (new \DateTime($project->deadline))->format("d-m-Y"); ?>
+                        <hr>
+                        <strong>Concluído:</strong> <?php echo ($project->finished != null ? (new \DateTime($project->finished))->format("d-m-Y") : "n/a"); ?>
+                        <hr>
+                        <strong>Cliente:</strong> <?php echo "{$project->firstname} {$project->lastname}".($project->fantasy ? " ( {$project->fantasy} ) " : ""); ?>
+                      </div>
+                    </div>
+                </div>
+
+                <div class="col-lg-6 col-md-6">
+                  <div data-chart="/project/chart/<?php echo $project->_; ?>" style="height:250px;"></div>
+                </div>
+
+                <?php if($project->description): ?>
+                <div class="col-lg-12 col-md-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading">Descrição</div>
+                    <div class="panel-body">
+                      <?php echo $project->description; ?>
+                    </div>
+                  </div>
+                </div>
+                <?php endif; ?>
+
+                <div class="col-lg-12 col-md-12">
+                  <div class="panel panel-default">
+                    <div class="panel-heading space-between">
+                      Membros do Projeto
+                      <button type="button" class="btn btn-default btn-sm" data-toggle="modal" data-target="#add" >
+                        <span class="fa fa-plus"></span> Adicionar Membro
+                      </button>
+                    </div>
+                      <table class="table table-striped no-margn">
+                        <tbody>
+                          <?php foreach ($members as $member): ?>
+                            <tr>
+                              <td class="avtar">
+                                <img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" />
+                              </td>
+                              <td>
+                                <?php echo $member->name; ?><br>
+                                <span class="label label-default"><?php echo $member->department; ?></span>
+                              </td>
+                              <td>
+                                <form method="post" class="validator-form" action="/project/member/remove/<?php echo "{$project->_}/{$member->uid}" ;?>" novalidate="novalidate">
+                                  <?php echo $form->render("security"); ?>
+                                  <button type="submit" class="btn btn-danger pull-right">
+                                    <span class="fa fa-close"></span>
+                                  </button>
+                                </form>
+                              </td>
+                            </tr>
+                          <?php endforeach; ?>
+                        </tbody>
+                      </table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            <div class="col-lg-6 col-md-12 panel panel-default activities-list nicescroll" style="min-height: 653px">
+                <ul class="timeline list-unstyled">
+                  <?php
+                    foreach($logs as $log):
+                      switch ($log->action) {
+                        case $this->logs->create : $cl = "success"; $icon = "check";       $action = "Criação";     break;
+                        case $this->logs->update : $cl = "primary"; $icon = "retweet";     $action = "Alteração";   break;
+                        case $this->logs->delete : $cl = "danger";  $icon = "trash";       $action = "Remoção";     break;
+                        case $this->logs->info   : $cl = "info";    $icon = "info-circle"; $action = "Informação";  break;
+                      }
+                  ?>
+                  <li class="clearfix">
+                      <time class="tl-time">
+                          <h3 class="text-<?php echo $cl; ?>"><?php echo $action ?></h3>
+                          <p><?php echo (new \DateTime($log->date))->format("d-m-Y \a\s H:i"); ?></p>
+                        </time>
+                        <i class="fa fa-<?php echo $icon; ?> bg-<?php echo $cl; ?> tl-icon text-white"></i>
+                        <div class="tl-content">
+                          <div class="panel panel-<?php echo $cl; ?>">
+                                <div class="panel-body">
+                                  <?php echo $log->description; ?>
+                                </div>
+                            </div>
+                        </div>
+                    </li>
+                    <?php endforeach; ?>
+                </ul>
+            </div>
+          </div>
+
+        </div>
+      </div>
     </div>
 
 </div>

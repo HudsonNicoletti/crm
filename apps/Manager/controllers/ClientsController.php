@@ -25,6 +25,7 @@ class ClientsController extends ControllerBase
     public function IndexAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
@@ -56,6 +57,7 @@ class ClientsController extends ControllerBase
     public function CreateAction()
     {
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
@@ -209,8 +211,8 @@ class ClientsController extends ControllerBase
 
     public function ModifyAction()
     {
-
       $this->assets
+      ->addCss("assets/manager/css/app/email.css")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
@@ -517,7 +519,9 @@ class ClientsController extends ControllerBase
       return $this->response->setJsonContent([
         "status" => $this->flags['status'] ,
         "title"  => $this->flags['title'] ,
-        "text"   => $this->flags['text']
+        "text"   => $this->flags['text'],
+        "redirect"   => $this->flags['redirect'],
+        "time"   => $this->flags['time'],
       ]);
 
       $this->response->send();
@@ -635,7 +639,9 @@ class ClientsController extends ControllerBase
       return $this->response->setJsonContent([
         "status" => $this->flags['status'] ,
         "title"  => $this->flags['title'] ,
-        "text"   => $this->flags['text']
+        "text"   => $this->flags['text'],
+        "redirect"   => $this->flags['redirect'],
+        "time"   => $this->flags['time'],
       ]);
 
       $this->response->send();

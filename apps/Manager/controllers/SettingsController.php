@@ -158,6 +158,10 @@ class SettingsController extends ControllerBase
 
   public function AdminAction()
   {
+    $this->assets
+    ->addCss("assets/manager/css/app/email.css")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
   }
 
