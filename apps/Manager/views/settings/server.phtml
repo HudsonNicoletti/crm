@@ -1,7 +1,7 @@
 <div class="warper container-fluid">
 
   <div class="page-header">
-    <h1>Configurações &mdash; E-Mail</h1>
+    <h1>Configurações &mdash; Servidor</h1>
   </div>
 
   <div class="row">
@@ -24,9 +24,9 @@
         <div class="panel-heading clean">General</div>
         <div class="panel-body no-padd">
         	<div class="list-group no-margn mail-nav">
-            <a href="/settings/email" class="list-group-item on">E-Mail</a>
+            <a href="/settings/email" class="list-group-item">E-Mail</a>
             <a href="/settings/admin" class="list-group-item">Administradores</a>
-            <a href="/settings/server" class="list-group-item">Configurações do Servidor</a>
+            <a href="/settings/server" class="list-group-item on">Configurações do Servidor</a>
           </div>
         </div>
 
@@ -65,28 +65,20 @@
         <div class="panel panel-default">
           <div class="panel-body">
 
-            <form method="post" class="form-horizontal validator-form" action="/settings/email/save" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+            <div class="alert alert-warning">
+              <h4>Atenção</h4>
+              Quais quer má configurações feitas aqui poderá afetar o funcionamento do sistema ,
+              caso algum erro ocorra , edite as configurações manualmente em <strong>config/config.ini</strong>
+            </div>
+
+            <form method="post" class="form-horizontal validator-form" action="/settings/server/save" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
               <?php echo $form->render("security"); ?>
               <div class="row">
 
                 <div class="col-md-6">
-                  <label class="control-label">Hosts</label>
+                  <label class="control-label">Host</label>
                   <div class="form-group has-feedback">
                     <?php echo $form->render("host"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <label class="control-label">Port</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("port"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <label class="control-label">Security Level</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("level"); ?>
                   </div>
                 </div>
 
@@ -105,16 +97,9 @@
                 </div>
 
                 <div class="col-md-6">
-                  <label class="control-label">Sender E-Mail</label>
+                  <label class="control-label">Database</label>
                   <div class="form-group has-feedback">
-                    <?php echo $form->render("sender_email"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Sender Name</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("sender_name"); ?>
+                    <?php echo $form->render("database"); ?>
                   </div>
                 </div>
 

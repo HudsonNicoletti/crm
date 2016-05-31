@@ -191,6 +191,13 @@ $router->add("/settings/email/save", [
     'action'     => 'saveemail',
 ])->via(["POST"]);
 
+$router->add("/settings/server/save", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'settings',
+    'action'     => 'saveserver',
+])->via(["POST"]);
+
 #   FRONTEND - REQUEST API
 $router->add("/request/:action", [
     'module'     => 'Manager',
