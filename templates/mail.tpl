@@ -1,18 +1,55 @@
-<div class='wrapper' style='padding: 10px;'>
-    <div class='container' style='max-width: 720px; margin: 0 auto;'>
+<!-- TICKETS -->
+{{#TICKET_CREATE}}
+{{/TICKET_CREATE}}
 
-        <div class='pre-header' style='color: #fff; font-size: 1px;'>
-            {{name}}  entrou em contato pelo site ! Visualise agora ! </div>
-        <div class='content' style='text-align: center; font-family: Helvetica, arial, sans-serif; color: #333333; width: 100%;' align='center'>
-            <img src='http://i.imgur.com/LLzZwG6.png?1' alt='' border='0' style='display: inline-block; outline: none; border: none; height: 120px'>
-            <h1 style='font-size: 30px; line-height: 30px;'>
-                {{name}} , Entrou em Contato !
-            </h1>
-            <p style='text-align: left; display: inline-block; ' align='left'>{{message}}</p>
-            <h4 style='font-size: 20px; line-height: 30px;'>
-                {{phone}} , {{email}}
-            </h4>
-        </div>
+{{#TICKET_RESPONSE}}
+{{/TICKET_RESPONSE}}
 
+<!-- ACCOUNTS -->
+{{#ACCOUNT_CREATE}}
+<div style="background-color: #eeeeef; padding: 50px 0; ">
+  <div style="max-width:640px; margin:0 auto; font-family: Helvetica, arial, sans-serif;">
+    <!-- <img src='http://agenciadzoe.com.br/assets/public/images/logo-alt.png' alt='' border='0' style='display: inline-block; outline: none; border: none; height: 80px; margin:15px'> -->
+    <div style="color: #fff; text-align: center; background-color:#2B2F3E; padding: 30px; border-top-left-radius: 3px; border-top-right-radius: 3px; margin: 0;">
+      <h1>Acesso ao Painel</h1>
     </div>
+    <div style="padding: 20px; background-color: rgb(255, 255, 255);">
+      <p>Olá {{NAME}},</p>
+
+      <p>Uma conta foi criada para você.</p>
+
+      <p>Utilize a seguinte informação para acessar seu painel de controle:</p>
+
+      <P>URL Painel: {{DASHBOARD_URL}} </P>
+
+      <P>Usuário: {{USERNAME}} ou Email: {{EMAIL}} </P>
+
+      <P>Senha: {{PASSWORD}}</P>
+    </div>
+  </div>
 </div>
+{{/ACCOUNT_CREATE}}
+
+{{#ACCOUNT_RESET}}
+<div style="background-color: #eeeeef; padding: 50px 0; ">
+  <div style="max-width:640px; margin:0 auto; font-family: Helvetica, arial, sans-serif;">
+    <!-- <img src='http://agenciadzoe.com.br/assets/public/images/logo-alt.png' alt='' border='0' style='display: inline-block; outline: none; border: none; height: 80px; margin:15px'> -->
+    <div style="color: #fff; text-align: center; background-color:#2B2F3E; padding: 30px; border-top-left-radius: 3px; border-top-right-radius: 3px; margin: 0;">
+      <h1>Redefinição de Senha</h1>
+    </div>
+    <div style="padding: 20px; background-color: rgb(255, 255, 255);">
+      <p>Olá {{NAME}},</p>
+
+      <p>Um pedido de redefinição de senha foi criado para a sua conta.</p>
+
+      <p>Para iniciar o processo de redefinição de senha, clique no link a seguir:</p>
+
+      <p><a href="#">Alterar Senha</a></p>
+
+      <p>Se você recebeu esta mensagem por engano, é provável que outro usuário tenha inserido seu endereço de e-mail por engano ao tentar redefinir uma senha.</p>
+
+      <p>Se você não iniciou a solicitação, não precisa tomar nenhuma ação e pode desconsiderar este e-mail.</p>
+    </div>
+  </div>
+</div>
+{{/ACCOUNT_RESET}}

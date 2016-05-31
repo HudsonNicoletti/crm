@@ -62,6 +62,13 @@ $di['dispatcher'] = function () {
     return $dispatcher;
 };
 
+$di['configuration'] = function () use ($cf) {
+    return (object)[
+      "database" => $cf->database ,
+      "mail"     => $cf->mail
+    ];
+};
+
 #   Configure PHPMailer ( loaded by composer ) , returning the mail ini config & PHPMailer functions
 $di['mail'] = function () use ($cf) {
     $mail = new PHPMailer;

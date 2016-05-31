@@ -184,6 +184,13 @@ $router->add("/tasks/status/{type:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'status',
 ]);
 
+$router->add("/settings/email/save", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'settings',
+    'action'     => 'saveemail',
+])->via(["POST"]);
+
 #   FRONTEND - REQUEST API
 $router->add("/request/:action", [
     'module'     => 'Manager',
