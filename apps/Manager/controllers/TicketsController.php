@@ -89,6 +89,7 @@ class TicketsController extends ControllerBase
       ->bind([
         "ticket"  =>  $this->dispatcher->getParam("ticket")
       ])
+      ->orderBy("date ASC")
       ->execute();
 
       $form = new Form();

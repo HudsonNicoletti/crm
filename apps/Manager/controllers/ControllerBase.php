@@ -55,7 +55,7 @@ class ControllerBase extends Controller
         {
           $nav = [
             ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
-            ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
+            ["active" => ($this->router->getControllerName() == "tickets"  ? "active" : ""), "href" => "/tickets",  "icon" => "ticket",         "label" => "Chamados"],
           ];
         }
 
