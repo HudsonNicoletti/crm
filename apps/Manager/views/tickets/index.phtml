@@ -1,0 +1,68 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Chamados</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert hidden" role="alert">
+        <h4 id="title"></h4>
+        <p id="desc"></p>
+      </div>
+    </div>
+  </div>
+  <hr class="dotted">
+  <div class="row">
+    <div class="col-md-2">
+      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+      <hr class="sm">
+      <div class="btn-group btn-group-justified">
+        <a role="button" class="btn btn-warning" data-filter="1" >Abertos</a>
+        <a role="button" class="btn btn-warning" data-filter="2" >Concluídos</a>
+      </div>
+    </div>
+    <div class="col-md-10">
+      <div class="panel panel-default table-responsive">
+        <table class="table table-striped no-margn">
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Título</th>
+                <th>Cliente</th>
+                <th>Categoria</th>
+                <th>Ultima Atividade</th>
+                <th>Status</th>
+                <th><i class="fa fa-cogs"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach($tickets as $ticket): ?>
+                <tr data-searchable data-filter-index="<?php echo $ticket->status; ?>" >
+                  <td><?php echo $ticket->_; ?></td>
+                  <td><?php echo $ticket->title; ?></td>
+                  <td>
+                    <?php echo "{$ticket->firstname} {$ticket->lastname}"; if($ticket->fantasy): ?>
+                      <br><span class="label label-primary bigger-text"><?php echo $ticket->fantasy ;?></span>
+                    <?php endif; ?>
+                  </td>
+                  <td><?php echo $ticket->category; ?></td>
+                  <td><?php echo (new \DateTime($ticket->updated))->format("d-m-Y \a\s H:i:s"); ?></td>
+                  <?php ($ticket->status == 1 ? $f = ["danger","Aberto"] : $f = ["primary","Concluído"]); ?>
+                  <td><span class="label label-<?php echo $f[0]; ?>"><?php echo $f[1]; ?></span></td>
+                  <td>
+                    <a href="/tickets/view/<?php echo $ticket->_; ?>">
+                      <button type="button" class="btn btn-sm btn-primary">
+                        <span class="fa fa-external-link"></span>
+                      </button>
+                    </a>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+      </div>
+    </div>
+  </div>
+
+</div>

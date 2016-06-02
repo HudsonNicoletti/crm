@@ -1,0 +1,83 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Chamado <small>#<?php echo $ticket->_; ?></small></h1>
+  </div>
+
+  <div class="page-header"><h3 class="no-margn"><?php echo $ticket->title; ?></h3></div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert hidden" role="alert">
+        <h4 id="title"></h4>
+        <p id="desc"></p>
+      </div>
+    </div>
+  </div>
+  <hr class="dotted">
+  <div class="row">
+    <div class="col-md-2">
+      <div class="panel panel-default">
+        <div class="panel-heading clean">Informações</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <span class="list-group-item"><strong class="text-primary">Categoria:</strong><br>
+               <span class="label label-default"><?php echo $ticket->category; ?></span>
+            </span>
+            <span class="list-group-item"><strong class="text-primary">Status:</strong><br>
+               <span class="label label-default"><?php echo ($ticket->status == 1 ? "Aberto" : "Concluído"); ?></span>
+            </span>
+            <?php if($ticket->project): ?>
+            <span class="list-group-item"><strong class="text-primary">Projeto Relacionado:</strong><br>
+               <span class="label label-default"><?php echo $ticket->project; ?></span>
+            </span>
+            <?php endif;?>
+            <span class="list-group-item"><strong class="text-primary">Aberto em:</strong><br>
+               <span class="label label-default"><?php echo (new \DateTime($ticket->created))->format("d-m-Y \a\s H:i:s"); ?></span>
+            </span>
+            <span class="list-group-item"><strong class="text-primary">Atualizado em:</strong><br>
+               <span class="label label-default"><?php echo (new \DateTime($ticket->updated))->format("d-m-Y \a\s H:i:s"); ?></span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-10">
+      <div class="panel panel-default">
+        <ul class="media-list messages nicescroll">
+          <?php foreach($tickets as $t): ?>
+            <?php if($t->firstname): ?>
+              <li class="media">
+                <a href="#" class="pull-left">
+                  <img alt="user" class="media-object" src="/assets/manager/images/avtar/<?php echo $t->clientImage;?>" style="margin-left: 15px">
+                </a>
+                <div class="media-body">
+                  <h5 class="media-heading">
+                    <strong><?php echo "{$t->firstname} {$t->lastname}";?></strong>
+                    <small class="text-primary"><?php echo (new \DateTime($t->date))->format("d-m-Y \a\s H:i:s"); ?></small>
+                  </h5>
+                  <p class="text-muted no-margn"><?php echo $t->text;?></p>
+                </div>
+              </li>
+            <?php elseif($t->team): ?>
+              <li class="media">
+                <a href="#" class="pull-right">
+                  <img alt="user" class="media-object" src="/assets/manager/images/avtar/<?php echo $t->teamImage;?>" style="margin-right: 15px">
+                </a>
+                <div class="media-body">
+                  <h5 class="media-heading">
+                    <small class="text-primary"><?php echo (new \DateTime($t->date))->format("d-m-Y \a\s H:i:s"); ?></small>
+                    <strong><?php echo $t->team;?></strong>
+                  </h5>
+                  <p class="text-muted no-margn"><?php echo $t->text;?></p>
+                </div>
+              </li>
+            <?php endif; ?>
+          <?php endforeach;?>
+
+        </ul>
+      </div>
+    </div>
+  </div>
+
+</div>
