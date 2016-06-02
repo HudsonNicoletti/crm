@@ -76,6 +76,19 @@
           <?php endforeach;?>
 
         </ul>
+        <div class="panel-footer">
+          <form method="post" class="validator-form" action="/tickets/send/<?php echo $ticket->_;  ?>" novalidate="novalidate">
+            <?php echo $form->render("security"); ?>
+            <div class="input-group">
+              <?php echo $form->render("text"); ?>
+              <span class="input-group-btn">
+                <button type="submit" class=" btn-success btn">
+                  <span class="fa fa-send"></span>
+                  Enviar</button>
+              </span>
+            </div>
+          </form>
+        </div>
       </div>
     </div>
   </div>

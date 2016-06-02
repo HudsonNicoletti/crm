@@ -191,6 +191,13 @@ $router->add("/tickets/view/{ticket:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'view',
 ]);
 
+$router->add("/tickets/send/{ticket:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tickets',
+    'action'     => 'send',
+])->via(["POST"]);
+
 $router->add("/settings/email/save", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
