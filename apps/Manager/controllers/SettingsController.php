@@ -15,6 +15,7 @@ use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
     Phalcon\Forms\Element\Select,
     Phalcon\Forms\Element\Password,
+    Phalcon\Forms\Element\Textarea,
     Phalcon\Forms\Element\Hidden;
 
 class SettingsController extends ControllerBase

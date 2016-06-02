@@ -1,8 +1,42 @@
 <!-- TICKETS -->
 {{#TICKET_CREATE}}
+<div style="background-color: #eeeeef; padding: 50px 0; ">
+  <div style="max-width:640px; margin:0 auto; font-family: Helvetica, arial, sans-serif;">
+    <!-- <img src='http://agenciadzoe.com.br/assets/public/images/logo-alt.png' alt='' border='0' style='display: inline-block; outline: none; border: none; height: 80px; margin:15px'> -->
+    <div style="color: #fff; text-align: center; background-color:#2B2F3E; padding: 30px; border-top-left-radius: 3px; border-top-right-radius: 3px; margin: 0;">
+      <h1>Chamado #{{ticket_id}} Aberto</h1>
+    </div>
+    <div style="padding: 20px; background-color: rgb(255, 255, 255);">
+      <p>Um novo chamado foi aberto.</p>
+
+      <p><strong>Chamado:</strong> {{ticket}} , em {{created}} &mdash; #{{ticket-id}}</p>
+
+      <p><strong>Cliente:</strong> {{client}}</p>
+
+      <p><a href="{{dashboard}}">Acessar Painel</a></p>
+    </div>
+  </div>
+</div>
 {{/TICKET_CREATE}}
 
 {{#TICKET_RESPONSE}}
+<div style="background-color: #eeeeef; padding: 50px 0; ">
+  <div style="max-width:640px; margin:0 auto; font-family: Helvetica, arial, sans-serif;">
+    <!-- <img src='http://agenciadzoe.com.br/assets/public/images/logo-alt.png' alt='' border='0' style='display: inline-block; outline: none; border: none; height: 80px; margin:15px'> -->
+    <div style="color: #fff; text-align: center; background-color:#2B2F3E; padding: 30px; border-top-left-radius: 3px; border-top-right-radius: 3px; margin: 0;">
+      <h1>Chamado #{{ticket_id}}</h1>
+    </div>
+    <div style="padding: 20px; background-color: rgb(255, 255, 255);">
+      <p>Olá {{NAME}},</p>
+
+      <p>Seu chamado <strong>{{ticket}}</strong> recebeu uma nova resposta.</p>
+
+      <p>Acesse o painel agora e veja sua resposta.</p>
+
+      <p><a href="{{dashboard}}">Acessar</a></p>
+    </div>
+  </div>
+</div>
 {{/TICKET_RESPONSE}}
 
 <!-- ACCOUNTS -->

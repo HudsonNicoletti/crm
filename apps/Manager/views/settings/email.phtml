@@ -62,77 +62,78 @@
     </div>
 
     <div class="col-sm-9">
-        <div class="panel panel-default">
-          <div class="panel-body">
+      <div class="panel panel-default">
+        <div class="panel-body">
 
-            <form method="post" class="form-horizontal validator-form" action="/settings/email/save" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
-              <?php echo $form->render("security"); ?>
-              <div class="row">
+          <form method="post" class="form-horizontal validator-form" action="/settings/email/save" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+            <?php echo $form->render("security"); ?>
+            <div class="row">
 
-                <div class="col-md-6">
-                  <label class="control-label">Hosts</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("host"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <label class="control-label">Port</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("port"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-3">
-                  <label class="control-label">Security Level</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("level"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Username</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("username"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Password</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("password"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Sender E-Mail</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("sender_email"); ?>
-                  </div>
-                </div>
-
-                <div class="col-md-6">
-                  <label class="control-label">Sender Name</label>
-                  <div class="form-group has-feedback">
-                    <?php echo $form->render("sender_name"); ?>
-                  </div>
-                </div>
-
-              </div>
-
-              <hr class="dotted">
-
-              <div class="row">
-                <div class="col-sm-12">
-                  <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Salvar</button>
+              <div class="col-md-6">
+                <label class="control-label">Hosts</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("host"); ?>
                 </div>
               </div>
-            </form>
 
-          </div>
+              <div class="col-md-3">
+                <label class="control-label">Port</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("port"); ?>
+                </div>
+              </div>
+
+              <div class="col-md-3">
+                <label class="control-label">Security Level</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("level"); ?>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="control-label">Username</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("username"); ?>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="control-label">Password</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("password"); ?>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="control-label">Sender E-Mail</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("sender_email"); ?>
+                </div>
+              </div>
+
+              <div class="col-md-6">
+                <label class="control-label">Sender Name</label>
+                <div class="form-group has-feedback">
+                  <?php echo $form->render("sender_name"); ?>
+                </div>
+              </div>
+
+            </div>
+
+            <hr class="dotted">
+
+            <div class="row">
+              <div class="col-sm-12">
+                <button type="submit" class="btn btn-primary btn-lg pull-right" name="signup" value="Validate">Salvar</button>
+              </div>
+            </div>
+          </form>
 
         </div>
+
       </div>
+    </div>
+
 
   </div>
 </div>
