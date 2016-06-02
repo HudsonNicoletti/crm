@@ -198,6 +198,20 @@ $router->add("/settings/server/save", [
     'action'     => 'saveserver',
 ])->via(["POST"]);
 
+$router->add("/settings/admin/add", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'settings',
+    'action'     => 'addadmin',
+])->via(["POST"]);
+
+$router->add("/settings/admin/remove/{uid:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'settings',
+    'action'     => 'removeadmin',
+])->via(["POST"]);
+
 #   FRONTEND - REQUEST API
 $router->add("/request/:action", [
     'module'     => 'Manager',

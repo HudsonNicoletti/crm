@@ -2,7 +2,12 @@
 
 namespace Manager\Controllers;
 
-use Manager\Models\Logs as Logs;
+use Manager\Models\Logs         as Logs,
+    Manager\Models\Team         as Team,
+    Manager\Models\Users        as Users,
+    Manager\Models\Tasks        as Tasks,
+    Manager\Models\Assignments  as Assignments,
+    Manager\Models\Departments  as Departments;
 
 use Mustache_Engine as Mustache;
 
@@ -160,9 +165,135 @@ class SettingsController extends ControllerBase
   {
     $this->assets
     ->addCss("assets/manager/css/app/email.css")
+    ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
+    $team = Users::query()
+    ->columns([
+      'Manager\Models\Users.permission',
+      'Manager\Models\Users.email',
+      'Manager\Models\Team.name',
+      'Manager\Models\Team.uid',
+      'Manager\Models\Team.image',
+      'Manager\Models\Departments.department'
+    ])
+    ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
+    ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
+    ->where("Manager\Models\Users.permission >= {$this->permissions->admin}")
+    ->execute();
+
+    $members = Users::query()
+    ->columns([
+      'Manager\Models\Team.name',
+      'Manager\Models\Team.uid',
+    ])
+    ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
+    ->where("Manager\Models\Users.permission < {$this->permissions->admin}")
+    ->execute();
+
+    $membersAvailable = [];
+
+    foreach ($members as $member) {
+      $membersAvailable[$member->uid] = $member->name;
+    }
+
+    $form = new Form();
+    $form->add(new Hidden( "security" ,[
+      'name'  => $this->security->getTokenKey(),
+      'value' => $this->security->getToken(),
+    ]));
+
+    $form->add(new Select( "members" , $membersAvailable , [
+      'class' => "chosen-select"
+    ]));
+
+    $this->view->form = $form;
+    $this->view->members = $team;
+
+  }
+
+  public function AddAdminAction()
+  {
+    $this->response->setContentType("application/json");
+
+    if(!$this->request->isPost()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if(!$this->security->checkToken()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Token de segurança inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $member = Users::findFirst($this->request->getPost("members"));
+        $member->permission = $this->permissions->admin;
+      $member->save();
+
+      $this->flags['title']  = "Alterado com Sucesso!";
+      $this->flags['text']   = "Permissões administrativas adicionadas com sucesso!";
+      $this->flags['redirect']   = "/settings/admin";
+      $this->flags['time']   = 1200;
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "title"     =>  $this->flags['title'],
+      "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'],
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+  }
+
+  public function RemoveAdminAction()
+  {
+    $this->response->setContentType("application/json");
+
+    if(!$this->request->isPost()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if(!$this->security->checkToken()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Token de segurança inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $member = Users::findFirst($this->dispatcher->getParam("uid"));
+        $member->permission = $this->permissions->team;
+      $member->save();
+
+      $this->flags['title']  = "Alterado com Sucesso!";
+      $this->flags['text']   = "Permissões administrativas removidas com sucesso!";
+      $this->flags['redirect']   = "/settings/admin";
+      $this->flags['time']   = 1200;
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "title"     =>  $this->flags['title'],
+      "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'],
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
   }
 
   public function ServerAction()

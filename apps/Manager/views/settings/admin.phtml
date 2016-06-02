@@ -62,15 +62,75 @@
     </div>
 
     <div class="col-sm-9">
-        <div class="panel panel-default">
-          <div class="panel-body">
-
-
-
+        <div class="panel panel-default table-responsive">
+          <div class="panel-body no-padd">
+            <table class="table table-striped no-margn">
+              <thead>
+                <tr>
+                  <th class="avtar"></th>
+                  <th>Membro</th>
+                  <th>Departamento</th>
+                  <th>Email</th>
+                  <th><i class="fa fa-cogs"></i></th>
+                  <th>
+                    <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#create">
+                      <span class="fa fa-plus"></span> Adicionar
+                    </button>
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                <?php foreach ($members as $member): ?>
+                  <tr data-searchable >
+                    <td><img src="/assets/manager/images/avtar/<?php echo $member->image; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" /</td>
+                    <td><?php echo $member->name; ?></td>
+                    <td><?php echo $member->department; ?></td>
+                    <td><?php echo $member->email; ?></td>
+                    <td colspan="2">
+                      <form method="post" class="validator-form" action="/settings/admin/remove/<?php echo $member->uid ;?>" novalidate="novalidate">
+                        <?php echo $form->render("security"); ?>
+                        <button type="submit" class="btn btn-danger">
+                          <span class="fa fa-close"></span>
+                        </button>
+                      </form>
+                    </td>
+                  </tr>
+                <?php endforeach; ?>
+              </tbody>
+            </table>
           </div>
-
         </div>
       </div>
 
+  </div>
+</div>
+
+<!-- create -->
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="labl" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="labl">Adicionar Administrador</h4>
+      </div>
+
+      <form role="form" method="post" accept-charset="utf8" action="/settings/admin/add" class="validator-form" >
+        <div class="modal-body">
+          <div class="alert hidden" role="alert">
+            <h4 id="title"></h4>
+            <p id="desc"></p>
+          </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Membros:</label>
+              <?php echo $form->render("members"); ?>
+              <?php echo $form->render("security"); ?>
+            </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+      </form>
+    </div>
   </div>
 </div>
