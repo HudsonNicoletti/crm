@@ -394,4 +394,13 @@ class SettingsController extends ControllerBase
 
   }
 
+  public function TeamPermissionsAction()
+  {
+
+  }
+
+  public function ClientPermissionsAction()
+  {
+
+  }
 }
