@@ -31,13 +31,38 @@ class ProjectsController extends ControllerBase
       'time'      => false
     ];
 
+    private function VerifyTasks()
+    {
+      $tasks = Tasks::find(["group"=>"project"]);
+      foreach($tasks as $task)
+      {
+        $project = Projects::findFirst($task->project);
+
+        if( ($this->TaskPercentage($task->project) - 100) == 0 )
+        {
+          $project->status = 2;
+        }
+        else
+        {
+          $project->status = 1;
+        }
+        $project->save();
+
+      }
+    }
+
     public function IndexAction()
     {
       $this->assets
       ->addCss("assets/manager/css/app/email.css")
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
       ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
       ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
       # Verify All Tasks First
       $this->VerifyTasks();
@@ -59,52 +84,6 @@ class ProjectsController extends ControllerBase
       ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
       ->execute();
 
-      $form = new Form();
-
-      $form->add(new Hidden( "security" ,[
-        'name'  => $this->security->getTokenKey(),
-        'value' => $this->security->getToken(),
-      ]));
-
-      $this->view->form = $form;
-      $this->view->projects   = $projects;
-      $this->view->controller = $this;
-
-    }
-
-    private function VerifyTasks()
-    {
-      $tasks = Tasks::find(["group"=>"project"]);
-      foreach($tasks as $task)
-      {
-        $project = Projects::findFirst($task->project);
-
-        if( ($this->TaskPercentage($task->project) - 100) == 0 )
-        {
-          $project->status = 2;
-        }
-        else
-        {
-          $project->status = 1;
-        }
-        $project->save();
-
-      }
-    }
-
-    public function CreateAction()
-    {
-      $this->assets
-      ->addCss("assets/manager/css/app/email.css")
-      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
-      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
-      ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
-      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/wysihtml5-0.3.0.min.js")
-      ->addJs("assets/manager/js/plugins/bootstrap-wysihtml5/bootstrap3-wysihtml5.js")
-      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
-
-      $form = new Form();
       $clients = Clients::query()
       ->columns([
         'Manager\Models\Clients._',
@@ -121,6 +100,7 @@ class ProjectsController extends ControllerBase
         $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
       }
 
+      $form = new Form();
       $form->add(new Hidden( "security" ,[
         'name'  => $this->security->getTokenKey(),
         'value' => $this->security->getToken(),
@@ -142,7 +122,6 @@ class ProjectsController extends ControllerBase
       $form->add(new Textarea( "description" ,[
         'class'         => "wysihtml form-control",
         'placeholder'   => "Breve Descrição ...",
-        'style'         => "height: 250px"
       ]));
 
       $form->add(new Select( "client" , $clientOptions , [
@@ -164,7 +143,15 @@ class ProjectsController extends ControllerBase
         'class'            => "chosen-select"
       ]));
 
-      $this->view->form = $form;
+      $this->view->form       = $form;
+      $this->view->projects   = $projects;
+      $this->view->controller = $this;
+
+    }
+
+    public function CategoriesAction()
+    {
+
     }
 
     public function OverviewAction()
@@ -468,13 +455,17 @@ class ProjectsController extends ControllerBase
         $this->flags['status'] = true ;
         $this->flags['title']  = "Cadastrado com Sucesso!";
         $this->flags['text']   = "Projeto Cadastrado com sucesso!";
+        $this->flags['redirect']   = "/projects";
+        $this->flags['time']   = 1200;
 
       endif;
 
       return $this->response->setJsonContent([
         "status" => $this->flags['status'] ,
         "title"  => $this->flags['title'] ,
-        "text"   => $this->flags['text']
+        "text"   => $this->flags['text'],
+        "redirect"   => $this->flags['redirect'],
+        "time"   => $this->flags['time'],
       ]);
 
       $this->response->send();
