@@ -6,8 +6,10 @@
 
   <div class="row">
     <div class="col-md-2">
-      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
-      <hr class="sm">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-target="#create">
+        <span class="fa fa-plus"></span> Adicionar Departamento
+      </button>
+      <hr class="dotted">
       <div class="panel panel-default">
         <div class="panel-heading clean">Navegação</div>
         <div class="panel-body no-padd">
@@ -22,15 +24,18 @@
 
     <div class="col-md-10">
       <div class="panel panel-default table-responsive">
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+            </div>
+          </div>
+        </div>
         <table class="table table-striped no-margn">
             <thead>
               <tr>
                 <th>Departamento</th>
-                <th>
-                  <button type="button" class="btn btn-success pull-right" data-toggle="modal" data-target="#create">
-                    <span class="fa fa-plus"></span> Cadastrar
-                  </button>
-                </th>
+                <th><i class="fa fa-cogs"></i></th>
               </tr>
             </thead>
             <tbody>
@@ -38,14 +43,12 @@
                 <tr data-searchable >
                     <td><?php echo $d->department; ?></td>
                     <td>
-                      <div class="pull-right">
-                        <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-form-action="/team/departments/update/<?php echo $d->_ ;?>">
-                          <span class="fa fa-pencil"></span>
-                        </button>
-                        <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove" data-form-action="/team/departments/remove/<?php echo $d->_ ;?>">
-                          <span class="fa fa-close"></span>
-                        </button>
-                      </div>
+                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-form-action="/team/departments/update/<?php echo $d->_ ;?>">
+                        <span class="fa fa-pencil"></span>
+                      </button>
+                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove" data-form-action="/team/departments/remove/<?php echo $d->_ ;?>">
+                        <span class="fa fa-close"></span>
+                      </button>
                     </td>
                 </tr>
               <?php endforeach; ?>
