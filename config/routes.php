@@ -100,6 +100,27 @@ $router->add("/team/departments/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'removedepartment',
 ]);
 
+$router->add("/projects/new/category", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'newcategory',
+]);
+
+$router->add("/projects/update/category/{type:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'updatecategory',
+]);
+
+$router->add("/projects/remove/category/{type:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'projects',
+    'action'     => 'removecategory',
+]);
+
 $router->add("/project/overview/{project:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',

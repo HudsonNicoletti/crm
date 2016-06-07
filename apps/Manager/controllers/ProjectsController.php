@@ -28,7 +28,8 @@ class ProjectsController extends ControllerBase
       'title'     => false,
       'text'      => false,
       'redirect'  => false,
-      'time'      => false
+      'time'      => false,
+      'target'    => false
     ];
 
     private function VerifyTasks()
@@ -47,8 +48,67 @@ class ProjectsController extends ControllerBase
           $project->status = 1;
         }
         $project->save();
-
       }
+    }
+
+    public function TaskPercentage($project)
+    {
+      $done = 0;
+      $tasks = Tasks::findByProject($project);
+
+      foreach($tasks as $task)
+      {
+        if($task->status == 2)
+        {
+          $done = $done + 1;
+        }
+      }
+
+      return ($done === 0 ? 0 : round(($done * 100) / $tasks->count()));
+    }
+
+    public function ProjectStatus($status)
+    {
+      switch ($status) {
+        case 1 : return 'Aberto'; break;
+        case 2 : return 'Concluído'; break;
+        case 3 : return 'Cancelado'; break;
+      }
+    }
+
+    public function ChartAction()
+    {
+      $this->response->setContentType("application/json");
+
+      if(!$this->request->isGet()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if($this->flags['status']):
+        $this->response->setStatusCode(200,"OK");
+
+        $tasks = $this->TaskPercentage($this->dispatcher->getParam("project"));
+
+        $this->flags['status'] = true ;
+        $this->flags['doneVal']   = $tasks;
+        $this->flags['openVal']   = (100 - $tasks);
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"  => $this->flags['status'] ,
+        "title"   => $this->flags['title'] ,
+        "text"    => $this->flags['text'] ,
+        "done"    => "Concluídos" ,
+        "open"    => "Em Aberto" ,
+        "doneVal" => $this->flags['doneVal'] ,
+        "openVal" => $this->flags['openVal']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 
     public function IndexAction()
@@ -151,7 +211,37 @@ class ProjectsController extends ControllerBase
 
     public function CategoriesAction()
     {
+      $this->assets
+      ->addCss("assets/manager/css/app/email.css")
+      ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+      ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+      ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
+      $categories = ProjectTypes::find(['order'=>"title ASC"]);
+
+      $form = new Form();
+      $form->add(new Hidden( "security" ,[
+        'name'  => $this->security->getTokenKey(),
+        'value' => $this->security->getToken(),
+      ]));
+
+      $form->add(new Text( "category" ,[
+        'class'         => "form-control",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
+
+      $form->add(new Select( "categories" , ProjectTypes::find() ,
+      [
+        'using' =>  ['_','title'],
+        'data-placeholder' => "Categoria do Projeto",
+        'class'            => "chosen-select"
+      ]));
+
+      $this->view->form = $form;
+      $this->view->categories = $categories;
     }
 
     public function OverviewAction()
@@ -577,66 +667,6 @@ class ProjectsController extends ControllerBase
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 
-    public function TaskPercentage($project)
-    {
-      $done = 0;
-      $tasks = Tasks::findByProject($project);
-
-      foreach($tasks as $task)
-      {
-        if($task->status == 2)
-        {
-          $done = $done + 1;
-        }
-      }
-
-      return ($done === 0 ? 0 : round(($done * 100) / $tasks->count()));
-    }
-
-    public function ProjectStatus($status)
-    {
-      switch ($status) {
-        case 1 : return 'Aberto'; break;
-        case 2 : return 'Concluído'; break;
-        case 3 : return 'Cancelado'; break;
-      }
-    }
-
-    public function ChartAction()
-    {
-      $this->response->setContentType("application/json");
-
-      if(!$this->request->isGet()):
-        $this->flags['status'] = false ;
-        $this->flags['title']  = "Erro!";
-        $this->flags['text']   = "Metodo Inválido.";
-      endif;
-
-      if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
-
-        $tasks = $this->TaskPercentage($this->dispatcher->getParam("project"));
-
-        $this->flags['status'] = true ;
-        $this->flags['doneVal']   = $tasks;
-        $this->flags['openVal']   = (100 - $tasks);
-
-      endif;
-
-      return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'] ,
-        "done"    => "Concluídos" ,
-        "open"    => "Em Aberto" ,
-        "doneVal" => $this->flags['doneVal'] ,
-        "openVal" => $this->flags['openVal']
-      ]);
-
-      $this->response->send();
-      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-    }
-
     public function NewMemberAction()
     {
       $this->response->setContentType("application/json");
@@ -894,6 +924,154 @@ class ProjectsController extends ControllerBase
         "text"    => $this->flags['text'],
         "redirect"    => $this->flags['redirect'] ,
         "time"    => $this->flags['time']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function NewCategoryAction()
+    {
+      $this->response->setContentType("application/json");
+      # Target Response Box
+      $this->flags['target']    = "#alertBox";
+
+      if(!$this->request->isPost()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($this->flags['status']):
+
+        $title = $this->request->getPost("category","string");
+
+        $category = new ProjectTypes;
+          $category->title = $title;
+        $category->save();
+
+        # Log What Happend
+        $this->logManager($this->logs->create,"Cadastrou uma categoria de projetos ( {$title} ).");
+
+        $this->flags['status']    = true ;
+        $this->flags['title']     = "Cadastrado com Sucesso!";
+        $this->flags['text']      = "Categoria Cadastrada com sucesso!";
+        $this->flags['redirect']  = "/projects/categories";
+        $this->flags['time']      = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'],
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function UpdateCategoryAction()
+    {
+      $this->response->setContentType("application/json");
+      # Target Response Box
+      $this->flags['target']    = "#editBox";
+
+      if(!$this->request->isPost()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Alterar!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Alterar!";
+        $this->flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($this->flags['status']):
+
+        $title = $this->request->getPost("category","string");
+
+        $category = ProjectTypes::findFirst($this->dispatcher->getParam("type"));
+          $category->title = $title;
+        $category->save();
+
+        # Log What Happend
+        $this->logManager($this->logs->update,"Alterou uma categoria de projetos ( {$title} ).");
+
+        $this->flags['status']    = true ;
+        $this->flags['title']     = "Alterado com Sucesso!";
+        $this->flags['text']      = "Categoria ALterada com sucesso!";
+        $this->flags['redirect']  = "/projects/categories";
+        $this->flags['time']      = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'],
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function RemoveCategoryAction()
+    {
+      $this->response->setContentType("application/json");
+      # Target Response Box
+      $this->flags['target']    = "#removeBox";
+
+      if(!$this->request->isPost()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Remover!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Remover!";
+        $this->flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($this->flags['status']):
+
+        $category = ProjectTypes::findFirst($this->dispatcher->getParam("type"));
+          $title = $category->title;
+        $category->delete();
+
+        # Log What Happend
+        $this->logManager($this->logs->delete,"Removeu uma categoria de projetos ( {$title} ).");
+
+        $this->flags['status']    = true ;
+        $this->flags['title']     = "Removido com Sucesso!";
+        $this->flags['text']      = "Categoria Removida com sucesso!";
+        $this->flags['redirect']  = "/projects/categories";
+        $this->flags['time']      = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'],
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target']
       ]);
 
       $this->response->send();

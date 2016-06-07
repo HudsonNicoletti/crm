@@ -42,7 +42,7 @@ $(document).ready(function() {
 				var $this   = $(e.target),
 	          action  = $this.attr("action"),
 	          method  = $this.attr("method"),
-	          $alert  = $("div[role='alert']"),
+	          $alert  = $("div[role='alert']:first"),
 	          inputs  = $this.find("input:not(:file):not(:submit) , textarea, select, input[type='hidden']"),
 	          files   = $this.find("input:file"),
 	          content = new FormData( $this );
@@ -79,9 +79,10 @@ $(document).ready(function() {
 								},
 	              success: function( response )
 	              {
-									var alertClass = (response.status ? "alert-success" : "alert-danger");
+									var alertClass = (response.status ? "alert-success" : "alert-danger"),
+											alertTarget = ( response.target ) ? $alert = $(response.target) : $alert = $alert;
 
-									$alert.removeClass("alert-success alert-danger alert-warning alert-info hidden")
+									alertTarget.removeClass("alert-success alert-danger alert-warning alert-info hidden")
 												.addClass(alertClass)
 												.find("#title").html(response.title)
 												.parent()
