@@ -15,18 +15,10 @@
 
   <div class="row">
     <div class="col-md-2">
-      <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
-      <hr class="sm">
-      <div class="btn-group btn-group-justified">
-        <a role="button" class="btn btn-warning" data-filter="1" >Abertos</a>
-        <a role="button" class="btn btn-warning" data-filter="2" >Concluídos</a>
-        <!-- <a role="button" class="btn btn-warning" data-filter="3" >Cancelados</a> -->
-      </div>
-      <hr class="sm">
-      <button type="button" class="btn btn-success btn-block " data-toggle="modal" data-target="#create">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-target="#create">
         <span class="fa fa-plus"></span> Adicionar Projeto
       </button>
-      <hr class="sm">
+      <hr class="dotted">
       <div class="panel panel-default">
         <div class="panel-heading clean">Navegação</div>
         <div class="panel-body no-padd">
@@ -39,9 +31,21 @@
     </div>
 
     <div class="col-md-10">
-
-
       <div class="panel panel-default table-responsive">
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-md-9">
+              <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+            </div>
+            <div class="col-md-3">
+              <div class="btn-group btn-group-justified">
+                <a role="button" class="btn btn-default" data-filter="1" >Abertos</a>
+                <a role="button" class="btn btn-default" data-filter="2" >Concluídos</a>
+                <!-- <a role="button" class="btn btn-warning" data-filter="3" >Cancelados</a> -->
+              </div>
+            </div>
+          </div>
+        </div>
         <table class="table table-striped no-margn">
             <thead>
               <tr>

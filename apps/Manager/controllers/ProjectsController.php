@@ -516,7 +516,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $project = new Projects;
           $project->title   = $this->request->getPost("title","string");
@@ -551,11 +550,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status" => $this->flags['status'] ,
-        "title"  => $this->flags['title'] ,
-        "text"   => $this->flags['text'],
-        "redirect"   => $this->flags['redirect'],
-        "time"   => $this->flags['time'],
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'],
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -579,7 +579,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $id    = $this->dispatcher->getParam("project");
         $title = $this->request->getPost("project_title","string");
@@ -603,11 +602,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'] ,
-        "redirect"   => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'] ,
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -660,7 +660,8 @@ class ProjectsController extends ControllerBase
         "title"     =>  $this->flags['title'],
         "text"      =>  $this->flags['text'],
         "redirect"  =>  $this->flags['redirect'],
-        "time"      =>  $this->flags['time']
+        "time"      =>  $this->flags['time'],
+        "target"    =>  $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -684,7 +685,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
 
@@ -708,11 +708,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'] ,
-        "redirect"    => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'] ,
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -736,7 +737,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
         $member = $this->dispatcher->getParam("member");
@@ -761,11 +761,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'],
-        "redirect"    => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -789,7 +790,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
         $title = $this->request->getPost("new_title");
@@ -817,11 +817,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'] ,
-        "redirect"    => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'] ,
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -845,7 +846,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $title = $this->request->getPost("title");
         $project = $this->dispatcher->getParam("project");
@@ -871,11 +871,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'] ,
-        "redirect"    => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'] ,
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -899,7 +900,6 @@ class ProjectsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
 
         $project = $this->dispatcher->getParam("project");
         $task = Tasks::findFirst($this->dispatcher->getParam("task"));
@@ -919,11 +919,12 @@ class ProjectsController extends ControllerBase
       endif;
 
       return $this->response->setJsonContent([
-        "status"  => $this->flags['status'] ,
-        "title"   => $this->flags['title'] ,
-        "text"    => $this->flags['text'],
-        "redirect"    => $this->flags['redirect'] ,
-        "time"    => $this->flags['time']
+        "status"    => $this->flags['status'] ,
+        "title"     => $this->flags['title'] ,
+        "text"      => $this->flags['text'],
+        "redirect"  => $this->flags['redirect'] ,
+        "time"      => $this->flags['time'],
+        "target"    => $this->flags['target'],
       ]);
 
       $this->response->send();
@@ -1053,6 +1054,12 @@ class ProjectsController extends ControllerBase
         $category = ProjectTypes::findFirst($this->dispatcher->getParam("type"));
           $title = $category->title;
         $category->delete();
+
+        foreach(Projects::findByType($this->dispatcher->getParam("type")) as $p)
+        {
+          $p->type = $this->request->getPost("categories");
+          $p->save();
+        }
 
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu uma categoria de projetos ( {$title} ).");

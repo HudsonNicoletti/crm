@@ -118,3 +118,9 @@
 	margin-left:6px;
 	opacity:0.8;
 }
+
+.row.reverse
+{
+  display: flex;
+  flex-direction: row-reverse;
+}
