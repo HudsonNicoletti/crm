@@ -18,6 +18,12 @@
   <div class="row">
     <div class="col-md-2">
       <div class="panel panel-default">
+        <div class="panel-heading clean">Navegação</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <a href="/tickets" class="list-group-item"> Todos Chamados </a>
+          </div>
+        </div>
         <div class="panel-heading clean">Informações</div>
         <div class="panel-body no-padd">
           <div class="list-group no-margn mail-nav">
@@ -41,6 +47,18 @@
           </div>
         </div>
       </div>
+      <?php if($ticket->status == 1): ?>
+      <hr class="dotted">
+      <form method="post" class="validator-form" action="/tickets/close/<?php echo $ticket->_; ?>" novalidate="novalidate">
+        <?php echo $form->render("security"); ?>
+        <button type="submit" class="btn btn-danger btn-block btn-circle"><span class="fa fa-check"></span> Concluír Chamado</button>
+      </form>
+      <?php else: ?>
+      <div class="alert fade in alert-info">
+        <h4 id="title">Atenção!</h4>
+        <p id="desc">Este chamado já está concluído , enviando uma nova mensagem irá abrir o mesmo novamente.</p>
+      </div>
+      <?php endif; ?>
     </div>
     <div class="col-md-10">
       <div class="panel panel-default">

@@ -19,7 +19,8 @@ class TicketsController extends ControllerBase
       'title'     => false,
       'text'      => false,
       'redirect'  => false,
-      'time'      => null
+      'time'      => null,
+      'target'    => false
     ];
 
     public function IndexAction()
@@ -127,6 +128,14 @@ class TicketsController extends ControllerBase
       if($this->flags['status']):
 
         $ticket = $this->dispatcher->getParam("ticket");
+        $status = Tickets::findFirst($ticket);
+
+          if($status->status == 2)
+          {
+            $status->status = 1;
+            $status->save();
+            $this->logManager($this->logs->update,"Abriu o chamado #({$ticket}).");
+          }
 
           $response = new TicketsResponse;
             $response->ticket = $ticket;
@@ -150,7 +159,55 @@ class TicketsController extends ControllerBase
         "title"     =>  $this->flags['title'],
         "text"      =>  $this->flags['text'],
         "redirect"  =>  $this->flags['redirect'],
-        "time"      =>  $this->flags['time']
+        "time"      =>  $this->flags['time'],
+        "target"    =>  $this->flags['target'],
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function CloseAction()
+    {
+      $this->response->setContentType("application/json");
+
+      if(!$this->request->isPost()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Concluír!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if(!$this->security->checkToken()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Concluír!";
+        $this->flags['text']   = "Token de segurança inválido.";
+      endif;
+
+      if($this->flags['status']):
+
+        $ticket = $this->dispatcher->getParam("ticket");
+
+        $t = Tickets::findFirst($ticket);
+        $t->status = 2;
+        $t->save();
+
+        # Log What Happend
+        $this->logManager($this->logs->update,"Concluíu o chamado #({$ticket}).");
+
+        $this->flags['title']     = "Concluído Com Sucesso!";
+        $this->flags['text']      = "Chamado concluído com Sucesso.";
+        $this->flags['redirect']  = "/tickets";
+        $this->flags['time']      = 1200;
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    =>  $this->flags['status'],
+        "title"     =>  $this->flags['title'],
+        "text"      =>  $this->flags['text'],
+        "redirect"  =>  $this->flags['redirect'],
+        "time"      =>  $this->flags['time'],
+        "target"    =>  $this->flags['target'],
       ]);
 
       $this->response->send();
