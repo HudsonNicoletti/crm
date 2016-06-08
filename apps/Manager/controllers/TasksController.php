@@ -3,12 +3,15 @@
 namespace Manager\Controllers;
 
 use Manager\Models\Logs as Logs,
+    Manager\Models\Team as Team,
     Manager\Models\Projects as Projects,
     Manager\Models\Tasks as Tasks;
 
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
     Phalcon\Forms\Element\Password,
+    Phalcon\Forms\Element\Textarea,
+    Phalcon\Forms\Element\Select,
     Phalcon\Forms\Element\Hidden;
 
 class TasksController extends ControllerBase
@@ -19,11 +22,21 @@ class TasksController extends ControllerBase
     'title'     => false,
     'text'      => false,
     'redirect'  => false,
-    'time'      => false
+    'time'      => false,
+    'target'    => false
   ];
 
   public function IndexAction()
   {
+    $this->assets
+    ->addCss("assets/manager/css/app/email.css")
+    ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
+    ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+    ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
+
     $tasks = Tasks::query()
     ->columns([
       'Manager\Models\Tasks._',
@@ -42,6 +55,40 @@ class TasksController extends ControllerBase
     $form->add(new Hidden( "security" ,[
         'name'  => $this->security->getTokenKey(),
         'value' => $this->security->getToken(),
+    ]));
+
+    $form->add(new Text( "title" ,[
+      'class'         => "form-control",
+      'data-validate' => true,
+      'data-empty'    => "* Campo Obrigatório",
+    ]));
+
+    $form->add(new Text( "deadline" ,[
+      'class'         => "form-control inputmask",
+      'placeholder'   => "dd-mm-yyyy",
+      'data-validate' => true,
+      'data-empty'    => "* Campo Obrigatório",
+      'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+    ]));
+
+    $form->add(new Textarea( "description" ,[
+      'class'         => "form-control",
+      'placeholder'   => "Breve Descrição ...",
+    ]));
+
+    $form->add(new Select( "project" , Projects::find() ,
+    [
+      'using' =>  ['_','title'],
+      'data-placeholder' => "Projeto Associado",
+      'class'            => "chosen-select form-control",
+    ]));
+
+    $form->add(new Select( "assigned" , Team::find() ,
+    [
+      'using' =>  ['uid','name'],
+      'data-placeholder' => "Membros Participantes",
+      'class'            => "chosen-select form-control",
+      'value'            => $this->session->get("secure_id")
     ]));
 
     $this->view->form = $form;
@@ -92,7 +139,7 @@ class TasksController extends ControllerBase
       $this->logManager($this->logs->update,$description,$task->project);
 
       $this->flags['redirect'] = "/tasks";
-      $this->flags['time'] = 0;
+      $this->flags['time'] = 1200;
 
     endif;
 
@@ -101,10 +148,65 @@ class TasksController extends ControllerBase
       "title"     =>  $this->flags['title'],
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
-      "time"      =>  $this->flags['time']
+      "time"      =>  $this->flags['time'] ,
+      "target"    =>  $this->flags['target'] ,
     ]);
 
     $this->response->send();
     $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+  }
+
+  public function NewAction()
+  {
+    $this->response->setContentType("application/json");
+
+    $this->flags['target'] = "#createBox";
+
+    if(!$this->request->isPost()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Cadastrar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if(!$this->security->checkToken()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Cadastrar!";
+      $this->flags['text']   = "Token de segurança inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $task = new Tasks;
+        $task->title        = $this->request->getPost("title","string");
+        $task->description  = $this->request->getPost("description","string");
+        $task->project      = $this->request->getPost("project","int");
+        $task->created      = (new \DateTime())->format("Y-m-d H:i:s");
+        $task->deadline     = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
+        $task->assigned     = $this->request->getPost("assigned","int");
+        $task->status       = 1;
+      $task->save();
+
+    # Log What Happend
+      $this->logManager($this->logs->create,"Adicionou uma nova tarefa ( {$this->request->getPost('title','string')} )",$this->request->getPost("project","int"));
+
+      $this->flags['title']    = "Cadastrado com Sucesso!";
+      $this->flags['text']     = "Tarefa cadastrada com sucesso!";
+      $this->flags['redirect'] = "/tasks";
+      $this->flags['time']     = 0;
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "title"     =>  $this->flags['title'],
+      "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'] ,
+      "target"    =>  $this->flags['target'] ,
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+
   }
 }

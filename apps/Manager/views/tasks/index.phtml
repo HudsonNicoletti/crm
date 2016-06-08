@@ -20,7 +20,7 @@
       </button>
     </div>
   </div>
-  
+
   <hr class="dotted">
   <div class="row">
     <div class="col-md-12">
@@ -30,6 +30,7 @@
             <div class="col-md-9">
               <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
             </div>
+            <hr class="dotted hidden-md hidden-lg">
             <div class="col-md-3">
               <div class="btn-group btn-group-justified">
                 <a role="button" class="btn btn-default" data-filter="1" >Abertos</a>
@@ -80,4 +81,80 @@
     </div>
   </div>
 
+</div>
+
+<!-- add task -->
+<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <h4 class="modal-title" id="create">Adicionar Tarefa</h4>
+      </div>
+
+      <form method="post" class="form-horizontal validator-form" action="/tasks/new" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
+        <div class="modal-body">
+
+          <div class="row">
+            <div class="col-md-12">
+              <div class="alert hidden" role="alert" id="createBox">
+                <h4 id="title"></h4>
+                <p id="desc"></p>
+              </div>
+            </div>
+          </div>
+
+          <?php echo $form->render("security"); ?>
+
+          <div class="row">
+
+            <div class="col-md-12">
+              <label class="control-label">Título</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("title"); ?>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="control-label">Descrição</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("description"); ?>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+
+            <div class="col-md-12">
+              <label class="control-label">Projeto Associado</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("project"); ?>
+              </div>
+            </div>
+
+            <div class="col-md-12">
+              <label class="control-label">Deadline</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("deadline"); ?>
+              </div>
+            </div>
+
+          </div>
+          <div class="row">
+            <div class="col-md-12">
+              <label class="control-label">Designado à</label>
+              <div class="form-group has-feedback">
+                <?php echo $form->render("assigned"); ?>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-primary">Cadastrar</button>
+        </div>
+      </form>
+    </div>
+  </div>
 </div>

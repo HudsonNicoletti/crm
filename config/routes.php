@@ -205,6 +205,13 @@ $router->add("/tasks/status/{type:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'action'     => 'status',
 ]);
 
+$router->add("/tasks/new/", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tasks',
+    'action'     => 'new',
+])->via(["POST"]);
+
 $router->add("/tickets/view/{ticket:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',

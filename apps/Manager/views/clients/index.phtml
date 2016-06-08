@@ -43,7 +43,7 @@
                 <th>N &deg; Documento</th>
                 <th>Domínio</th>
                 <th>Telefone</th>
-                <th></th>
+                <th><i class="fa fa-cogs"></i></th>
               </tr>
             </thead>
             <tbody>
@@ -59,6 +59,9 @@
                     <td><?php echo $client->phone; ?></td>
                     <td>
                       <form method="post" class="validator-form" action="/clients/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
+                        <button type="button" class="btn btn-primary">
+                          <span class="fa fa-info-circle"></span>
+                        </button>
                         <a href="/clients/modify/<?php echo $client->_ ;?>">
                           <button type="button" class="btn btn-info">
                             <span class="fa fa-pencil"></span>
