@@ -65,35 +65,30 @@
         </div>
       </div>
       <div class="col-md-6">
+        <div class="panel panel-default">
+          <div class="panel-heading">Calendar</div>
+          <div class="panel-body">
 
-        <div class="panel panel-default" data-ng-controller="TodoCtrl">
-            <div class="panel-heading un-bold"><h4>Anotações <a href="" data-ng-click="remove()" class="pull-right"><small>Apagar Selecionados</small></a></h4></div>
-              <div class="panel-body">
-               <ul class="list-group no-margn nicescroll todo-list" style="height:205px; overflow:auto;">
-                  <li data-ng-repeat="todo in todos" class="list-group-item">
-                  <label class="cr-styled">
-                    <input type="checkbox" data-ng-model="todo.done">
-                      <i class="fa"></i>
-                  </label>
-                  <span class="done-{{todo.done}}">{{todo.text}}</span>
-                  </li>
-               </ul>
+            <div class="panel-heading clean clearfix text-center">
+              <div class="btn-group pull-left">
+                <button class="btn btn-default btn-sm" data-calendar-nav="prev"><i class="fa fa-chevron-left"></i></button>
+                <button class="btn btn-sm btn-default" data-calendar-nav="today">Today</button>
+                <button class="btn btn-sm btn-default" data-calendar-nav="next">Next >&gt;</button>
               </div>
-
-              <div class="panel-footer">
-                  <form data-ng-submit="addTodo()" role="form">
-                  <div class="input-group">
-                    <input type="text" data-ng-model="todoText" class="form-control" placeholder="add new todo here">
-                    <span class="input-group-btn">
-                      <button class="btn-primary btn" type="submit" >Add</button>
-                    </span>
-                  </div>
-                  </form>
+              <b class="calender-title"></b>
+              <div class="btn-group pull-right">
+                <button class="btn btn-sm btn-default" data-calendar-view="year">Ano</button>
+                <button class="btn btn-sm btn-default active" data-calendar-view="month">Mês</button>
+                <button class="btn btn-sm btn-default" data-calendar-view="week">Semana</button>
+                <button class="btn btn-sm btn-default" data-calendar-view="day">Dia</button>
               </div>
+            </div>
 
-
+          <div class="panel-body">
+            <div id="calendar"></div>
+            </div>
           </div>
-
+        </div>
       </div>
     </div>
 

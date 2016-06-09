@@ -29,6 +29,13 @@ $router->add("/:controller/:action/:params", [
     'params'     => 3,
 ]);
 
+$router->add("/calenderEvents", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'index',
+    'action'     => 'calendar',
+]);
+
 
 $router->add("/clients/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',

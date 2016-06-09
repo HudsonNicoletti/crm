@@ -14,6 +14,10 @@ class IndexController extends ControllerBase
     public function IndexAction()
     {
       // create a redirect for clients
+      $this->assets
+           ->addCss('assets/manager/css/plugins/calendar/calendar.css')
+           ->addJs('assets/manager/js/plugins/calendar/calendar.js')
+           ->addJs('assets/manager/js/plugins/calendar/calendar-conf.js');
 
       $user = $this->session->get("secure_id");
       $logs = Logs::query()
@@ -39,5 +43,27 @@ class IndexController extends ControllerBase
       $this->view->tasks    = count($tasks);
       $this->view->clients  = Clients::find()->count();
 
+    }
+
+    public function CalendarAction()
+    {
+      $this->response->setContentType("application/json");
+
+      return $this->response->setJsonContent([
+        "success"    => 1,
+        "result"    => [
+          [
+          "id"=> "293",
+    			"title"=> "This is warning class event with very long title to check how it fits to evet in day view",
+    			"url"=> "http://www.example.com/",
+    			"class"=> "event-warning",
+    			"start"=> "1362938400000",
+    			"end"=>   "1363197686300"
+          ]
+        ]
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
 }

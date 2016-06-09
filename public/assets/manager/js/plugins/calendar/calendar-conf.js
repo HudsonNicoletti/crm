@@ -3,11 +3,11 @@
 	"use strict";
 
 	var options = {
-		events_source: 'assets/js/plugins/calendar/events.json.php',
+		events_source: '/calenderEvents',
 		view: 'month',
-		tmpl_path: 'assets/js/plugins/calendar/tmpls/',
+		tmpl_path: '/assets/manager/js/plugins/calendar/tmpls/',
 		tmpl_cache: false,
-		day: '2013-03-12',
+		day: '2016-08-06',
 		onAfterEventsLoad: function(events) {
 			if(!events) {
 				return;
@@ -69,22 +69,22 @@
 		//e.preventDefault();
 		//e.stopPropagation();
 	});
-	
-	
-	
+
+
+
 	$('.add-calendar-event').click(function(){
-		
+
 		var calendarEventName = $('.calendar-event-name').val();
-		
+
 		var dateTime = new Date();
-		
+
 		var hr = dateTime.getHours();
-		var mins = dateTime.getMinutes();  
-		
+		var mins = dateTime.getMinutes();
+
 		if(calendarEventName == ''){
 			alert('Event name can’t be blank')
 		}
-		
+
 		else{
 		$('.calendar-events-ctrl').before('\
 							<h5 class="no-margn"><a href="#" class="text-muted"><strong>'+calendarEventName+'</strong></a></h5>\
@@ -92,7 +92,7 @@
                             <hr>')
 		}
 	});
-	
-	
-	
+
+
+
 }(jQuery));
