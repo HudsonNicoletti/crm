@@ -270,7 +270,6 @@ class TeamController extends ControllerBase
     endif;
 
     if($this->flags['status']):
-      $this->response->setStatusCode(200,"OK");
 
       foreach($this->request->getUploadedFiles() as $file)
       {
@@ -335,7 +334,6 @@ class TeamController extends ControllerBase
     endif;
 
     if($this->flags['status']):
-      $this->response->setStatusCode(200,"OK");
 
       $d = new Departments();
         $d->department = $this->request->getPost("department","string");
@@ -403,22 +401,15 @@ class TeamController extends ControllerBase
 
     if($this->flags['status']):
 
-      $this->response->setStatusCode(200,"OK");
-
-      if($this->request->hasFiles())
-      {
+      if($this->request->hasFiles()):
         unlink("assets/manager/images/avtar/{$m->image}");
-        foreach($this->request->getUploadedFiles() as $file)
-        {
+        foreach($this->request->getUploadedFiles() as $file):
           $filename = substr(sha1(uniqid()), 0, 12).'.'.$file->getExtension();
           $file->moveTo("assets/manager/images/avtar/{$filename}");
-        }
-        $m->image = $filename;
-      }
-      else
-      {
-        $m->image = $m->image;
-      }
+        endforeach;
+      else:
+        $filename = $m->image;
+      endif;
 
         $u->username   = $this->request->getPost("username");
         $u->password   = ($this->request->getPost("password") != null ) ? password_hash($this->request->getPost("password"), PASSWORD_BCRYPT ) : $u->password;
@@ -429,6 +420,7 @@ class TeamController extends ControllerBase
         $m->name          = $this->request->getPost("name");
         $m->phone         = $this->request->getPost("phone");
         $m->department_id = $this->request->getPost("department");
+        $m->image         = $filename;
         $m->save();
 
       $name = $this->request->getPost("name");

@@ -39,6 +39,7 @@
         <table class="table table-striped no-margn">
             <thead>
               <tr>
+                <th class="avtar"></th>
                 <th>Responsável</th>
                 <th>N &deg; Documento</th>
                 <th>Domínio</th>
@@ -49,6 +50,7 @@
             <tbody>
               <?php foreach ($clients as $client): ?>
                 <tr data-searchable >
+                  <td><img src="/assets/manager/images/avtar/<?php echo $client->image; ?>" alt="<?php echo "{$client->firstname} {$client->lastname}"; ?>" class="img-circle avtar" /></td>
                     <td>
                       <?php echo "{$client->firstname} {$client->lastname}"; if($client->fantasy): ?>
                         <br><span class="label label-primary bigger-text"><?php echo $client->fantasy ;?></span>

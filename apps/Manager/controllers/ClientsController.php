@@ -2,12 +2,13 @@
 
 namespace Manager\Controllers;
 
-use \Manager\Models\Users as Users,
-    \Manager\Models\Clients as Clients,
-    \Manager\Models\Companies as Companies,
-    \Manager\Models\ClientContacts as ClientContacts;
+use Manager\Models\Users as Users,
+    Manager\Models\Clients as Clients,
+    Manager\Models\Companies as Companies,
+    Manager\Models\ClientContacts as ClientContacts;
 
 use Phalcon\Forms\Form,
+    Phalcon\Forms\Element\File,
     Phalcon\Forms\Element\Text,
     Phalcon\Forms\Element\Password,
     Phalcon\Forms\Element\Hidden;
@@ -19,7 +20,8 @@ class ClientsController extends ControllerBase
       'title'     => false,
       'text'      => false,
       'redirect'  => false,
-      'time'      => null
+      'time'      => null,
+      'target'    => false
     ];
 
     public function IndexAction()
@@ -38,6 +40,7 @@ class ClientsController extends ControllerBase
         'Manager\Models\Clients.document',
         'Manager\Models\Clients.phone',
         'Manager\Models\Clients.domain',
+        'Manager\Models\Clients.image',
         'Manager\Models\Companies.fantasy',
       ])
       ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = Manager\Models\Clients._')
@@ -172,13 +175,18 @@ class ClientsController extends ControllerBase
         'data-empty'    => "* Campo Obrigatório",
       ]));
 
+      $form->add(new File( "file" ,[
+        'class'         => "form-control",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+      ]));
+
       $form->add(new Text( "username" ,[
         'class'         => "form-control",
         'id'            => "username",
         'data-validate' => true,
         'data-empty'    => "* Campo Obrigatório",
       ]));
-
       $form->add(new Password( "password" ,[
         'class'         => "form-control",
         'id'            => "password",
@@ -326,21 +334,24 @@ class ClientsController extends ControllerBase
 
         $form->add(new Text( "state" ,[
             'class'         => "form-control",
-            'id'            => "state",
             'data-validate' => true,
             'data-empty'    => "* Campo Obrigatório",
             'value'         => $client[0]->state
         ]));
 
+        $form->add(new File( "file" ,[
+          'class'         => "form-control",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]));
+
         $form->add(new Text( "username" ,[
             'class'         => "form-control",
-            'id'            => "username",
             'value'         => $client[0]->username
         ]));
 
         $form->add(new Password( "password" ,[
             'class'         => "form-control",
-            'id'            => "password",
         ]));
 
         if( $client[0]->client != null )
@@ -432,6 +443,12 @@ class ClientsController extends ControllerBase
         $this->flags['text']   = "Endereço de E-Mail inválido!";
       endif;
 
+      if(!$this->request->hasFiles()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Cadastrar!";
+        $this->flags['text']   = "Nehuma Imagem Selecionada!";
+      endif;
+
       if( Users::findFirstByEmail($this->request->getPost("email"))->_ != NULL ):
         $this->flags['status'] = false ;
         $this->flags['title']  = "Erro ao Cadastrar!";
@@ -445,7 +462,12 @@ class ClientsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
+
+        foreach($this->request->getUploadedFiles() as $file)
+        {
+          $filename = substr(sha1(uniqid()), 0, 12).'.'.$file->getExtension();
+          $file->moveTo("assets/manager/images/avtar/{$filename}");
+        }
 
         $user = new Users;
           $user->username   = $this->request->getPost("username");
@@ -467,6 +489,7 @@ class ClientsController extends ControllerBase
           $client->zip       = $this->request->getPost("zip");
           $client->city      = $this->request->getPost("city");
           $client->state     = $this->request->getPost("state");
+          $client->image     = $filename;
         $client->save();
 
         if( $this->dispatcher->getParam("type") == "company" )
@@ -567,7 +590,17 @@ class ClientsController extends ControllerBase
       endif;
 
       if($this->flags['status']):
-        $this->response->setStatusCode(200,"OK");
+
+        # Handle image
+        if($this->request->hasFiles()):
+          unlink("assets/manager/images/avtar/{$c->image}");
+          foreach($this->request->getUploadedFiles() as $file):
+            $filename = substr(sha1(uniqid()), 0, 12).'.'.$file->getExtension();
+            $file->moveTo("assets/manager/images/avtar/{$filename}");
+          endforeach;
+        else:
+          $filename = $c->image;
+        endif;
 
           $u->username   = $this->request->getPost("username");
           $u->password   = ($this->request->getPost("password") != null ) ? password_hash($this->request->getPost("password"), PASSWORD_BCRYPT ) : $u->password;
@@ -587,6 +620,7 @@ class ClientsController extends ControllerBase
           $c->zip       = $this->request->getPost("zip");
           $c->city      = $this->request->getPost("city");
           $c->state     = $this->request->getPost("state");
+          $c->image     = $filename;
         $c->save();
 
         if( $company->_ != null )
@@ -682,6 +716,8 @@ class ClientsController extends ControllerBase
             $client->delete();
           }
         }
+
+        unlink("assets/manager/images/avtar/{$c->image}");
 
         # Log What Happend
         $this->logManager($this->logs->delete,"Removeu um cliente ({$n}).");
