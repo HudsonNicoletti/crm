@@ -16,6 +16,7 @@ class IndexController extends ControllerBase
       // create a redirect for clients
       $this->assets
            ->addCss('assets/manager/css/plugins/calendar/calendar.css')
+           ->addJs('assets/manager/js/plugins/underscore/underscore-min.js')
            ->addJs('assets/manager/js/plugins/calendar/calendar.js')
            ->addJs('assets/manager/js/plugins/calendar/calendar-conf.js');
 
@@ -49,19 +50,33 @@ class IndexController extends ControllerBase
     {
       $this->response->setContentType("application/json");
 
+      $my = [];
+      $colors = [
+        "event-important",
+        "event-warning",
+        "event-info",
+        "event-inverse",
+        "event-success",
+        "event-special",
+      ];
+      $tasks = Tasks::findByAssigned($this->session->get("secure_id"));
+      foreach($tasks as $task)
+      {
+        array_push($my,[
+          "id"    => $task->_,
+          "title" => $task->title,
+          "class" => $colors[rand(0,5)],
+          "start" => (new \DateTime($task->created))->getTimestamp()."000",
+          "end"   => (new \DateTime($task->deadline))->getTimestamp()."000",
+        ]);
+      }
+
       return $this->response->setJsonContent([
-        "success"    => 1,
-        "result"    => [
-          [
-          "id"=> "293",
-    			"title"=> "This is warning class event with very long title to check how it fits to evet in day view",
-    			"url"=> "http://www.example.com/",
-    			"class"=> "event-warning",
-    			"start"=> "1362938400000",
-    			"end"=>   "1363197686300"
-          ]
-        ]
+        "success"  => 1,
+        "result"   => $my
       ]);
+
+      # dates = timestamp of YYYY-DD-MM
 
       $this->response->send();
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);

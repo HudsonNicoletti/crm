@@ -1,13 +1,12 @@
 (function($) {
 
 	"use strict";
-
 	var options = {
 		events_source: '/calenderEvents',
 		view: 'month',
 		tmpl_path: '/assets/manager/js/plugins/calendar/tmpls/',
 		tmpl_cache: false,
-		day: '2016-08-06',
+		day: "now",
 		onAfterEventsLoad: function(events) {
 			if(!events) {
 				return;
