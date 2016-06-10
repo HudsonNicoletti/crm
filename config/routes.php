@@ -222,14 +222,14 @@ $router->add("/task/{method:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'tasks',
-    'action'     => 'info',
+    'action'     => 'modal',
 ]);
 
 $router->add("/task/{method:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
     'controller' => 'tasks',
-    'action'     => 'info',
+    'action'     => 'modal',
 ]);
 
 $router->add("/tickets/view/{ticket:[a-zA-Z0-9\_\-]+}", [

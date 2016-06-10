@@ -178,7 +178,7 @@ class TasksController extends ControllerBase
 
   }
 
-  public function InfoAction()
+  public function ModalAction()
   {
     $this->response->setContentType("application/json");
 

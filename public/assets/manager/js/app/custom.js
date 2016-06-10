@@ -48,99 +48,103 @@ $(function(){
 
 	});
 
-	/********************************
-	popover
-	********************************/
-	if( $.isFunction($.fn.popover) ){
-	$('.popover-btn').popover();
-	}
+  function initAll()
+  {
+  	/********************************
+  	popover
+  	********************************/
+  	if( $.isFunction($.fn.popover) ){
+  	$('.popover-btn').popover();
+  	}
 
-	/********************************
-	tooltip
-	********************************/
-	if( $.isFunction($.fn.tooltip) ){
-	$('.tooltip-btn').tooltip()
-	}
+  	/********************************
+  	tooltip
+  	********************************/
+  	if( $.isFunction($.fn.tooltip) ){
+  	$('.tooltip-btn').tooltip()
+  	}
 
-	/********************************
-	NanoScroll - fancy scroll bar
-	********************************/
-	if( $.isFunction($.fn.niceScroll) ){
-	$(".nicescroll").niceScroll({
+  	/********************************
+  	NanoScroll - fancy scroll bar
+  	********************************/
+  	if( $.isFunction($.fn.niceScroll) ){
+  	$(".nicescroll").niceScroll({
 
-		cursorcolor: '#9d9ea5',
-		cursorborderradius : '0px'
+  		cursorcolor: '#9d9ea5',
+  		cursorborderradius : '0px'
 
-	});
-	}
+  	});
+  	}
 
-	if( $.isFunction($.fn.niceScroll) ){
-	$("aside.left-panel:not(.collapsed)").niceScroll({
-		cursorcolor: '#8e909a',
-		cursorborder: '0px solid #fff',
-		cursoropacitymax: '0.5',
-		cursorborderradius : '0px'
-	});
-	}
+  	if( $.isFunction($.fn.niceScroll) ){
+  	$("aside.left-panel:not(.collapsed)").niceScroll({
+  		cursorcolor: '#8e909a',
+  		cursorborder: '0px solid #fff',
+  		cursoropacitymax: '0.5',
+  		cursorborderradius : '0px'
+  	});
+  	}
 
-	/********************************
-	Input Mask
-	********************************/
-	if( $.isFunction($.fn.inputmask) ){
-		$(".inputmask").inputmask();
-	}
+  	/********************************
+  	Input Mask
+  	********************************/
+  	if( $.isFunction($.fn.inputmask) ){
+  		$(".inputmask").inputmask();
+  	}
 
-	/********************************
-	TagsInput
-	********************************/
-	if( $.isFunction($.fn.tagsinput) ){
-		$('.tagsinput').tagsinput();
-	}
+  	/********************************
+  	TagsInput
+  	********************************/
+  	if( $.isFunction($.fn.tagsinput) ){
+  		$('.tagsinput').tagsinput();
+  	}
 
-	/********************************
-	Chosen Select
-	********************************/
-	if( $.isFunction($.fn.chosen) ){
-		$('.chosen-select').chosen();
-        $('.chosen-select-deselect').chosen({ allow_single_deselect: true });
-	}
+  	/********************************
+  	Chosen Select
+  	********************************/
+  	if( $.isFunction($.fn.chosen) ){
+  		$('.chosen-select').chosen();
+          $('.chosen-select-deselect').chosen({ allow_single_deselect: true });
+  	}
 
-	/********************************
-	DateTime Picker
-	********************************/
-	if( $.isFunction($.fn.datetimepicker) ){
-		$('#datetimepicker').datetimepicker();
-		$('#datepicker').datetimepicker({
-      pickTime: false,
-      format: 'DD/MM/YYYY'
-    });
-		$('#timepicker').datetimepicker({pickDate: false});
+  	/********************************
+  	DateTime Picker
+  	********************************/
+  	if( $.isFunction($.fn.datetimepicker) ){
+  		$('#datetimepicker').datetimepicker();
+  		$('#datepicker').datetimepicker({
+        pickTime: false,
+        format: 'DD/MM/YYYY'
+      });
+  		$('#timepicker').datetimepicker({pickDate: false});
 
-		$('#datetimerangepicker1').datetimepicker();
-		$('#datetimerangepicker2').datetimepicker();
-		$("#datetimerangepicker1").on("dp.change",function (e) {
-		   $('#datetimerangepicker2').data("DateTimePicker").setMinDate(e.date);
-		});
-		$("#datetimerangepicker2").on("dp.change",function (e) {
-		   $('#datetimerangepicker1').data("DateTimePicker").setMaxDate(e.date);
-		});
-	}
+  		$('#datetimerangepicker1').datetimepicker();
+  		$('#datetimerangepicker2').datetimepicker();
+  		$("#datetimerangepicker1").on("dp.change",function (e) {
+  		   $('#datetimerangepicker2').data("DateTimePicker").setMinDate(e.date);
+  		});
+  		$("#datetimerangepicker2").on("dp.change",function (e) {
+  		   $('#datetimerangepicker1').data("DateTimePicker").setMaxDate(e.date);
+  		});
+  	}
 
-	/********************************
-	wysihtml5
-	********************************/
-	if( $.isFunction($.fn.wysihtml5) ){
-		$('.wysihtml').wysihtml5();
-	}
+  	/********************************
+  	wysihtml5
+  	********************************/
+  	if( $.isFunction($.fn.wysihtml5) ){
+  		$('.wysihtml').wysihtml5();
+  	}
 
-	/********************************
-	wysihtml5
-	********************************/
-	if( $.isFunction($.fn.ckeditor) ){
-	CKEDITOR.disableAutoInline = true;
-	$('#ckeditor').ckeditor();
-	$('.inlineckeditor').ckeditor();
-	}
+  	/********************************
+  	wysihtml5
+  	********************************/
+  	if( $.isFunction($.fn.ckeditor) ){
+  	CKEDITOR.disableAutoInline = true;
+  	$('#ckeditor').ckeditor();
+  	$('.inlineckeditor').ckeditor();
+  	}
+  }
+  initAll();
 
 	/********************************
 	Scroll To Top
@@ -262,6 +266,7 @@ $(function(){
         success: function( response )
         {
           $('#modal-results').html(response.data[1]);
+          initAll();
           $(response.data[0]).modal("show");
         }
       });
