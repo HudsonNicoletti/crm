@@ -15,7 +15,7 @@
 
   <div class="row">
     <div class="col-md-2 col-md-offset-10">
-      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-target="#create">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-ajax="/task/create/">
         <span class="fa fa-plus"></span> Adicionar Tarefa
       </button>
     </div>
@@ -68,9 +68,37 @@
                     <?php $action = ( $task->status == 1 ? 'close' : 'open' ); ?>
                     <form method="post" class="validator-form" action="/tasks/status/<?php echo "{$action}/{$task->_}"; ?>" novalidate="novalidate">
                       <?php echo $form->render("security"); ?>
-                      <button type="submit" class="btn btn-<?php echo ( $task->status == 1 ? 'success' : 'danger' ); ?>">
-                        <span class="fa fa-<?php echo ( $task->status == 1 ? 'check' : 'exchange' ); ?>"></span>
-                      </button>
+                      <?php if($task->status == 1): ?>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/task/view/<?php echo $task->_;?>">
+                            <span class="fa fa-info-circle"></span>
+                            Info
+                          </button>
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/task/update/<?php echo $task->_;?>">
+                            <span class="fa fa-pencil"></span>
+                            Editar
+                          </button>
+                          <button type="submit" class="btn btn-success">
+                            <span class="fa fa-check"></span>
+                            Concluír
+                          </button>
+                        </div>
+                      <?php elseif($task->status == 2): ?>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/task/view/<?php echo $task->_;?>">
+                            <span class="fa fa-info-circle"></span>
+                            Info
+                          </button>
+                          <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/task/update/<?php echo $task->_;?>">
+                            <span class="fa fa-pencil"></span>
+                            Editar
+                          </button>
+                          <button type="submit" class="btn btn-danger">
+                            <span class="fa fa-exchange"></span>
+                            Abrir
+                          </button>
+                        </div>
+                      <?php endif; ?>
                     </form>
                   </td>
                 </tr>
@@ -83,78 +111,4 @@
 
 </div>
 
-<!-- add task -->
-<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="create">Adicionar Tarefa</h4>
-      </div>
-
-      <form method="post" class="form-horizontal validator-form" action="/tasks/new" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
-        <div class="modal-body">
-
-          <div class="row">
-            <div class="col-md-12">
-              <div class="alert hidden" role="alert" id="createBox">
-                <h4 id="title"></h4>
-                <p id="desc"></p>
-              </div>
-            </div>
-          </div>
-
-          <?php echo $form->render("security"); ?>
-
-          <div class="row">
-
-            <div class="col-md-12">
-              <label class="control-label">Título</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("title"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Descrição</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("description"); ?>
-              </div>
-            </div>
-
-          </div>
-          <div class="row">
-
-            <div class="col-md-12">
-              <label class="control-label">Projeto Associado</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("project"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Deadline</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("deadline"); ?>
-              </div>
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label class="control-label">Designado à</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("assigned"); ?>
-              </div>
-            </div>
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<div id="modal-results"></div>

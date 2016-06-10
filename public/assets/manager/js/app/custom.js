@@ -247,6 +247,29 @@ $(function(){
   });
 
 	/********************************
+	Mustach Templating
+	********************************/
+  if($("[data-ajax]").length)
+  {
+    $("[data-ajax]").on("click",function(){
+      $.ajax({
+        url:  $(this).data("ajax"),
+        type: "GET",
+        processData: false,
+        contentType: false,
+        dataType: "json",
+        cache: false,
+        success: function( response )
+        {
+          $('#modal-results').html(response.data[1]);
+          $(response.data[0]).modal("show");
+        }
+      });
+      return false;
+    });
+  }
+
+	/********************************
 	Forms
 	********************************/
   function AjaxSubmit(action , method)

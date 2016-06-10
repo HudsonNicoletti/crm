@@ -36,7 +36,6 @@ $router->add("/calenderEvents", [
     'action'     => 'calendar',
 ]);
 
-
 $router->add("/clients/remove/{urlrequest:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',
@@ -218,6 +217,20 @@ $router->add("/tasks/new/", [
     'controller' => 'tasks',
     'action'     => 'new',
 ])->via(["POST"]);
+
+$router->add("/task/{method:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tasks',
+    'action'     => 'info',
+]);
+
+$router->add("/task/{method:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tasks',
+    'action'     => 'info',
+]);
 
 $router->add("/tickets/view/{ticket:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',

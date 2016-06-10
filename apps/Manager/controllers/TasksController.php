@@ -7,6 +7,8 @@ use Manager\Models\Logs as Logs,
     Manager\Models\Projects as Projects,
     Manager\Models\Tasks as Tasks;
 
+use Mustache_Engine as Mustache;
+
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
     Phalcon\Forms\Element\Password,
@@ -53,42 +55,8 @@ class TasksController extends ControllerBase
 
     $form = new Form();
     $form->add(new Hidden( "security" ,[
-        'name'  => $this->security->getTokenKey(),
-        'value' => $this->security->getToken(),
-    ]));
-
-    $form->add(new Text( "title" ,[
-      'class'         => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Text( "deadline" ,[
-      'class'         => "form-control inputmask",
-      'placeholder'   => "dd-mm-yyyy",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
-    ]));
-
-    $form->add(new Textarea( "description" ,[
-      'class'         => "form-control",
-      'placeholder'   => "Breve Descrição ...",
-    ]));
-
-    $form->add(new Select( "project" , Projects::find() ,
-    [
-      'using' =>  ['_','title'],
-      'data-placeholder' => "Projeto Associado",
-      'class'            => "chosen-select form-control",
-    ]));
-
-    $form->add(new Select( "assigned" , Team::find() ,
-    [
-      'using' =>  ['uid','name'],
-      'data-placeholder' => "Membros Participantes",
-      'class'            => "chosen-select form-control",
-      'value'            => $this->session->get("secure_id")
+      'name'  => $this->security->getTokenKey(),
+      'value' => $this->security->getToken(),
     ]));
 
     $this->view->form = $form;
@@ -208,5 +176,125 @@ class TasksController extends ControllerBase
     $this->response->send();
     $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
 
+  }
+
+  public function InfoAction()
+  {
+    $this->response->setContentType("application/json");
+
+    if(!$this->request->isGet()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $form = new Form();
+      $action = false;
+      $inputs = [];
+
+      # CREATING ELEMENTS
+      $element['project'] = new Select( "project" , Projects::find() ,[
+        'using' =>  ['_','title'],
+        'title' => "Projeto Associado",
+        'class' => "chosen-select form-control"
+      ]);
+
+      $element['title'] = new Text( "title" ,[
+        'class'         => "form-control",
+        'title'         => "Título",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      $element['description'] = new Textarea( "description" ,[
+        'class'         => "form-control",
+        'title'         => "Observações",
+        'placeholder'   => "Breve Descrição ..."
+      ]);
+
+      $element['deadline'] = new Text( "deadline" ,[
+        'class'         => "form-control inputmask",
+        'title'         => "Deadline",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório",
+        'placeholder'   => "dd-mm-yyyy",
+        'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+      ]);
+
+      $element['assigned'] = new Select( "assigned" , Team::find() ,[
+        'using' =>  ['uid','name'],
+        'title' => "Membros Participantes",
+        'class' => "chosen-select form-control"
+      ]);
+
+      $element['security'] = new Hidden( "security" ,[
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
+      ]);
+
+      # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
+      if( $this->dispatcher->getParam("method") == "create" ):
+        $action = "/tasks/new";
+        $template = "create";
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "update"):
+        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
+        $action = "/tasks/update/{$task->_}";
+        $template = "update";
+        $element['project']->setAttribute("value",$task->project);
+        $element['title']->setAttribute("value",$task->title);
+        $element['description']->setAttribute("value",$task->description);
+        $element['deadline']->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
+        $element['assigned']->setAttribute("value",$task->assigned);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO VIEW POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "view"):
+        $template = "view";
+        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
+        $element['project']->setAttribute("value",$task->project);
+        $element['title']->setAttribute("value",$task->title);
+        $element['description']->setAttribute("value",$task->description);
+        $element['deadline']->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
+        $element['assigned']->setAttribute("value",$task->assigned);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      endif;
+
+      # POPULATE ARRAY WITH TITLE AND INPUTS FOR RENDERING
+      foreach($form as $f)
+      {
+        array_push($inputs,[ "title" => $f->getAttribute("title") , "input" => $f->render($f->getName()) ]);
+      }
+
+      # RENDER
+      $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
+        $template => true,
+        "action"  => $action,
+        "inputs"  => $inputs
+      ]);
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "data"      =>  [ "#{$template}" , $body ]  # Modal Target , data
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
   }
 }
