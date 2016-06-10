@@ -178,6 +178,58 @@ class TasksController extends ControllerBase
 
   }
 
+  public function UpdateAction()
+  {
+    $this->response->setContentType("application/json");
+
+    $this->flags['target'] = "#updateBox";
+
+    if(!$this->request->isPost()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if(!$this->security->checkToken()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Token de segurança inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $task = Tasks::findFirst($this->dispatcher->getParam("task"));
+        $task->title        = $this->request->getPost("title","string");
+        $task->description  = $this->request->getPost("description","string");
+        $task->project      = $this->request->getPost("project","int");
+        $task->deadline     = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
+        $task->assigned     = $this->request->getPost("assigned","int");
+      $task->save();
+
+    # Log What Happend
+      $this->logManager($this->logs->create,"Alterou uma tarefa ( {$this->request->getPost('title','string')} )",$this->request->getPost("project","int"));
+
+      $this->flags['title']    = "Alterado com Sucesso!";
+      $this->flags['text']     = "Tarefa Alterada com sucesso!";
+      $this->flags['redirect'] = "/tasks";
+      $this->flags['time']     = 1200;
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "title"     =>  $this->flags['title'],
+      "text"      =>  $this->flags['text'],
+      "redirect"  =>  $this->flags['redirect'],
+      "time"      =>  $this->flags['time'] ,
+      "target"    =>  $this->flags['target'] ,
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+
+  }
+
   public function ModalAction()
   {
     $this->response->setContentType("application/json");
@@ -225,7 +277,7 @@ class TasksController extends ControllerBase
 
       $element['assigned'] = new Select( "assigned" , Team::find() ,[
         'using' =>  ['uid','name'],
-        'title' => "Membros Participantes",
+        'title' => "Responsável",
         'class' => "chosen-select form-control"
       ]);
 
@@ -262,11 +314,11 @@ class TasksController extends ControllerBase
       elseif ($this->dispatcher->getParam("method") == "view"):
         $template = "view";
         $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $element['project']->setAttribute("value",$task->project);
-        $element['title']->setAttribute("value",$task->title);
-        $element['description']->setAttribute("value",$task->description);
-        $element['deadline']->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
-        $element['assigned']->setAttribute("value",$task->assigned);
+        $element['project']->setAttribute("disabled",true)->setAttribute("value",$task->project);
+        $element['title']->setAttribute("disabled",true)->setAttribute("value",$task->title);
+        $element['description']->setAttribute("disabled",true)->setAttribute("value",$task->description);
+        $element['deadline']->setAttribute("disabled",true)->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
+        $element['assigned']->setAttribute("disabled",true)->setAttribute("value",$task->assigned);
         foreach($element as $e)
         {
           $form->add($e);

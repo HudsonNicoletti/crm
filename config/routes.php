@@ -218,6 +218,13 @@ $router->add("/tasks/new/", [
     'action'     => 'new',
 ])->via(["POST"]);
 
+$router->add("/tasks/update/{task:[a-zA-Z0-9\_\-]+}", [
+    'module'     => 'Manager',
+    'namespace'  => 'Manager\Controllers',
+    'controller' => 'tasks',
+    'action'     => 'update',
+])->via(["POST"]);
+
 $router->add("/task/{method:[a-zA-Z0-9\_\-]+}", [
     'module'     => 'Manager',
     'namespace'  => 'Manager\Controllers',

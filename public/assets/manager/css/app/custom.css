@@ -124,3 +124,8 @@
   display: flex;
   flex-direction: row-reverse;
 }
+
+.chosen-disabled
+{
+  font-weight: bold;
+}
