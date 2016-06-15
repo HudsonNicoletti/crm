@@ -39,6 +39,8 @@ class TasksController extends ControllerBase
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
     ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
+    $uid = $this->session->get('secure_id');
+
     $tasks = Tasks::query()
     ->columns([
       'Manager\Models\Tasks._',
@@ -50,7 +52,7 @@ class TasksController extends ControllerBase
       'Manager\Models\Projects.title as project',
     ])
     ->leftJoin('Manager\Models\Projects', 'Manager\Models\Tasks.project = Manager\Models\Projects._')
-    ->where("assigned = '{$this->session->get('secure_id')}'")
+    ->where("assigned = '{$uid}'")
     ->execute();
 
     $form = new Form();

@@ -24,7 +24,8 @@ class TeamController extends ControllerBase
     'title'     => false,
     'text'      => false,
     'redirect'  => false,
-    'time'      => null
+    'time'      => null,
+    'targer'    => false
   ];
 
   public function IndexAction()
@@ -32,8 +33,7 @@ class TeamController extends ControllerBase
     $this->assets
     ->addCss("assets/manager/css/app/email.css")
     ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js");
 
     $form = new Form();
 
