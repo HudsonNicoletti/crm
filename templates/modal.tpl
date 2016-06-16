@@ -36,14 +36,14 @@
   </div>
 </div>
 {{/create}}
-{{#update}}
+{{#modify}}
 <!-- EDIT -->
-<div class="modal fade" id="update" tabindex="-1" role="dialog" aria-labelledby="update" aria-hidden="true">
+<div class="modal fade" id="modify" tabindex="-1" role="dialog" aria-labelledby="modify" aria-hidden="true">
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="update">Alterar Informações</h4>
+        <h4 class="modal-title" id="modify">Alterar Informações</h4>
       </div>
         <form role="form" method="post" accept-charset="utf8" action="{{action}}" class="validator-form" >
         <div class="modal-body">
@@ -73,7 +73,7 @@
     </div>
   </div>
 </div>
-{{/update}}
+{{/modify}}
 {{#view}}
 <!-- INFO -->
 <div class="modal fade" id="view" tabindex="-1" role="dialog" aria-labelledby="view" aria-hidden="true">

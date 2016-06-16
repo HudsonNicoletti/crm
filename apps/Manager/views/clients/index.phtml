@@ -60,19 +60,22 @@
                     <td><?php echo $client->domain; ?></td>
                     <td><?php echo $client->phone; ?></td>
                     <td>
-                      <form method="post" class="validator-form" action="/clients/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
-                        <button type="button" class="btn btn-primary">
-                          <span class="fa fa-info-circle"></span>
-                        </button>
-                        <a href="/clients/modify/<?php echo $client->_ ;?>">
-                          <button type="button" class="btn btn-info">
-                            <span class="fa fa-pencil"></span>
+                      <form method="post" class="validator-form" action="/client/remove/<?php echo $client->_ ;?>" novalidate="novalidate">
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-info" data-toggle="modal" data-ajax="/client/view/<?php echo $client->_;?>">
+                            <span class="fa fa-info-circle"></span>
+                            Info
                           </button>
-                        </a>
+                          <button type="button" class="btn btn-primary" data-href="/client/modify/<?php echo $client->_ ;?>">
+                            <span class="fa fa-pencil"></span>
+                            Editar
+                          </button>
+                          <button type="submit" class="btn btn-danger">
+                            <span class="fa fa-close"></span>
+                            Remover
+                          </button>
+                        </div>
                         <?php echo $form->render("security"); ?>
-                        <button type="submit" class="btn btn-danger">
-                          <span class="fa fa-close"></span>
-                        </button>
                       </form>
                     </td>
                 </tr>
@@ -85,3 +88,5 @@
   </div>
 
 </div>
+
+<div id="modal-results"></div>

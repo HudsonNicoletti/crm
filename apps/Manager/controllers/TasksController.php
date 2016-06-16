@@ -85,7 +85,7 @@ class TasksController extends ControllerBase
 
       $task = Tasks::findFirst( $this->dispatcher->getParam("task") );
 
-      if( $this->dispatcher->getParam("type") == "close" )
+      if( $this->dispatcher->getParam("method") == "close" )
       {
         $task->status = 2;
         $task->completed = (new \DateTime())->format("Y-m-d H:i:s");
@@ -290,7 +290,7 @@ class TasksController extends ControllerBase
 
       # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
       if( $this->dispatcher->getParam("method") == "create" ):
-        $action = "/tasks/new";
+        $action = "/task/new";
         $template = "create";
         foreach($element as $e)
         {
@@ -298,10 +298,10 @@ class TasksController extends ControllerBase
         }
 
       # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
-      elseif ($this->dispatcher->getParam("method") == "update"):
+      elseif ($this->dispatcher->getParam("method") == "modify"):
         $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $action = "/tasks/update/{$task->_}";
-        $template = "update";
+        $action = "/task/update/{$task->_}";
+        $template = "modify";
         $element['project']->setAttribute("value",$task->project);
         $element['title']->setAttribute("value",$task->title);
         $element['description']->setAttribute("value",$task->description);

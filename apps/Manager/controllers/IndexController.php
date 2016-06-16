@@ -81,4 +81,15 @@ class IndexController extends ControllerBase
       $this->response->send();
       $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
     }
+
+    public function webAction()
+    {
+      $this->response->setContentType("application/json");
+      return $this->response->setJsonContent([
+        $this->dispatcher->getParam("method"),
+        $this->dispatcher->getParam("id"),
+      ]);
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
 }

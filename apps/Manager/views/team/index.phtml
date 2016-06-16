@@ -16,12 +16,15 @@
 
   <div class="row">
     <div class="col-md-2">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-ajax="/team/create/">
+        <span class="fa fa-plus"></span> Adicionar Membro
+      </button>
+      <hr class="dotted">
       <div class="panel panel-default">
         <div class="panel-heading clean">Navegação</div>
         <div class="panel-body no-padd">
           <div class="list-group no-margn mail-nav">
             <a href="/team" class="list-group-item on">Membros Cadastrados</a>
-            <a href="/team/create" class="list-group-item">Cadastrar Novo Membro</a>
             <a href="/team/departments" class="list-group-item">Departamentos</a>
           </div>
         </div>
@@ -57,12 +60,10 @@
                     <td><?php echo $member->email; ?></td>
                     <td><?php echo $member->phone; ?></td>
                     <td>
-                      <a href="/team/modify/<?php echo $member->_ ;?>">
-                        <button type="button" class="btn btn-info">
-                          <span class="fa fa-pencil"></span>
-                        </button>
-                      </a>
-                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#confirm" data-form-action="/team/remove/<?php echo $member->uid ;?>">
+                      <button type="button" class="btn btn-info" data-toggle="modal" data-ajax="/team/modify/<?php echo $member->uid ;?>">
+                        <span class="fa fa-pencil"></span>
+                      </button>
+                      <button type="button" class="btn btn-danger" data-toggle="modal" data-ajax="/team/remove/<?php echo $member->uid ;?>">
                         <span class="fa fa-close"></span>
                       </button>
                     </td>
