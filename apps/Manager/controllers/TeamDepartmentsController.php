@@ -208,5 +208,114 @@ class TeamDepartmentsController extends ControllerBase
     $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
   }
 
+  public function ModalAction()
+  {
+    $this->response->setContentType("application/json");
 
+    if(!$this->request->isGet()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $form = new Form();
+      $action = false;
+      $inputs = [];
+
+      # CREATING ELEMENTS
+      $element['name'] = new Text( "name" ,[
+        'class'         => "form-control",
+        'title'         => "Nome Completo",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      $element['email'] = new Text( "email" ,[
+        'class'         => "form-control",
+        'title'         => "E-Mail",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      $element['phone'] = new Text( "phone" ,[
+        'class'         => "form-control",
+        'title'         => "Telefone",
+      ]);
+
+      $element['department'] = new Select( "department" , Departments::find() ,[
+        'using' =>  ['_','title'],
+        'title' => "Departamento",
+        'class' => "chosen-select form-control"
+      ]);
+
+      $element['security'] = new Hidden( "security" ,[
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
+      ]);
+
+      # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
+      if( $this->dispatcher->getParam("method") == "create" ):
+        $action = "/task/new";
+        $template = "create";
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "modify"):
+        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
+        $action = "/task/update/{$task->_}";
+        $template = "modify";
+        $element['project']->setAttribute("value",$task->project);
+        $element['title']->setAttribute("value",$task->title);
+        $element['description']->setAttribute("value",$task->description);
+        $element['deadline']->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
+        $element['assigned']->setAttribute("value",$task->assigned);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO VIEW POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "view"):
+        $template = "view";
+        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
+        $element['project']->setAttribute("disabled",true)->setAttribute("value",$task->project);
+        $element['title']->setAttribute("disabled",true)->setAttribute("value",$task->title);
+        $element['description']->setAttribute("disabled",true)->setAttribute("value",$task->description);
+        $element['deadline']->setAttribute("disabled",true)->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
+        $element['assigned']->setAttribute("disabled",true)->setAttribute("value",$task->assigned);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      endif;
+
+      # POPULATE ARRAY WITH TITLE AND INPUTS FOR RENDERING
+      foreach($form as $f)
+      {
+        array_push($inputs,[ "title" => $f->getAttribute("title") , "input" => $f->render($f->getName()) ]);
+      }
+
+      # RENDER
+      $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
+        $template => true,
+        "action"  => $action,
+        "inputs"  => $inputs
+      ]);
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "data"      =>  [ "#{$template}" , $body ]  # Modal Target , data
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+  }
 }

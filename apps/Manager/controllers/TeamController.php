@@ -2,11 +2,13 @@
 
 namespace Manager\Controllers;
 
-use \Manager\Models\Team as Team,
-    \Manager\Models\Users as Users,
-    \Manager\Models\Tasks        as Tasks,
-    \Manager\Models\Assignments  as Assignments,
-    \Manager\Models\Departments as Departments;
+use Manager\Models\Team         as Team,
+    Manager\Models\Users        as Users,
+    Manager\Models\Tasks        as Tasks,
+    Manager\Models\Assignments  as Assignments,
+    Manager\Models\Departments  as Departments;
+
+use Mustache_Engine as Mustache;
 
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
@@ -32,8 +34,12 @@ class TeamController extends ControllerBase
   {
     $this->assets
     ->addCss("assets/manager/css/app/email.css")
+    ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
     ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js");
+    ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
     $form = new Form();
 
@@ -437,5 +443,172 @@ class TeamController extends ControllerBase
     $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
   }
 
-  
+  public function ModalAction()
+  {
+    $this->response->setContentType("application/json");
+
+    if(!$this->request->isGet()):
+      $this->flags['status'] = false ;
+      $this->flags['title']  = "Erro ao Alterar!";
+      $this->flags['text']   = "Metodo Inválido.";
+    endif;
+
+    if($this->flags['status']):
+
+      $form = new Form();
+      $action = false;
+      $inputs = [];
+
+      if($this->dispatcher->getParam("member"))
+      {
+        $member = Users::query()
+        ->columns([
+          'Manager\Models\Users._',
+          'Manager\Models\Users.email',
+          'Manager\Models\Users.username',
+          'Manager\Models\Team.name',
+          'Manager\Models\Team.department_id as department',
+          'Manager\Models\Team.phone'
+        ])
+        ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Users._')
+        ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
+        ->where("Manager\Models\Users._ = :user:")
+        ->bind([
+          "user"  => $this->dispatcher->getParam("member")
+        ])
+        ->execute();
+      }
+
+      # CREATING ELEMENTS
+      $element['name'] = new Text( "name" ,[
+        'class'         => "form-control",
+        'title'         => "Nome Completo",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      $element['email'] = new Text( "email" ,[
+        'class'         => "form-control",
+        'title'         => "E-Mail",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      $element['phone'] = new Text( "phone" ,[
+        'class'         => "form-control",
+        'title'         => "Telefone",
+      ]);
+
+      $element['department'] = new Select( "department" , Departments::find() ,[
+        'using' =>  ['_','department'],
+        'title' => "Departamento",
+        'class' => "chosen-select form-control"
+      ]);
+
+      if($this->dispatcher->getParam("method") == "modify"):
+      $element['image'] = new File( "image" ,[
+        'class'         => "form-control",
+        'title'         => "Foto",
+      ]);
+      endif;
+
+      $element['username'] = new Text( "username" ,[
+        'class'         => "form-control",
+        'title'         => "Usuário",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+
+      if($this->dispatcher->getParam("method") == "modify"):
+      $element['password'] = new Password( "password" ,[
+        'class'         => "form-control",
+        'title'         => "Senha",
+        'data-validate' => true,
+        'data-empty'    => "* Campo Obrigatório"
+      ]);
+      endif;
+
+      $element['security'] = new Hidden( "security" ,[
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
+      ]);
+
+      # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
+      if( $this->dispatcher->getParam("method") == "create" ):
+        $action = "/team/new";
+        $template = "create";
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "modify"):
+        $action = "/team/update/{$member[0]->_}";
+        $template = "modify";
+
+        $element['name']        ->setAttribute("value",$member[0]->name);
+        $element['email']       ->setAttribute("value",$member[0]->email);
+        $element['phone']       ->setAttribute("value",$member[0]->phone);
+        $element['department']  ->setAttribute("value",$member[0]->department);
+        $element['username']    ->setAttribute("value",$member[0]->username);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO DELETE POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "remove"):
+        $action = "/team/delete/{$member[0]->_}";
+        $template = "remove";
+
+        $element['name']        ->setAttribute("value",$member[0]->name);
+        $element['email']       ->setAttribute("value",$member[0]->email);
+        $element['phone']       ->setAttribute("value",$member[0]->phone);
+        $element['department']  ->setAttribute("value",$member[0]->department);
+        $element['username']    ->setAttribute("value",$member[0]->username);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO VIEW POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "view"):
+        $template = "view";
+
+        $element['name']        ->setAttribute("disabled",true)->setAttribute("value",$member[0]->name);
+        $element['email']       ->setAttribute("disabled",true)->setAttribute("value",$member[0]->email);
+        $element['phone']       ->setAttribute("disabled",true)->setAttribute("value",$member[0]->phone);
+        $element['department']  ->setAttribute("disabled",true)->setAttribute("value",$member[0]->department);
+        $element['username']    ->setAttribute("disabled",true)->setAttribute("value",$member[0]->username);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      endif;
+
+      # POPULATE ARRAY WITH TITLE AND INPUTS FOR RENDERING
+      foreach($form as $f)
+      {
+        array_push($inputs,[ "title" => $f->getAttribute("title") , "input" => $f->render($f->getName()) ]);
+      }
+
+      # RENDER
+      $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
+        $template => true,
+        "action"  => $action,
+        "inputs"  => $inputs
+      ]);
+
+    endif;
+
+    return $this->response->setJsonContent([
+      "status"    =>  $this->flags['status'],
+      "data"      =>  [ "#{$template}" , $body ]  # Modal Target , data
+    ]);
+
+    $this->response->send();
+    $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+  }
 }
