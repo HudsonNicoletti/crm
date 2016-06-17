@@ -135,79 +135,11 @@ class TeamController extends ControllerBase
     $this->view->form = $form;
   }
 
-  public function ModifyAction()
-  {
-    $this->assets
-    ->addCss("assets/manager/css/app/email.css")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
-
-    $user   = Users::findFirst($this->dispatcher->getParam("urlrequest"));
-    $member = Team::findFirstByUid($user->_);
-
-    $form = new Form();
-
-    $form->add(new Hidden( "security" ,[
-      'name'  => $this->security->getTokenKey(),
-      'value' => $this->security->getToken()
-    ]));
-
-    $form->add(new Text( "name" ,[
-      'class'         => "form-control",
-      'id'            => "name",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $member->name
-    ]));
-
-    $form->add(new Text( "email" ,[
-      'class'         => "form-control",
-      'id'            => "email",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $user->email
-    ]));
-
-    $form->add(new Text( "phone" ,[
-      'class'         => "form-control",
-      'id'            => "phone",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $member->phone
-    ]));
-
-    $form->add(new Text( "username" ,[
-      'class'         => "form-control",
-      'id'            => "username",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $user->username
-    ]));
-
-    $form->add(new Password( "password" ,[
-      'class'         => "form-control",
-      'id'            => "password",
-    ]));
-
-    $form->add(new Select("department", Departments::find(),[
-      'using' => ['_','department'],
-      'class' => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-      'value'         => $member->department_id
-    ]));
-
-    $form->add(new File("image",[
-      'class' => "form-control",
-    ]));
-
-      $this->view->form = $form;
-      $this->view->uid = $this->dispatcher->getParam("urlrequest");
-  }
-
   public function NewAction()
   {
     $this->response->setContentType("application/json");
+
+    $this->flags['target'] = "#createBox";
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
@@ -286,6 +218,7 @@ class TeamController extends ControllerBase
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
       "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -297,8 +230,10 @@ class TeamController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
-    $u = Users::findFirstBy_($this->dispatcher->getParam("urlrequest"));
+    $u = Users::findFirstBy_($this->dispatcher->getParam("member"));
     $m = Team::findFirstByUid($u->_);
+
+    $this->flags['target'] = "#updateBox";
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
@@ -371,6 +306,7 @@ class TeamController extends ControllerBase
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
       "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -381,6 +317,9 @@ class TeamController extends ControllerBase
   public function DeleteAction()
   {
     $this->response->setContentType("application/json");
+
+    $this->flags['target'] = "#removeBox";
+
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
@@ -394,7 +333,7 @@ class TeamController extends ControllerBase
       $this->flags['text']   = "Token de segurança inválido.";
     endif;
 
-    if($this->request->getPost('select') === $this->dispatcher->getParam('urlrequest')):
+    if($this->request->getPost('select') === $this->dispatcher->getParam('member')):
       $this->flags['status']    = false ;
       $this->flags['title']     = "Atenção!";
       $this->flags['text']      = "É necessário selecionar um outro membro para assumir responsabilidade de todos os projetos que o mesmo seja responsável.";
@@ -403,8 +342,8 @@ class TeamController extends ControllerBase
 
     if($this->flags['status']):
 
-      $member = Team::findFirstByUid($this->dispatcher->getParam('urlrequest'));
-      $user   = Users::findFirst($this->dispatcher->getParam('urlrequest'));
+      $member = Team::findFirstByUid($this->dispatcher->getParam('member'));
+      $user   = Users::findFirst($this->dispatcher->getParam('member'));
 
       # remove image from server
       unlink("assets/manager/images/avtar/{$member->image}");
@@ -437,6 +376,7 @@ class TeamController extends ControllerBase
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
       "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -479,6 +419,14 @@ class TeamController extends ControllerBase
         ->execute();
       }
 
+      if($this->dispatcher->getParam("method") == "remove"):
+        $element['department'] = new Select( "department" , Departments::find() ,[
+          'using' =>  ['_','department'],
+          'title' => "Departamento",
+          'class' => "chosen-select form-control"
+        ]);
+      else:
+
       # CREATING ELEMENTS
       $element['name'] = new Text( "name" ,[
         'class'         => "form-control",
@@ -505,7 +453,7 @@ class TeamController extends ControllerBase
         'class' => "chosen-select form-control"
       ]);
 
-      if($this->dispatcher->getParam("method") == "modify"):
+      if($this->dispatcher->getParam("method") != "view"):
       $element['image'] = new File( "image" ,[
         'class'         => "form-control",
         'title'         => "Foto",
@@ -519,12 +467,10 @@ class TeamController extends ControllerBase
         'data-empty'    => "* Campo Obrigatório"
       ]);
 
-      if($this->dispatcher->getParam("method") == "modify"):
+      if($this->dispatcher->getParam("method") != "view"):
       $element['password'] = new Password( "password" ,[
         'class'         => "form-control",
         'title'         => "Senha",
-        'data-validate' => true,
-        'data-empty'    => "* Campo Obrigatório"
       ]);
       endif;
 
@@ -533,10 +479,14 @@ class TeamController extends ControllerBase
           'value' => $this->security->getToken(),
       ]);
 
+      endif;
+
       # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
       if( $this->dispatcher->getParam("method") == "create" ):
         $action = "/team/new";
         $template = "create";
+
+        $element['password']    ->setAttribute("data-validate",true)->setAttribute("data-empty","* Campo Obrigatório");
         foreach($element as $e)
         {
           $form->add($e);
