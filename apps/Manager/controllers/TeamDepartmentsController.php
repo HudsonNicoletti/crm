@@ -2,11 +2,13 @@
 
 namespace Manager\Controllers;
 
-use \Manager\Models\Team as Team,
-    \Manager\Models\Users as Users,
-    \Manager\Models\Tasks        as Tasks,
-    \Manager\Models\Assignments  as Assignments,
-    \Manager\Models\Departments as Departments;
+use Manager\Models\Team as Team,
+    Manager\Models\Users as Users,
+    Manager\Models\Tasks        as Tasks,
+    Manager\Models\Assignments  as Assignments,
+    Manager\Models\Departments as Departments;
+
+use Mustache_Engine as Mustache;
 
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
@@ -32,9 +34,12 @@ class TeamDepartmentsController extends ControllerBase
   {
     $this->assets
     ->addCss("assets/manager/css/app/email.css")
+    ->addCss('assets/manager/css/plugins/bootstrap-chosen/chosen.css')
     ->addJs("assets/manager/js/plugins/jquery.filtr.min.js")
+    ->addJs('assets/manager/js/plugins/inputmask/jquery.inputmask.bundle.js')
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
+    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js")
+    ->addJs("assets/manager/js/plugins/bootstrap-chosen/chosen.jquery.js");
 
     $form = new Form();
 
@@ -63,6 +68,8 @@ class TeamDepartmentsController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
+    $this->flags['target'] = "#createBox";
+
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Cadastrar!";
@@ -78,17 +85,17 @@ class TeamDepartmentsController extends ControllerBase
     if($this->flags['status']):
 
       $d = new Departments();
-        $d->department = $this->request->getPost("department","string");
+        $d->department = $this->request->getPost("title","string");
       $d->save();
 
-      $name = $this->request->getPost("department","string");
+      $name = $this->request->getPost("title","string");
       # Log What Happend
-      $this->logManager($this->logs->create,"Cadastrou um novo departamento ({$name}).");
+      $this->logManager($this->logs->create,"Cadastrou um novo departamento ( {$name} ).");
 
       $this->flags['title']  = "Cadastrado com Sucesso!";
       $this->flags['text']   = "Departamento cadastrado com sucesso! A página irá atualizar.";
       $this->flags['redirect']   = "/team/departments";
-      $this->flags['time']   = 2200;
+      $this->flags['time']   = 1200;
 
     endif;
 
@@ -97,7 +104,8 @@ class TeamDepartmentsController extends ControllerBase
       "title"     =>  $this->flags['title'],
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
-      "time"      =>  $this->flags['time']
+      "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -108,6 +116,8 @@ class TeamDepartmentsController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
+    $this->flags['target'] = "#updateBox";
+
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Alterar!";
@@ -121,20 +131,19 @@ class TeamDepartmentsController extends ControllerBase
     endif;
 
     if($this->flags['status']):
-      $this->response->setStatusCode(200,"OK");
 
-      $d = Departments::findFirst($this->dispatcher->getParam("urlrequest"));
-        $d->department = $this->request->getPost("department","string");
+      $d = Departments::findFirst($this->dispatcher->getParam("department"));
+        $d->department = $this->request->getPost("title","string");
       $d->save();
 
-      $name = $this->request->getPost("department");
+      $name = $this->request->getPost("title");
       # Log What Happend
-      $this->logManager($this->logs->update,"Alterou nome de um departamento para ({$name}).");
+      $this->logManager($this->logs->update,"Alterou nome de um departamento para ( {$name} ).");
 
       $this->flags['title']  = "Alterado com Sucesso!";
       $this->flags['text']   = "Departamento alterado com sucesso! A página irá atualizar.";
       $this->flags['redirect']   =  '/team/departments';
-      $this->flags['time']   = 2200;
+      $this->flags['time']   = 1200;
 
     endif;
 
@@ -143,7 +152,8 @@ class TeamDepartmentsController extends ControllerBase
       "title"     =>  $this->flags['title'],
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
-      "time"      =>  $this->flags['time']
+      "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -154,6 +164,8 @@ class TeamDepartmentsController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
+    $this->flags['target'] = "#removeBox";
+
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Remover!";
@@ -166,21 +178,14 @@ class TeamDepartmentsController extends ControllerBase
       $this->flags['text']   = "Token de segurança inválido.";
     endif;
 
-    if($this->request->getPost('departments') === $this->dispatcher->getParam('urlrequest')):
-      $this->flags['status']    = false ;
-      $this->flags['title']     = "Atenção!";
-      $this->flags['text']      = "É necessário selecionar um outro membro para assumir responsabilidade de todos os projetos que o mesmo seja responsável.";
-    endif;
-
-
     if($this->flags['status']):
 
-      $d = Departments::findFirst($this->dispatcher->getParam('urlrequest'));
+      $d = Departments::findFirst($this->dispatcher->getParam('department'));
 
       $m = Team::findByDepartment_id($d->_);
       foreach($m as $t)
       {
-        $t->department_id = $this->request->getPost("departments");
+        $t->department_id = $this->request->getPost("department");
         $t->save();
       }
 
@@ -202,6 +207,7 @@ class TeamDepartmentsController extends ControllerBase
       "text"      =>  $this->flags['text'],
       "redirect"  =>  $this->flags['redirect'],
       "time"      =>  $this->flags['time'],
+      "target"    =>  $this->flags['target'],
     ]);
 
     $this->response->send();
@@ -222,33 +228,25 @@ class TeamDepartmentsController extends ControllerBase
 
       $form = new Form();
       $action = false;
+      $alert = false;
       $inputs = [];
+      $id = $this->dispatcher->getParam("department");
 
-      # CREATING ELEMENTS
-      $element['name'] = new Text( "name" ,[
-        'class'         => "form-control",
-        'title'         => "Nome Completo",
-        'data-validate' => true,
-        'data-empty'    => "* Campo Obrigatório"
-      ]);
-
-      $element['email'] = new Text( "email" ,[
-        'class'         => "form-control",
-        'title'         => "E-Mail",
-        'data-validate' => true,
-        'data-empty'    => "* Campo Obrigatório"
-      ]);
-
-      $element['phone'] = new Text( "phone" ,[
-        'class'         => "form-control",
-        'title'         => "Telefone",
-      ]);
-
-      $element['department'] = new Select( "department" , Departments::find() ,[
-        'using' =>  ['_','title'],
-        'title' => "Departamento",
-        'class' => "chosen-select form-control"
-      ]);
+      if($this->dispatcher->getParam("method") == "remove"):
+        $element['department'] = new Select( "department" , Departments::find([" _ != '{$id}' "]) ,[
+          'using' =>  ['_','department'],
+          'title' => "Departamento",
+          'class' => "chosen-select form-control"
+        ]);
+      else:
+        # CREATING ELEMENTS
+        $element['title'] = new Text( "title" ,[
+          'class'         => "form-control",
+          'title'         => "Título",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório"
+        ]);
+      endif;
 
       $element['security'] = new Hidden( "security" ,[
           'name'  => $this->security->getTokenKey(),
@@ -257,8 +255,9 @@ class TeamDepartmentsController extends ControllerBase
 
       # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
       if( $this->dispatcher->getParam("method") == "create" ):
-        $action = "/task/new";
+        $action = "/team/department/new";
         $template = "create";
+
         foreach($element as $e)
         {
           $form->add($e);
@@ -266,14 +265,11 @@ class TeamDepartmentsController extends ControllerBase
 
       # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
       elseif ($this->dispatcher->getParam("method") == "modify"):
-        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $action = "/task/update/{$task->_}";
+        $department = Departments::findFirst($id);
+        $action = "/team/department/update/{$department->_}";
         $template = "modify";
-        $element['project']->setAttribute("value",$task->project);
-        $element['title']->setAttribute("value",$task->title);
-        $element['description']->setAttribute("value",$task->description);
-        $element['deadline']->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
-        $element['assigned']->setAttribute("value",$task->assigned);
+
+        $element['title']->setAttribute("value",$department->department);
         foreach($element as $e)
         {
           $form->add($e);
@@ -281,13 +277,25 @@ class TeamDepartmentsController extends ControllerBase
 
       # IF REQUEST IS TO VIEW POPULATE WITH VALJUE TO ELEMENT
       elseif ($this->dispatcher->getParam("method") == "view"):
+        $department = Departments::findFirst($id);
         $template = "view";
-        $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $element['project']->setAttribute("disabled",true)->setAttribute("value",$task->project);
-        $element['title']->setAttribute("disabled",true)->setAttribute("value",$task->title);
-        $element['description']->setAttribute("disabled",true)->setAttribute("value",$task->description);
-        $element['deadline']->setAttribute("disabled",true)->setAttribute("value",(new \DateTime($task->deadline))->format("d-m-Y"));
-        $element['assigned']->setAttribute("disabled",true)->setAttribute("value",$task->assigned);
+
+        $element['title']->setAttribute("value",$department->department);
+        foreach($element as $e)
+        {
+          $form->add($e);
+        }
+
+      # IF REQUEST IS TO REMOVE POPULATE WITH VALJUE TO ELEMENT
+      elseif ($this->dispatcher->getParam("method") == "remove"):
+        $department = Departments::findFirst($id);
+        $action = "/team/department/delete/{$department->_}";
+        $alert = [
+          "title" => "Selecione Um Departamento!",
+          "desc"  => "É necessário que selecione um departamento para que todos os membros deste departamento sejam transferidos."
+        ];
+        $template = "remove";
+
         foreach($element as $e)
         {
           $form->add($e);
@@ -305,6 +313,7 @@ class TeamDepartmentsController extends ControllerBase
       $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
         $template => true,
         "action"  => $action,
+        "alert"   => $alert,
         "inputs"  => $inputs
       ]);
 
