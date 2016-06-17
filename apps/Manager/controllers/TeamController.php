@@ -333,40 +333,35 @@ class TeamController extends ControllerBase
       $this->flags['text']   = "Token de segurança inválido.";
     endif;
 
-    if($this->request->getPost('select') === $this->dispatcher->getParam('member')):
-      $this->flags['status']    = false ;
-      $this->flags['title']     = "Atenção!";
-      $this->flags['text']      = "É necessário selecionar um outro membro para assumir responsabilidade de todos os projetos que o mesmo seja responsável.";
-    endif;
-
-
     if($this->flags['status']):
 
       $member = Team::findFirstByUid($this->dispatcher->getParam('member'));
-      $user   = Users::findFirst($this->dispatcher->getParam('member'));
+      $user   = Users::findFirst($member->uid);
 
       # remove image from server
       unlink("assets/manager/images/avtar/{$member->image}");
 
       # update projects assignments table
-      foreach (Assignments::findByMember($member->_) as $assign)
+      foreach (Assignments::findByMember($member->uid) as $assign)
       {
         $assign->delete();
       }
-      foreach (Tasks::findByAssigned($member->_) as $task)
+      foreach (Tasks::findByAssigned($member->uid) as $task)
       {
-        $task->assigned = $this->request->getPost("select");
+        $task->assigned = $this->request->getPost("member");
         $task->save();
       }
 
       # Log What Happend
-      $this->logManager($this->logs->delete,"Removeu um membro da equipe ({$member->name}).");
+      $this->logManager($this->logs->delete,"Removeu um membro da equipe ( {$member->name} ).");
 
       $member->delete();
       $user->delete();
 
-      $this->flags['title']  = "Removido Com Successo";
-      $this->flags['text']   = "Membro da equipe removido ";
+      $this->flags['title']      = "Removido Com Successo";
+      $this->flags['text']       = "Membro da equipe removido ";
+      $this->flags['redirect']   = "/team";
+      $this->flags['time']       = 1200;
 
     endif;
 
@@ -397,9 +392,11 @@ class TeamController extends ControllerBase
 
       $form = new Form();
       $action = false;
+      $alert = false;
       $inputs = [];
+      $uid = $this->dispatcher->getParam("member");
 
-      if($this->dispatcher->getParam("member"))
+      if($uid)
       {
         $member = Users::query()
         ->columns([
@@ -414,15 +411,15 @@ class TeamController extends ControllerBase
         ->innerJoin('Manager\Models\Departments', 'Manager\Models\Team.department_id = Manager\Models\Departments._')
         ->where("Manager\Models\Users._ = :user:")
         ->bind([
-          "user"  => $this->dispatcher->getParam("member")
+          "user"  => $uid
         ])
         ->execute();
       }
 
       if($this->dispatcher->getParam("method") == "remove"):
-        $element['department'] = new Select( "department" , Departments::find() ,[
-          'using' =>  ['_','department'],
-          'title' => "Departamento",
+        $element['member'] = new Select( "member" , Team::find([" uid != '{$uid}' "]) ,[
+          'using' =>  ['_','name'],
+          'title' => "Membros",
           'class' => "chosen-select form-control"
         ]);
       else:
@@ -474,12 +471,12 @@ class TeamController extends ControllerBase
       ]);
       endif;
 
+      endif;
+
       $element['security'] = new Hidden( "security" ,[
           'name'  => $this->security->getTokenKey(),
           'value' => $this->security->getToken(),
       ]);
-
-      endif;
 
       # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
       if( $this->dispatcher->getParam("method") == "create" ):
@@ -512,11 +509,10 @@ class TeamController extends ControllerBase
         $action = "/team/delete/{$member[0]->_}";
         $template = "remove";
 
-        $element['name']        ->setAttribute("value",$member[0]->name);
-        $element['email']       ->setAttribute("value",$member[0]->email);
-        $element['phone']       ->setAttribute("value",$member[0]->phone);
-        $element['department']  ->setAttribute("value",$member[0]->department);
-        $element['username']    ->setAttribute("value",$member[0]->username);
+        $alert = [
+          "title" => "Selecione Um Membro!",
+          "desc"  => "É necessário que selecione um membro para que todos os projetos e tarefas deste membro sejam transferidos."
+        ];
         foreach($element as $e)
         {
           $form->add($e);
@@ -548,6 +544,7 @@ class TeamController extends ControllerBase
       $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
         $template => true,
         "action"  => $action,
+        "alert"   => $alert,
         "inputs"  => $inputs
       ]);
 
