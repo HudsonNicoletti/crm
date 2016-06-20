@@ -50,11 +50,9 @@
             <tbody>
               <?php foreach ($clients as $client): ?>
                 <tr data-searchable >
-                  <td><img src="/assets/manager/images/avtar/<?php echo $client->image; ?>" alt="<?php echo "{$client->firstname} {$client->lastname}"; ?>" class="img-circle avtar" /></td>
+                  <td><img src="/assets/manager/images/avtar/<?php echo $client->image ?: 'placeholder.jpg'; ; ?>" alt="<?php echo "{$client->firstname} {$client->lastname}"; ?>" class="img-circle avtar" /></td>
                     <td>
-                      <?php echo "{$client->firstname} {$client->lastname}"; if($client->fantasy): ?>
-                        <br><span class="label label-primary bigger-text"><?php echo $client->fantasy ;?></span>
-                      <?php endif; ?>
+                      <?php echo $client->fantasy ?: "{$client->firstname} {$client->lastname}"; ?>
                     </td>
                     <td><?php echo $client->document; ?></td>
                     <td><?php echo $client->domain; ?></td>

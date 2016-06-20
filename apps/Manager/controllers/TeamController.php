@@ -71,70 +71,6 @@ class TeamController extends ControllerBase
     $this->view->members = $team;
   }
 
-  public function CreateAction()
-  {
-    $this->assets
-    ->addCss("assets/manager/css/app/email.css")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
-    ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
-
-    $form = new Form();
-    $form->add(new Hidden( "security" ,[
-      'name'  => $this->security->getTokenKey(),
-      'value' => $this->security->getToken()
-    ]));
-
-    $form->add(new Text( "name" ,[
-      'class'         => "form-control",
-      'id'            => "name",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Text( "email" ,[
-      'class'         => "form-control",
-      'id'            => "email",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Text( "phone" ,[
-      'class'         => "form-control",
-      'id'            => "phone",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Text( "username" ,[
-      'class'         => "form-control",
-      'id'            => "username",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Password( "password" ,[
-      'class'         => "form-control",
-      'id'            => "password",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new Select("department", Departments::find(),[
-      'using' => ['_','department'],
-      'class' => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $form->add(new File("image",[
-      'class' => "form-control",
-      'data-validate' => true,
-      'data-empty'    => "* Campo Obrigatório",
-    ]));
-
-    $this->view->form = $form;
-  }
-
   public function NewAction()
   {
     $this->response->setContentType("application/json");
@@ -151,12 +87,6 @@ class TeamController extends ControllerBase
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Cadastrar!";
       $this->flags['text']   = "Token de segurança inválido.";
-    endif;
-
-    if(!$this->request->hasFiles()):
-      $this->flags['status'] = false ;
-      $this->flags['title']  = "Erro ao Cadastrar!";
-      $this->flags['text']   = "Nehuma Imagem Selecionada!";
     endif;
 
     if(!$this->isEmail($this->request->getPost("email"))):
@@ -179,11 +109,14 @@ class TeamController extends ControllerBase
 
     if($this->flags['status']):
 
-      foreach($this->request->getUploadedFiles() as $file)
-      {
-        $filename = substr(sha1(uniqid()), 0, 12).'.'.$file->getExtension();
-        $file->moveTo("assets/manager/images/avtar/{$filename}");
-      }
+      if($this->request->hasFiles()):
+        foreach($this->request->getUploadedFiles() as $file):
+          $filename = substr(sha1(uniqid()), 0, 12).'.'.$file->getExtension();
+          $file->moveTo("assets/manager/images/avtar/{$filename}");
+        endforeach;
+      else:
+        $filename = null;
+      endif;
 
       $user = new Users;
         $user->username   = $this->request->getPost("username");

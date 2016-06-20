@@ -275,17 +275,6 @@ class TeamDepartmentsController extends ControllerBase
           $form->add($e);
         }
 
-      # IF REQUEST IS TO VIEW POPULATE WITH VALJUE TO ELEMENT
-      elseif ($this->dispatcher->getParam("method") == "view"):
-        $department = Departments::findFirst($id);
-        $template = "view";
-
-        $element['title']->setAttribute("value",$department->department);
-        foreach($element as $e)
-        {
-          $form->add($e);
-        }
-
       # IF REQUEST IS TO REMOVE POPULATE WITH VALJUE TO ELEMENT
       elseif ($this->dispatcher->getParam("method") == "remove"):
         $department = Departments::findFirst($id);

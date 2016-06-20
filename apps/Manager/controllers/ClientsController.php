@@ -455,7 +455,7 @@ class ClientsController extends ControllerBase
             $file->moveTo("assets/manager/images/avtar/{$filename}");
           endforeach;
         else:
-          $filename = 'avtar.jpg';
+          $filename = null;
         endif;
 
         $user = new Users;
@@ -546,7 +546,7 @@ class ClientsController extends ControllerBase
             $file->moveTo("assets/manager/images/avtar/{$filename}");
           endforeach;
         else:
-          $filename = 'avtar.jpg';
+          $filename = null;
         endif;
 
         $user = new Users;

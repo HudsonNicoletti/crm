@@ -42,12 +42,16 @@
                 <tr data-searchable >
                     <td><?php echo $d->department; ?></td>
                     <td>
-                      <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-ajax="/team/department/modify/<?php echo $d->_ ;?>">
-                        <span class="fa fa-pencil"></span>
-                      </button>
-                      <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove" data-ajax="/team/department/remove/<?php echo $d->_ ;?>">
-                        <span class="fa fa-close"></span>
-                      </button>
+                      <div class="btn-group">
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/team/department/modify/<?php echo $d->_ ;?>">
+                          <span class="fa fa-pencil"></span>
+                          Editar
+                        </button>
+                        <button type="button" class="btn btn-danger" data-toggle="modal" data-ajax="/team/department/remove/<?php echo $d->_ ;?>">
+                          <span class="fa fa-close"></span>
+                          Remover
+                        </button>
+                      </div>
                     </td>
                 </tr>
               <?php endforeach; ?>
