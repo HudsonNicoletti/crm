@@ -16,15 +16,13 @@
 
     <div class="row">
       <div class="col-sm-2">
-        <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
-        <hr class="sm">
         <div class="btn-group btn-group-justified">
           <a role="button" class="btn btn-warning" data-filter="1" >Abertos</a>
           <a role="button" class="btn btn-warning" data-filter="2" >Concluídos</a>
           <!-- <a role="button" class="btn btn-warning" data-filter="3" >Cancelados</a> -->
         </div>
         <hr class="sm">
-        <button type="button" class="btn btn-success btn-block " data-toggle="modal" data-target="#addTask">
+        <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-ajax="/project/<?php echo $project->_; ?>/tasks/create">
           <span class="fa fa-plus"></span> Adicionar Tarefa
         </button>
         <hr class="sm">
@@ -33,11 +31,11 @@
           <div class="panel-body no-padd">
             <div class="list-group no-margn mail-nav">
               <a href="/projects" class="list-group-item">Projetos Cadastrados</a>
-              <a href="/project/overview/<?php echo $project->_; ?>" class="list-group-item">Visão Geral</a>
-              <a href="/project/tasks/<?php echo $project->_; ?>"    class="list-group-item on">Tarefas</a>
-              <a href="/project/settings/<?php echo $project->_; ?>" class="list-group-item">Configurações</a>
-              <a href="/project/feedback/<?php echo $project->_; ?>" class="list-group-item">Feedback</a>
-              <a href="/project/invoices/<?php echo $project->_; ?>" class="list-group-item">Faturas</a>
+              <a href="/project/<?php echo $project->_; ?>/overview" class="list-group-item">Visão Geral</a>
+              <a href="/project/<?php echo $project->_; ?>/tasks"    class="list-group-item on">Tarefas</a>
+              <a href="/project/<?php echo $project->_; ?>/settings" class="list-group-item">Configurações</a>
+              <a href="/project/<?php echo $project->_; ?>/feedback" class="list-group-item">Feedback</a>
+              <a href="/project/<?php echo $project->_; ?>/invoices" class="list-group-item">Faturas</a>
             </div>
           </div>
         </div>
@@ -46,6 +44,9 @@
       <div class="col-md-10">
             <div class="col-lg-12 col-md-12">
               <div class="panel panel-default">
+                <div class="panel-heading">
+                  <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+                </div>
                 <table class="table table-striped no-margn">
                     <thead>
                       <tr>
@@ -69,20 +70,26 @@
                             <?php echo $task->name; ?><br>
                           </td>
                           <td>
-                            <span class="label label-default"><?php echo $controller->ProjectStatus($task->status); ?></span>
+                            <?php $status = ($task->status == 1 ? ["danger","Aberto"] : ["success","Concluído"]);?>
+                            <span class="label label-<?php echo $status[0];?>"><?php echo $status[1];?></span>
                           </td>
                           <td>
-                            <form method="post" class="validator-form" action="/project/task/remove/<?php echo "{$project->_}/{$task->_}"?>" novalidate="novalidate">
+                            <form method="post" class="validator-form" novalidate="novalidate" action="/project/<?php echo $project->_; ?>/tasks/remove/<?php echo $task->_; ?>">
                               <?php echo $form->render("security"); ?>
-                              <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#taskInfo-<?php echo $task->_; ?>">
-                                <span class="fa fa-info-circle"></span>
-                              </button>
-                              <button type="button" class="btn btn-info" data-toggle="modal" data-target="#editTask-<?php echo $task->_; ?>">
-                                <span class="fa fa-pencil"></span>
-                              </button>
-                              <button type="submit" class="btn btn-danger">
-                                <span class="fa fa-close"></span>
-                              </button>
+                              <div class="btn-group">
+                                <button type="button" class="btn btn-info" data-toggle="modal" data-ajax="/project/<?php echo $project->_; ?>/tasks/view/<?php echo $task->_; ?>">
+                                  <span class="fa fa-info-circle"></span>
+                                  Info
+                                </button>
+                                <button type="button" class="btn btn-primary" data-toggle="modal" data-ajax="/project/<?php echo $project->_; ?>/tasks/modify/<?php echo $task->_; ?>>">
+                                  <span class="fa fa-pencil"></span>
+                                  Editar
+                                </button>
+                                <button type="submit" class="btn btn-danger">
+                                  <span class="fa fa-close"></span>
+                                  Remover
+                                </button>
+                              </div>
                             </form>
                           </td>
                         </tr>
@@ -96,155 +103,4 @@
 
 </div>
 
-<!-- add task -->
-<div class="modal fade" id="addTask" tabindex="-1" role="dialog" aria-labelledby="addTask" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="addTask">Adicionar Tarefa</h4>
-      </div>
-
-      <form role="form" method="post" accept-charset="utf8" action="/project/task/new/<?php echo $project->_; ?>" class="validator-form" >
-        <div class="modal-body">
-
-          <?php echo $form->render("security"); ?>
-
-          <div class="alert hidden" role="alert">
-            <h4 id="title"></h4>
-            <p id="desc"></p>
-          </div>
-
-          <div class="row">
-
-            <div class="col-md-12">
-              <label class="control-label">Título</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("new_title"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Descrição</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("new_description"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Designado à</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("new_members"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Deadline</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("new_deadline"); ?>
-              </div>
-            </div>
-
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Adicionar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-
-<!-- task info -->
-<?php foreach($tasks as $task): ?>
-<div class="modal fade" id="taskInfo-<?php echo $task->_;?>" tabindex="-1" role="dialog" aria-labelledby="taskInfo-<?php echo $task->_;?>" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="taskInfo-<?php echo $task->_;?>"><?php echo $task->title;?></h4>
-      </div>
-
-        <div class="modal-body">
-          <dl class="dl-horizontal">
-            <dt>Criação &mdash; Deadline:</dt>
-            <dd>
-              <span class="label label-primary"><?php echo (new \DateTime($task->created))->format("d-m-Y"); ?></span>
-              <span class="label label-danger"><?php echo (new \DateTime($task->deadline))->format("d-m-Y"); ?></span>
-            </dd>
-            <hr>
-            <dt>Designado à</dt>
-            <dd>
-              <img src="/assets/manager/images/avtar/<?php echo $task->image; ?>" alt="<?php echo $task->name; ?>" class="img-circle avtar" />
-              <?php echo $task->name; ?><br>
-            </dd>
-            <hr>
-            <dt>Descrição</dt>
-            <dd><?php echo $task->description;?></dd>
-          </dl>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>
-        </div>
-    </div>
-  </div>
-</div>
-<div class="modal fade" id="editTask-<?php echo $task->_;?>" tabindex="-1" role="dialog" aria-labelledby="editTask-<?php echo $task->_;?>" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="editTask-<?php echo $task->_;?>">Alterar Informações</h4>
-      </div>
-        <form role="form" method="post" accept-charset="utf8" action="/project/task/update/<?php echo "{$project->_}/{$task->_}"; ?>" class="validator-form" >
-        <?php echo $form->render("security"); ?>
-        <div class="modal-body">
-          <dl class="dl-horizontal">
-            <dt>Título:</dt>
-            <dd>
-              <div class="col-md-12">
-                <div class="form-group has-feedback">
-                  <input type="text" name="title" class="form-control" data-validate data-empty="* Campo Obrigatório" value="<?php echo $task->title; ?>">
-                </div>
-              </div>
-            </dd>
-            <hr>
-            <dt>Deadline:</dt>
-            <dd>
-              <div class="col-md-12">
-                <div class="form-group has-feedback">
-                  <input type="text" name="deadline" class="form-control inputmask" data-inputmask="'alias': 'dd-mm-yyyy'" data-validate data-empty="* Campo Obrigatório" value="<?php echo (new \DateTime($task->created))->format("d-m-Y"); ?>">
-                </div>
-              </div>
-            </dd>
-            <hr>
-            <dt>Designado à</dt>
-            <dd>
-              <div class="col-md-12">
-                <div class="form-group has-feedback">
-                  <?php echo $form->render("new_members"); ?>
-                </div>
-              </div>
-            </dd>
-            <hr>
-            <dt>Descrição</dt>
-            <dd>
-              <div class="col-md-12">
-                <div class="form-group has-feedback">
-                  <textarea name="description" class="form-control" rows="4" ><?php echo $task->description;?></textarea>
-                </div>
-              </div>
-            </dd>
-          </dl>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Alterar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<?php endforeach; ?>
+<div id="modal-results"></div>

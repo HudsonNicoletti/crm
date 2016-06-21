@@ -131,18 +131,12 @@ $router->add("/team/department/delete/{department:[0-9]+}", [
 # END   - TeamController
 
 # START - ClientsController
-$router->add("/client/view/{id:[0-9]+}", [
-  'controller' => 'clients',
-  'action'     => 'modal',
-  'method'     => 'view',
-]);
-
-$router->add("/client/remove/{id:[0-9]+}", [
+$router->add("/client/remove/{client:[0-9]+}", [
   'controller' => 'clients',
   'action'     => 'remove',
 ]);
 
-$router->add("/client/modify/{id:[0-9]+}", [
+$router->add("/client/modify/{client:[0-9]+}", [
   'controller' => 'clients',
   'action'     => 'modify',
 ]);
@@ -157,112 +151,154 @@ $router->add("/clients/new/company", [
   'action'     => 'company',
 ]);
 
-$router->add("/client/update/{id:[0-9]+}", [
+$router->add("/client/update/{client:[0-9]+}", [
   'controller' => 'clients',
   'action'     => 'update',
 ]);
 # END   - ClientsController
 
-
-
-
-$router->add("/projects/new/category", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'newcategory',
-]);
-
-$router->add("/projects/update/category/{type:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'updatecategory',
-]);
-
-$router->add("/projects/remove/category/{type:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'removecategory',
-]);
-
-$router->add("/project/overview/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
+# START - ProjectsController
+$router->add("/project/{project:[0-9]+}/overview", [
   'controller' => 'projects',
   'action'     => 'overview',
 ]);
 
-$router->add("/project/tasks/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'tasks',
-]);
-
-$router->add("/project/settings/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
+$router->add("/project/{project:[0-9]+}/settings", [
   'controller' => 'projects',
   'action'     => 'settings',
 ]);
 
-$router->add("/project/chart/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
+$router->add("/project/{project:[0-9]+}/chart", [
   'controller' => 'projects',
   'action'     => 'chart',
 ]);
 
-$router->add("/project/update/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
+$router->add("/project/{project:[0-9]+}/update", [
   'controller' => 'projects',
   'action'     => 'update',
 ]);
 
-$router->add("/project/remove/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
+$router->add("/project/{project:[0-9]+}/remove", [
   'controller' => 'projects',
   'action'     => 'remove',
 ]);
 
-$router->add("/project/member/new/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'newmember',
+# Project Members
+$router->add("/project/{project:[0-9]+}/members/create", [
+  'controller' => 'projectmembers',
+  'action'     => 'modal',
+  'method'     => 'create',
 ]);
 
-$router->add("/project/member/remove/{project:[a-zA-Z0-9\_\-]+}/{member:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'removemember',
+$router->add("/project/{project:[0-9]+}/members/modify/{member:[0-9]+}", [
+  'controller' => 'projectmembers',
+  'action'     => 'modal',
+  'method'     => 'modify',
 ]);
 
-$router->add("/project/task/new/{project:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'newtask',
+$router->add("/project/{project:[0-9]+}/members/remove/{member:[0-9]+}", [
+  'controller' => 'projectmembers',
+  'action'     => 'modal',
+  'method'     => 'remove',
 ]);
 
-$router->add("/project/task/update/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'updatetask',
+$router->add("/project/{project:[0-9]+}/members/new", [
+  'controller' => 'projectmembers',
+  'action'     => 'new',
+])->via(["POST"]);
+
+$router->add("/project/{project:[0-9]+}/members/update/{member:[0-9]+}", [
+  'controller' => 'projectmembers',
+  'action'     => 'update',
+])->via(["POST"]);
+
+$router->add("/project/{project:[0-9]+}/members/delete/{delete:[0-9]+}", [
+  'controller' => 'projectmembers',
+  'action'     => 'delete',
+])->via(["POST"]);
+
+
+# Project Tasks
+$router->add("/project/{project:[0-9]+}/tasks", [
+  'controller' => 'projecttasks',
+  'action'     => 'index',
 ]);
 
-$router->add("/project/task/remove/{project:[a-zA-Z0-9\_\-]+}/{task:[a-zA-Z0-9\_\-]+}", [
-  'module'     => 'Manager',
-  'namespace'  => 'Manager\Controllers',
-  'controller' => 'projects',
-  'action'     => 'removetask',
+$router->add("/project/{project:[0-9]+}/tasks/create", [
+  'controller' => 'projecttasks',
+  'action'     => 'modal',
+  'method'     => 'create',
 ]);
+
+$router->add("/project/{project:[0-9]+}/tasks/view/{task:[0-9]+}", [
+  'controller' => 'projecttasks',
+  'action'     => 'modal',
+  'method'     => 'view',
+]);
+
+$router->add("/project/{project:[0-9]+}/tasks/modify/{task:[0-9]+}", [
+  'controller' => 'projecttasks',
+  'action'     => 'modal',
+  'method'     => 'modify',
+]);
+
+$router->add("/project/{project:[0-9]+}/tasks/new", [
+  'controller' => 'projecttasks',
+  'action'     => 'new',
+])->via(["POST"]);
+
+$router->add("/project/{project:[0-9]+}/tasks/update/{task:[0-9]+}", [
+  'controller' => 'projecttasks',
+  'action'     => 'update',
+])->via(["POST"]);
+
+$router->add("/project/{project:[0-9]+}/tasks/remove/{task:[0-9]+}", [
+  'controller' => 'projecttasks',
+  'action'     => 'remove',
+])->via(["POST"]);
+
+# Project Categories
+$router->add("/project/categories", [
+  'controller' => 'projectcategories',
+  'action'     => 'index',
+]);
+
+$router->add("/project/categories/create", [
+  'controller' => 'projectcategories',
+  'action'     => 'modal',
+  'method'     => 'create',
+]);
+
+$router->add("/project/categories/modify/{category:[0-9]+}", [
+  'controller' => 'projectcategories',
+  'action'     => 'modal',
+  'method'     => 'modify',
+]);
+
+$router->add("/project/categories/remove/{category:[0-9]+}", [
+  'controller' => 'projectcategories',
+  'action'     => 'modal',
+  'method'     => 'remove',
+]);
+
+$router->add("/project/categories/new", [
+  'controller' => 'projectcategories',
+  'action'     => 'new',
+])->via(["POST"]);
+
+$router->add("/project/categories/update/{category:[0-9]+}", [
+  'controller' => 'projectcategories',
+  'action'     => 'update',
+])->via(["POST"]);
+
+$router->add("/project/categories/delete/{category:[0-9]+}", [
+  'controller' => 'projectcategories',
+  'action'     => 'delete',
+])->via(["POST"]);
+# END   - ProjectsController
+
+
+
 
 
 

@@ -426,11 +426,9 @@ $(function(){
   }
 
 
-  $("[data-form-action]").on("click",function(){
+  $("[data-href]").on("click",function(){
 
-    var $targetParent = $($(this).data("target"));
-
-    $targetParent.find("[data-dynamic-action]").attr("action",$(this).data("form-action"));
+    window.location.href = $(this).data("href");
 
   });
 });

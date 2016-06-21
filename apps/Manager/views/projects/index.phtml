@@ -79,16 +79,17 @@
                     </td>
                     <td>
                       <form method="post" class="validator-form" action="/projects/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
-                        <a href="/project/overview/<?php echo $project->_; ?>">
-                          <button type="button" class="btn btn-info">
-                            <span class="fa fa-pencil"></span>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-primary" data-href="/project/overview/<?php echo $project->_; ?>">
+                            <span class="fa fa-info-circle"></span>
+                            Info
                           </button>
-                        </a>
+                          <button type="submit" class="btn btn-danger">
+                            <span class="fa fa-close"></span>
+                            Remover
+                          </button>
+                        </div>
                         <?php echo $form->render("security"); ?>
-                        <button type="submit" class="btn btn-danger">
-                          <span class="fa fa-close"></span>
-                        </button>
-                      </form>
                     </td>
                 </tr>
               <?php endforeach; ?>

@@ -51,12 +51,16 @@
                 <tr data-searchable >
                   <td><?php echo $c->title; ?></td>
                   <td>
-                    <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-form-action="/projects/update/category/<?php echo $c->_ ;?>">
-                      <span class="fa fa-pencil"></span>
-                    </button>
-                    <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#remove" data-form-action="/projects/remove/category/<?php echo $c->_ ;?>">
-                      <span class="fa fa-close"></span>
-                    </button>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-ajax="/project/category/update/<?php echo $c->_ ;?>">
+                        <span class="fa fa-pencil"></span>
+                        Editar
+                      </button>
+                      <button type="button" class="btn btn-danger" data-ajax="/project/category/remove/<?php echo $c->_ ;?>">
+                        <span class="fa fa-close"></span>
+                        Remover
+                      </button>
+                    </div>
                   </td>
                 </tr>
               <?php endforeach; ?>
@@ -69,91 +73,4 @@
 
 </div>
 
-<!-- create -->
-<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="labl" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="labl">Cadastrar Categoria</h4>
-      </div>
-
-      <form role="form" method="post" accept-charset="utf8" action="/projects/new/category" class="validator-form" >
-        <div class="modal-body">
-          <div class="alert hidden" role="alert" id="alertBox">
-            <h4 id="title"></h4>
-            <p id="desc"></p>
-          </div>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Título da Categoria:</label>
-              <?php echo $form->render("security"); ?>
-              <?php echo $form->render("category"); ?>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- edit -->
-<div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabell" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabell">Alterar Categoria</h4>
-      </div>
-
-      <form role="form" method="post" accept-charset="utf8" action="/team/departments/" class="validator-form" data-dynamic-action >
-        <div class="modal-body">
-          <div class="alert hidden" role="alert" id="editBox">
-            <h4 id="title"></h4>
-            <p id="desc"></p>
-          </div>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Novo Título:</label>
-              <?php echo $form->render("security"); ?>
-              <?php echo $form->render("category"); ?>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Confirmar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
-<!-- remove -->
-<div class="modal fade" id="remove" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="myModalLabel">Confirmação</h4>
-      </div>
-
-      <form role="form" method="post" accept-charset="utf8" action="/team/remove/" class="validator-form" data-dynamic-action >
-        <div class="modal-body">
-
-          <div class="alert alert-info" role="alert" id="removeBox">
-            <h4 id="title">Atenção!</h4>
-            <p id="desc">É necessário selecionar outra categoria para que os projetos cadastrados no mesmo sejam aterados.</p>
-          </div>
-            <div class="form-group">
-              <label for="exampleInputEmail1">Categorias:</label>
-              <?php echo $form->render("security"); ?>
-              <?php echo $form->render("categories"); ?>
-            </div>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Confirmar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<div id="modal-results"></div>
