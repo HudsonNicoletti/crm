@@ -227,7 +227,7 @@ class ProjectTasksController extends ControllerBase
       $this->flags['title']      = "Removido Com Sucesso!";
       $this->flags['text']       = "Tarefa removida com sucesso do projeto!";
       $this->flags['redirect']   = "/project/{$project}/tasks";
-      $this->flags['time']       = 1800;
+      $this->flags['time']       = 1200;
 
     endif;
 
@@ -329,7 +329,7 @@ class ProjectTasksController extends ControllerBase
 
       # IF REQUEST IS TO UPDATE POPULATE WITH VALJUE TO ELEMENT
       elseif ($this->dispatcher->getParam("method") == "modify"):
-        $action = "/project/{$project}/tasks/update/";
+        $action = "/project/{$project}/tasks/update/{$task_id}";
         $template = "modify";
 
         $element['title']       ->setAttribute("value",$task->title);
