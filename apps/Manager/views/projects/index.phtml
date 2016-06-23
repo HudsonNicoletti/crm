@@ -78,9 +78,9 @@
                     <td><?php echo $controller->ProjectStatus($project->status); ?>
                     </td>
                     <td>
-                      <form method="post" class="validator-form" action="/projects/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
+                      <form method="post" class="validator-form" action="/project>/remove/<?php echo $project->_ ;?>" novalidate="novalidate">
                         <div class="btn-group">
-                          <button type="button" class="btn btn-primary" data-href="/project/overview/<?php echo $project->_; ?>">
+                          <button type="button" class="btn btn-primary" data-href="/project/<?php echo $project->_; ?>/overview">
                             <span class="fa fa-info-circle"></span>
                             Info
                           </button>
