@@ -184,35 +184,24 @@ $router->add("/project/{project:[0-9]+}/remove", [
 ]);
 
 # Project Members
-$router->add("/project/{project:[0-9]+}/members/create", [
+$router->add("/project/{project:[0-9]+}/member/create", [
   'controller' => 'projectmembers',
   'action'     => 'modal',
   'method'     => 'create',
 ]);
 
-$router->add("/project/{project:[0-9]+}/members/modify/{member:[0-9]+}", [
-  'controller' => 'projectmembers',
-  'action'     => 'modal',
-  'method'     => 'modify',
-]);
-
-$router->add("/project/{project:[0-9]+}/members/remove/{member:[0-9]+}", [
+$router->add("/project/{project:[0-9]+}/member/remove/{member:[0-9]+}", [
   'controller' => 'projectmembers',
   'action'     => 'modal',
   'method'     => 'remove',
 ]);
 
-$router->add("/project/{project:[0-9]+}/members/new", [
+$router->add("/project/{project:[0-9]+}/member/new", [
   'controller' => 'projectmembers',
   'action'     => 'new',
 ])->via(["POST"]);
 
-$router->add("/project/{project:[0-9]+}/members/update/{member:[0-9]+}", [
-  'controller' => 'projectmembers',
-  'action'     => 'update',
-])->via(["POST"]);
-
-$router->add("/project/{project:[0-9]+}/members/delete/{delete:[0-9]+}", [
+$router->add("/project/{project:[0-9]+}/member/delete/{member:[0-9]+}", [
   'controller' => 'projectmembers',
   'action'     => 'delete',
 ])->via(["POST"]);

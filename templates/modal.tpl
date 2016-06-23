@@ -5,10 +5,17 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="create">Cadastrar Tarefa</h4>
+        <h4 class="modal-title" id="create">Cadastro</h4>
       </div>
         <form role="form" method="post" accept-charset="utf8" action="{{action}}" class="validator-form" >
         <div class="modal-body">
+
+          {{#alert}}
+          <div class="alert alert-info fade in">
+            <h4 id="title">{{title}}</h4>
+            <p id="desc">{{desc}}</p>
+          </div>
+          {{/alert}}
 
           <div class="alert hidden fade in" id="createBox">
             <h4 id="title"></h4>
@@ -48,6 +55,13 @@
         <form role="form" method="post" accept-charset="utf8" action="{{action}}" class="validator-form" >
         <div class="modal-body">
 
+          {{#alert}}
+          <div class="alert alert-info fade in">
+            <h4 id="title">{{title}}</h4>
+            <p id="desc">{{desc}}</p>
+          </div>
+          {{/alert}}
+
           <div class="alert hidden fade in" id="updateBox">
             <h4 id="title"></h4>
             <p id="desc"></p>
@@ -81,7 +95,7 @@
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="remove">Confrimação</h4>
+        <h4 class="modal-title" id="remove">Confrimação de Remoção</h4>
       </div>
         <form role="form" method="post" accept-charset="utf8" action="{{action}}" class="validator-form" >
         <div class="modal-body">
@@ -129,6 +143,13 @@
         <h4 class="modal-title" id="view">Informações</h4>
       </div>
         <div class="modal-body">
+
+          {{#alert}}
+          <div class="alert alert-info fade in">
+            <h4 id="title">{{title}}</h4>
+            <p id="desc">{{desc}}</p>
+          </div>
+          {{/alert}}
 
           <div class="row">
             {{#inputs}}
