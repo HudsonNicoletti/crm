@@ -86,7 +86,7 @@ class ProjectTasksController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
-    $this->flags->target  = "#createBox";
+    $this->flags['target']  = "#createBox";
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
@@ -144,7 +144,7 @@ class ProjectTasksController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
-    $this->flags->target  = "#updateBox";
+    $this->flags['target']  = "#updateBox";
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;

@@ -11,6 +11,8 @@ use Manager\Models\Logs         as Logs,
     Manager\Models\ProjectTypes as ProjectTypes,
     Manager\Models\Projects     as Projects;
 
+use Mustache_Engine as Mustache;
+
 use Phalcon\Forms\Form,
     Phalcon\Forms\Element\Text,
     Phalcon\Forms\Element\Textarea,
@@ -144,63 +146,10 @@ class ProjectsController extends ControllerBase
       ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
       ->execute();
 
-      $clients = Clients::query()
-      ->columns([
-        'Manager\Models\Clients._',
-        'Manager\Models\Clients.firstname',
-        'Manager\Models\Clients.lastname',
-        'Manager\Models\Companies.fantasy',
-      ])
-      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Clients._')
-      ->execute();
-
-      $clientOptions = [];
-
-      foreach ($clients as $client) {
-        $clientOptions[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
-      }
-
       $form = new Form();
       $form->add(new Hidden( "security" ,[
         'name'  => $this->security->getTokenKey(),
         'value' => $this->security->getToken(),
-      ]));
-
-      $form->add(new Text( "title" ,[
-        'class'         => "form-control",
-        'data-validate' => true,
-        'data-empty'    => "* Campo Obrigatório",
-      ]));
-
-      $form->add(new Text( "deadline" ,[
-        'class'         => "form-control inputmask",
-        'data-validate' => true,
-        'data-empty'    => "* Campo Obrigatório",
-        'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
-      ]));
-
-      $form->add(new Textarea( "description" ,[
-        'class'         => "wysihtml form-control",
-        'placeholder'   => "Breve Descrição ...",
-      ]));
-
-      $form->add(new Select( "client" , $clientOptions , [
-        'class' => "chosen-select"
-      ]));
-
-      $form->add(new Select( "members" , Team::find() ,
-      [
-        'using' =>  ['uid','name'],
-        'data-placeholder' => "Membros Participantes",
-        'multiple'         => true,
-        'class'            => "chosen-select form-control",
-      ]));
-
-      $form->add(new Select( "type" , ProjectTypes::find() ,
-      [
-        'using' =>  ['_','title'],
-        'data-placeholder' => "Categoria do Projeto",
-        'class'            => "chosen-select"
       ]));
 
       $this->view->form       = $form;
@@ -412,6 +361,8 @@ class ProjectsController extends ControllerBase
     public function NewAction()
     {
       $this->response->setContentType("application/json");
+
+      $this->flags['target'] = "#createBox";
 
       if(!$this->request->isPost()):
         $this->flags['status'] = false ;
@@ -726,6 +677,127 @@ class ProjectsController extends ControllerBase
         "redirect"  => $this->flags['redirect'],
         "time"      => $this->flags['time'],
         "target"    => $this->flags['target']
+      ]);
+
+      $this->response->send();
+      $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
+    }
+
+    public function ModalAction()
+    {
+      $this->response->setContentType("application/json");
+
+      if(!$this->request->isGet()):
+        $this->flags['status'] = false ;
+        $this->flags['title']  = "Erro ao Alterar!";
+        $this->flags['text']   = "Metodo Inválido.";
+      endif;
+
+      if($this->flags['status']):
+
+        $form = new Form();
+        $action = false;
+        $alert = false;
+        $inputs = [];
+        $method = $this->dispatcher->getParam("method");
+
+        $_clients = Clients::query()
+        ->columns([
+          'Manager\Models\Clients._',
+          'Manager\Models\Clients.firstname',
+          'Manager\Models\Clients.lastname',
+          'Manager\Models\Companies.fantasy',
+        ])
+        ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Clients._')
+        ->execute();
+
+        foreach ($_clients as $client) {
+          $clients[$client->_] = "{$client->firstname} {$client->lastname}".( $client->fantasy ? " ( {$client->fantasy} ) " :'' );
+        }
+
+        # CREATING ELEMENTS
+        $element['title'] = new Text( "title" ,[
+          'class'         => "form-control",
+          'title'         => "Título do Projeto",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório"
+        ]);
+
+        $element['deadline'] = new Text( "deadline" ,[
+          'class'         => "form-control",
+          'title'         => "Deadline",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+          'data-inputmask'=> "'alias': 'dd-mm-yyyy'"
+        ]);
+
+        $element['description'] = new Textarea( "description" ,[
+          'class'         => "form-control wysihtml",
+          'title'         => "Breve Descrição",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]);
+
+        $element['client'] = new Select( "client" , $clients ,[
+
+          'class'         => "form-control chosen-select",
+          'title'         => "Cliente",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]);
+
+        $element['members'] = new Select( "members" , Team::find() ,[
+          'using'         =>  ['uid','name'],
+          'class'         => "form-control chosen-select",
+          'title'         => "Membros Participantes",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+          'multiple'      => true,
+        ]);
+
+        $element['type'] = new Select( "type" , ProjectTypes::find() ,[
+          'using'         =>  ['_','title'],
+          'class'         => "form-control chosen-select",
+          'title'         => "Categoria do Projeto",
+          'data-validate' => true,
+          'data-empty'    => "* Campo Obrigatório",
+        ]);
+
+        $element['security'] = new Hidden( "security" ,[
+          'name'  => $this->security->getTokenKey(),
+          'value' => $this->security->getToken(),
+        ]);
+
+        # IF REQUEST IS TO CREATE JUST POPULATE WITH DEFAULT ELEMENTS
+        if( $this->dispatcher->getParam("method") == "create" ):
+          $action = "/project/new";
+          $template = "create";
+
+          foreach($element as $e)
+          {
+            $form->add($e);
+          }
+        endif;
+
+        # POPULATE ARRAY WITH TITLE AND INPUTS FOR RENDERING
+        foreach($form as $f)
+        {
+          array_push($inputs,[ "title" => $f->getAttribute("title") , "input" => $f->render($f->getName()) ]);
+        }
+
+        # RENDER
+        $body = (new Mustache)->render(file_get_contents($_SERVER['DOCUMENT_ROOT']."/templates/modal.tpl"),[
+          $template => true,
+          "action"  => $action,
+          "alert"   => $alert,
+          "inputs"  => $inputs
+        ]);
+
+      endif;
+
+      return $this->response->setJsonContent([
+        "status"    =>  $this->flags['status'],
+        "data"      =>  [ "#{$template}" , $body ]  # Modal Target , data
       ]);
 
       $this->response->send();

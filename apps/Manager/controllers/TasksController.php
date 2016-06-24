@@ -47,6 +47,7 @@ class TasksController extends ControllerBase
       'Manager\Models\Tasks.title',
       'Manager\Models\Tasks.description',
       'Manager\Models\Tasks.deadline',
+      'Manager\Models\Tasks.created',
       'Manager\Models\Tasks.completed',
       'Manager\Models\Tasks.status',
       'Manager\Models\Projects.title as project',
@@ -249,23 +250,6 @@ class TasksController extends ControllerBase
       $inputs = [];
       $project = $this->dispatcher->getParam("project");
       $task = $this->dispatcher->getParam("task");
-
-      # Assigned Members Query
-      $members = Assignments::query()
-      ->columns([
-        'Manager\Models\Team._',
-        'Manager\Models\Team.uid',
-        'Manager\Models\Team.name',
-        'Manager\Models\Team.image',
-        'Manager\Models\Departments.department',
-      ])
-      ->innerJoin('Manager\Models\Team', 'Manager\Models\Team.uid = Manager\Models\Assignments.member')
-      ->innerJoin('Manager\Models\Departments', 'Manager\Models\Departments._ = Manager\Models\Team.department_id')
-      ->where("Manager\Models\Assignments.project = :project:")
-      ->bind([
-        "project" =>  $project
-      ])
-      ->execute();
 
       # CREATING ELEMENTS
       $element['project'] = new Select( "project" , Projects::find() ,[

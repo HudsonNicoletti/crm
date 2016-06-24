@@ -39,7 +39,7 @@ class ProjectMembersController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
-    $this->flags->target = "#createBox";
+    $this->flags['target'] = "#createBox";
 
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;

@@ -15,7 +15,7 @@
 
   <div class="row">
     <div class="col-md-2">
-      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-target="#create">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-ajax="/project/create">
         <span class="fa fa-plus"></span> Adicionar Projeto
       </button>
       <hr class="dotted">
@@ -102,83 +102,4 @@
 
 </div>
 
-<!-- add project -->
-<div class="modal fade" id="create" tabindex="-1" role="dialog" aria-labelledby="create" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
-        <h4 class="modal-title" id="create">Adicionar Projeto</h4>
-      </div>
-
-      <form method="post" class="form-horizontal validator-form" action="/projects/new" accept-charset="utf8" enctype="multipart/form-data" novalidate="novalidate">
-        <div class="modal-body">
-
-          <div class="row">
-            <div class="col-md-12">
-              <div class="alert hidden" role="alert">
-                <h4 id="title"></h4>
-                <p id="desc"></p>
-              </div>
-            </div>
-          </div>
-
-          <?php echo $form->render("security"); ?>
-
-          <div class="row">
-
-            <div class="col-md-12">
-              <label class="control-label">Título do Projeto</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("title"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Categoria</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("type"); ?>
-              </div>
-            </div>
-
-          </div>
-          <div class="row">
-
-            <div class="col-md-12">
-              <label class="control-label">Deadline</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("deadline"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Cliente</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("client"); ?>
-              </div>
-            </div>
-
-          </div>
-          <div class="row">
-            <div class="col-md-12">
-              <label class="control-label">Membros</label>
-              <div class="form-group has-feedback">
-                <?php echo $form->render("members"); ?>
-              </div>
-            </div>
-
-            <div class="col-md-12">
-              <label class="control-label">Descrição</label>
-              <?php echo $form->render("description"); ?>
-            </div>
-          </div>
-
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-          <button type="submit" class="btn btn-primary">Cadastrar</button>
-        </div>
-      </form>
-    </div>
-  </div>
-</div>
+<div id="modal-results"></div>

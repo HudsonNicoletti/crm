@@ -158,6 +158,12 @@ $router->add("/client/update/{client:[0-9]+}", [
 # END   - ClientsController
 
 # START - ProjectsController
+$router->add("/project/create", [
+  'controller' => 'projects',
+  'action'     => 'modal',
+  'method'     => 'create',
+]);
+
 $router->add("/project/{project:[0-9]+}/overview", [
   'controller' => 'projects',
   'action'     => 'overview',
