@@ -3,6 +3,7 @@
 namespace Manager\Controllers;
 
 use Manager\Models\Logs         as Logs,
+    Manager\Models\Projects     as Projects,
     Manager\Models\ProjectTypes as ProjectTypes;
 
 use Mustache_Engine as Mustache;
@@ -175,7 +176,7 @@ class ProjectCategoriesController extends ControllerBase
       $this->flags['title']  = "Erro ao Remover!";
       $this->flags['text']   = "Metodo Inválido.";
     endif;
-
+    
     if(!$this->security->checkToken()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Remover!";
