@@ -192,7 +192,7 @@ $(function(){
   						$alert  = $("div[role='alert']:first"),
   						inputs  = $this.find("input:not(:file):not(:submit) , textarea, select, input[type='hidden']"),
   						files   = $this.find("input:file"),
-  						content = new FormData( $this );
+  						content = new FormData(  );
 
   						//  Loop & append inputs
   						for( var i = 0;  i < inputs.length ; ++i )
