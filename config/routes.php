@@ -164,6 +164,11 @@ $router->add("/project/create", [
   'method'     => 'create',
 ]);
 
+$router->add("/project/new", [
+  'controller' => 'projects',
+  'action'     => 'new',
+])->via(["POST"]);
+
 $router->add("/project/{project:[0-9]+}/overview", [
   'controller' => 'projects',
   'action'     => 'overview',
