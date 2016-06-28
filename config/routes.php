@@ -189,7 +189,7 @@ $router->add("/project/{project:[0-9]+}/update", [
   'action'     => 'update',
 ]);
 
-$router->add("/project/{project:[0-9]+}/remove", [
+$router->add("/project/remove/{project:[0-9]+}", [
   'controller' => 'projects',
   'action'     => 'remove',
 ]);

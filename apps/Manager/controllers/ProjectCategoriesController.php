@@ -176,7 +176,7 @@ class ProjectCategoriesController extends ControllerBase
       $this->flags['title']  = "Erro ao Remover!";
       $this->flags['text']   = "Metodo Inválido.";
     endif;
-    
+
     if(!$this->security->checkToken()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro ao Remover!";

@@ -21,7 +21,7 @@ use \Phalcon\Mvc\Model\Query\Builder as Builder;
 
 class TeamController extends ControllerBase
 {
-  private  $flags = [
+  private $flags = [
     'status'    => true,
     'title'     => false,
     'text'      => false,
