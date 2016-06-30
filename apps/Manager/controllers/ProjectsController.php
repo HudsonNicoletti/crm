@@ -225,6 +225,19 @@ class ProjectsController extends ControllerBase
         endif;
       }
 
+      $logs = Logs::query()
+      ->columns([
+        "Manager\Models\Team.name",
+        "Manager\Models\Logs.action",
+        "Manager\Models\Logs.date",
+        "Manager\Models\Logs.description",
+      ])
+      ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
+      ->where("project = :project:")
+      ->orderBy("date DESC")
+      ->bind([ "project" => $urlrequest ])
+      ->execute();
+
       $form = new Form();
 
       $form->add(new Hidden( "security" ,[
@@ -243,7 +256,7 @@ class ProjectsController extends ControllerBase
 
       $this->view->project = $project[0];
       $this->view->members = $members;
-      $this->view->logs = Logs::find([ "project = '{$urlrequest}'", "order" => "_ DESC" ]);
+      $this->view->logs = $logs;
       $this->view->form = $form;
       $this->view->controller = $this;
     }
@@ -510,6 +523,7 @@ class ProjectsController extends ControllerBase
         $action = false;
         $alert = false;
         $inputs = [];
+        $clients = [];
         $method = $this->dispatcher->getParam("method");
 
         $_clients = Clients::query()
@@ -551,7 +565,6 @@ class ProjectsController extends ControllerBase
         ]);
 
         $element['client'] = new Select( "client" , $clients ,[
-
           'class'         => "form-control chosen-select",
           'title'         => "Cliente",
           'data-validate' => true,

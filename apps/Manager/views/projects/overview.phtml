@@ -100,33 +100,31 @@
 
               </div>
             </div>
-            <div class="col-lg-6 col-md-12 panel panel-default activities-list nicescroll" style="min-height: 653px">
-                <ul class="timeline list-unstyled">
-                  <?php
+
+            <div class="col-md-6">
+              <div class="panel panel-default" id="activities">
+                <div class="panel-body">
+                  <ul class="activities-list list-unstyled nicescroll">
+                    <?php
                     foreach($logs as $log):
                       switch ($log->action) {
-                        case $this->logs->create : $l = [ 'class' => "success",  'icon' => "check",       'title' => "Criação"];     break;
-                        case $this->logs->update : $l = [ 'class' => "primary",  'icon' => "retweet",     'title' => "Alteração"];   break;
-                        case $this->logs->delete : $l = [ 'class' => "danger",   'icon' => "trash",       'title' => "Remoção"];     break;
-                        case $this->logs->info   : $l = [ 'class' => "info",     'icon' => "info-circle", 'title' => "Informação"];  break;
+                        case $this->logs->create : $cl = "success-activity"; break;
+                        case $this->logs->update : $cl = "warning-activity"; break;
+                        case $this->logs->delete : $cl = "danger-activity"; break;
+                        case $this->logs->info   : $cl = "info-activity"; break;
                       }
-                  ?>
-                  <li class="clearfix">
-                      <time class="tl-time">
-                          <h3 class="text-<?php echo $l['class']; ?>"><?php echo $l['title']; ?></h3>
-                          <p><?php echo (new \DateTime($log->date))->format("d-m-Y \a\s H:i"); ?></p>
-                        </time>
-                        <i class="fa fa-<?php echo $l['icon']; ?> bg-<?php echo $l['class']; ?> tl-icon text-white"></i>
-                        <div class="tl-content">
-                          <div class="panel panel-<?php echo $l['class']; ?>">
-                                <div class="panel-body">
-                                  <?php echo $log->description; ?>
-                                </div>
-                            </div>
-                        </div>
-                    </li>
-                    <?php endforeach; ?>
-                </ul>
+                    ?>
+                      <li class="<?php echo $cl; ?>">
+                        <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
+                        <p>
+                          <span class="text-primary"><?php echo $log->name; ?></span>
+                          <?php echo $log->description; ?>
+                        </p>
+                      </li>
+                      <?php endforeach; ?>
+                    </ul>
+                </div>
+              </div>
             </div>
           </div>
 

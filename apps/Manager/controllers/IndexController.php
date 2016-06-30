@@ -29,7 +29,7 @@ class IndexController extends ControllerBase
         "Manager\Models\Logs.description",
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
-      ->orderBy("date DESC")
+      ->where()
       ->limit(120)
       ->execute();
 
