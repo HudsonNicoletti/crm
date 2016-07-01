@@ -295,6 +295,45 @@ $router->add("/project/categories/delete/{category:[0-9]+}", [
   'controller' => 'projectcategories',
   'action'     => 'delete',
 ])->via(["POST"]);
+
+# Project Prefixes
+$router->add("/project/prefixes", [
+  'controller' => 'projectprefixes',
+  'action'     => 'index',
+]);
+
+$router->add("/project/prefixes/create", [
+  'controller' => 'projectprefixes',
+  'action'     => 'modal',
+  'method'     => 'create',
+]);
+
+$router->add("/project/prefixes/modify/{prefix:[0-9]+}", [
+  'controller' => 'projectprefixes',
+  'action'     => 'modal',
+  'method'     => 'modify',
+]);
+
+$router->add("/project/prefixes/remove/{prefix:[0-9]+}", [
+  'controller' => 'projectprefixes',
+  'action'     => 'modal',
+  'method'     => 'remove',
+]);
+
+$router->add("/project/prefixes/new", [
+  'controller' => 'projectprefixes',
+  'action'     => 'new',
+])->via(["POST"]);
+
+$router->add("/project/prefixes/update/{prefix:[0-9]+}", [
+  'controller' => 'projectprefixes',
+  'action'     => 'update',
+])->via(["POST"]);
+
+$router->add("/project/prefixes/delete/{prefix:[0-9]+}", [
+  'controller' => 'projectprefixes',
+  'action'     => 'delete',
+])->via(["POST"]);
 # END   - ProjectsController
 
 

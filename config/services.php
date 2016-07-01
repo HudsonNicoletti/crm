@@ -1,11 +1,12 @@
 <?php
 
-use Phalcon\Mvc\Dispatcher\Exception as DispatchException,
-    Phalcon\Session\Adapter\Files as SessionAdapter,
-    Phalcon\Db\Adapter\Pdo\Mysql as DbAdapter,
-    Phalcon\Mvc\Dispatcher as PhDispatcher,
-    Phalcon\Events\Manager as EventsManager,
-    Phalcon\Mvc\Url as UrlResolver,
+use Phalcon\Mvc\Dispatcher\Exception  as DispatchException,
+    Phalcon\Session\Adapter\Files     as SessionAdapter,
+    Phalcon\Db\Adapter\Pdo\Mysql      as DbAdapter,
+    Phalcon\Mvc\Dispatcher            as PhDispatcher,
+    Phalcon\Events\Manager            as EventsManager,
+    Phalcon\Mvc\Url                   as UrlResolver,
+    Phalcon\Mvc\Model\Manager         as ModelsManager,
     Phalcon\Config\Adapter\Ini,
     Phalcon\DI\FactoryDefault,
     Phalcon\Mvc\Router,

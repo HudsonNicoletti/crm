@@ -141,8 +141,8 @@ class ProjectsController extends ControllerBase
         'Manager\Models\Companies.fantasy',
         'Manager\Models\ProjectTypes.title as type',
       ])
-      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = \Manager\Models\Projects.client')
-      ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = \Manager\Models\Projects.client')
+      ->leftJoin('Manager\Models\Companies', 'Manager\Models\Companies.client = Manager\Models\Projects.client')
+      ->innerJoin('Manager\Models\Clients', 'Manager\Models\Clients._ = Manager\Models\Projects.client')
       ->innerJoin('Manager\Models\ProjectTypes', 'Manager\Models\ProjectTypes._ = Manager\Models\Projects.type')
       ->execute();
 

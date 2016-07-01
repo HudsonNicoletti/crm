@@ -1,0 +1,78 @@
+<div class="warper container-fluid">
+
+  <div class="page-header">
+    <h1>Prefixos de Tarefas</h1>
+  </div>
+
+  <div class="row">
+    <div class="col-md-12">
+      <div class="alert hidden" role="alert">
+        <h4 id="title"></h4>
+        <p id="desc"></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-2">
+      <button type="button" class="btn btn-success btn-block btn-circle" data-toggle="modal" data-ajax="/project/prefixes/create">
+        <span class="fa fa-plus"></span> Adicionar Prefixo
+      </button>
+      <hr class="dotted">
+      <div class="panel panel-default">
+        <div class="panel-heading clean">Navegação</div>
+        <div class="panel-body no-padd">
+          <div class="list-group no-margn mail-nav">
+            <a href="/projects" class="list-group-item">Projetos Cadastrados</a>
+            <a href="/project/categories" class="list-group-item">Categorias</a>
+            <a href="/project/prefixes" class="list-group-item on">Prefixos</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-10">
+      <div class="panel panel-default table-responsive">
+        <div class="panel-heading">
+          <div class="row">
+            <div class="col-md-12">
+              <input type="text" name="search" class="form-control form-control-circle" placeholder="Filtro" data-search >
+            </div>
+          </div>
+        </div>
+        <table class="table table-striped table-hover no-margn">
+            <thead>
+              <tr>
+                <th>Título</th>
+                <th>Categoria</th>
+                <th><i class="fa fa-cogs"></i></th>
+              </tr>
+            </thead>
+            <tbody>
+              <?php foreach ($categories as $c): ?>
+                <tr data-searchable >
+                  <td><?php echo $c->title; ?></td>
+                  <td>
+                    <div class="btn-group">
+                      <button type="button" class="btn btn-primary" data-ajax="/project/categories/modify/<?php echo $c->_ ;?>">
+                        <span class="fa fa-pencil"></span>
+                        Editar
+                      </button>
+                      <button type="button" class="btn btn-danger" data-ajax="/project/categories/remove/<?php echo $c->_ ;?>">
+                        <span class="fa fa-close"></span>
+                        Remover
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              <?php endforeach; ?>
+            </tbody>
+          </table>
+
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div id="modal-results"></div>

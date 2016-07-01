@@ -4,10 +4,10 @@ namespace Manager\Controllers;
 
 use Mustache_Engine as Mustache;
 
-use Manager\Models\Users as Users,
-    Manager\Models\Clients as Clients,
-    Manager\Models\Logs as Logs,
-    Manager\Models\Team as Team;
+use Manager\Models\Logs     as Logs,
+    Manager\Models\Team     as Team,
+    Manager\Models\Users    as Users,
+    Manager\Models\Clients  as Clients;
 
 use Phalcon\Mvc\Controller;
 
