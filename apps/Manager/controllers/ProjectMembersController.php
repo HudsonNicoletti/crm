@@ -94,6 +94,8 @@ class ProjectMembersController extends ControllerBase
   {
     $this->response->setContentType("application/json");
 
+    $this->flags['target'] = "#removeBox";
+
     if(!$this->request->isPost()):
       $this->flags['status'] = false ;
       $this->flags['title']  = "Erro!";

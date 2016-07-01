@@ -31,14 +31,6 @@ class SettingsController extends ControllerBase
   public function IndexAction()
   {
     $this->assets->addCss("assets/manager/css/app/email.css");
-    $form = new Form();
-
-    $form->add(new Hidden( "security" ,[
-      'name'  => $this->security->getTokenKey(),
-      'value' => $this->security->getToken(),
-    ]));
-
-    $this->view->form = $form;
   }
 
   public function EmailAction()
@@ -48,63 +40,72 @@ class SettingsController extends ControllerBase
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator.min.js")
     ->addJs("assets/manager/js/plugins/bootstrap-validator/bootstrapValidator-conf.js");
 
-    $form = new Form();
-
-    $form->add(new Hidden( "security" ,[
+    $element['security'] = new Hidden( "security" ,[
       'name'  => $this->security->getTokenKey(),
       'value' => $this->security->getToken(),
-    ]));
+    ]);
 
-    $form->add(new Text( "host" ,[
+    $element['host'] = new Text( "host" ,[
       'class'         => "form-control",
+      'title'         => "Host",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->host
-    ]));
+    ]);
 
-    $form->add(new Text( "username" ,[
+    $element['username'] = new Text( "username" ,[
       'class'         => "form-control",
+      'title'         => "Username",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->username
-    ]));
+    ]);
 
-    $form->add(new Password( "password" ,[
+    $element['password'] = new Password( "password" ,[
       'class'         => "form-control",
+      'title'         => "Password",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->password
-    ]));
+    ]);
 
-    $form->add(new Text( "port" ,[
+    $element['port'] = new Text( "port" ,[
       'class'         => "form-control",
+      'title'         => "Port",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->port
-    ]));
+    ]);
 
-    $form->add(new Text( "sender_email" ,[
+    $element['sender_email'] = new Text( "sender_email" ,[
       'class'         => "form-control",
+      'title'         => "Sender E-Mail",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->email
-    ]));
+    ]);
 
-    $form->add(new Text( "sender_name" ,[
+    $element['sender_name'] = new Text( "sender_name" ,[
       'class'         => "form-control",
+      'title'         => "Sender Name",
       'data-validate' => true,
       'data-empty'    => "* Campo Obrigatório",
       'value'         => $this->configuration->mail->name
-    ]));
+    ]);
 
-    $form->add(new Select("level",[
-      "tls" => "TLS",
-      "ssl" => "SSL"
-    ],[
-      'class' => "form-control" ,
-      'value' => $this->configuration->mail->security
-    ]));
+    $element['level'] = new Select( "level" ,["tls" => "TLS","ssl" => "SSL"],[
+      'class'         => "form-control chosen-select",
+      'title'         => "Security Level",
+      'data-validate' => true,
+      'data-empty'    => "* Campo Obrigatório",
+      'value'         => $this->configuration->mail->security
+    ]);
 
+    $form = new Form();
+    foreach($element as $e)
+    {
+      $form->add($e);
+    }
     $this->view->form = $form;
   }
 

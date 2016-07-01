@@ -38,7 +38,7 @@ class ControllerBase extends Controller
         $user = Users::findFirst($id);
         $info = ( $user->permission == $this->permissions->client ? Clients::findFirstByUser($id) : Team::findFirstByUid($id) );
 
-        if($user->permission >= $this->permissions->team)
+        if($user->permission >= $this->permissions->admin)
         {
           $nav = [
             ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
@@ -51,11 +51,22 @@ class ControllerBase extends Controller
             ["active" => ($this->router->getControllerName() == "settings" ? "active" : ""), "href" => "/settings", "icon" => "wrench",         "label" => "Configurações"],
           ];
         }
-        else
+        elseif($user->permission === $this->permissions->team)
+        {
+          $nav = [
+            ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
+            ["active" => ($this->router->getControllerName() == "tasks"    ? "active" : ""), "href" => "/tasks",    "icon" => "check-square-o", "label" => "Tarefas"],
+            ["active" => ($this->router->getControllerName() == "tickets"  ? "active" : ""), "href" => "/tickets",  "icon" => "ticket",         "label" => "Chamados"],
+            ["active" => ($this->router->getControllerName() == "clients"  ? "active" : ""), "href" => "/clients",  "icon" => "briefcase",      "label" => "Clientes"],
+            ["active" => ($this->router->getControllerName() == "projects" ? "active" : ""), "href" => "/projects", "icon" => "archive",        "label" => "Projetos"],
+          ];
+        }
+        elseif($user->permission <= $this->permissions->client)
         {
           $nav = [
             ["active" => ($this->router->getControllerName() == "index"    ? "active" : ""), "href" => "/",         "icon" => "bookmark-o",     "label" => "Visão Geral"],
             ["active" => ($this->router->getControllerName() == "tickets"  ? "active" : ""), "href" => "/tickets",  "icon" => "ticket",         "label" => "Chamados"],
+            ["active" => ($this->router->getControllerName() == "projects" ? "active" : ""), "href" => "/projects", "icon" => "archive",        "label" => "Projetos"],
           ];
         }
 
