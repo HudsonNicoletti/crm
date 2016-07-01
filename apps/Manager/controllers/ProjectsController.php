@@ -214,17 +214,6 @@ class ProjectsController extends ControllerBase
       ])
       ->execute();
 
-      $assign = Assignments::findByProject($urlrequest);
-      $clause = [];
-      foreach($assign as $i => $a)
-      {
-        if ($i === (count($assign) - 1)):
-          array_push($clause, "uid != '{$a->member}'");
-        else:
-          array_push($clause, "uid != '{$a->member}' AND ");
-        endif;
-      }
-
       $logs = Logs::query()
       ->columns([
         "Manager\Models\Team.name",
@@ -233,29 +222,15 @@ class ProjectsController extends ControllerBase
         "Manager\Models\Logs.description"
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
+      ->where("Manager\Models\Logs.project = :project:")
+      ->bind([
+        "project" =>  $urlrequest
+      ])
       ->execute();
-
-
-      $form = new Form();
-
-      $form->add(new Hidden( "security" ,[
-        'name'  => $this->security->getTokenKey(),
-        'value' => $this->security->getToken(),
-        'id'    => false
-      ]));
-
-      $form->add(new Select( "members" , Team::find([ implode(" ",$clause) ]) ,
-      [
-        'using' =>  ['uid','name'],
-        'id'               => false,
-        'data-placeholder' => "Membros",
-        'class'            => "chosen-select",
-      ]));
 
       $this->view->project = $project[0];
       $this->view->members = $members;
       $this->view->logs = $logs;
-      $this->view->form = $form;
       $this->view->controller = $this;
     }
 

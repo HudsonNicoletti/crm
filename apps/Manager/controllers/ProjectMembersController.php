@@ -67,7 +67,7 @@ class ProjectMembersController extends ControllerBase
       $name = Projects::findFirst($project)->title;
 
       # Log What Happend
-      $this->logManager($this->logs->update,"Adicionou {$member} ao projeto {$name}.",$project);
+      $this->logManager($this->logs->update,"Adicionou o membro {$member}",$project);
 
       $this->flags['status'] = true ;
       $this->flags['title']  = "Adicionado Com Sucesso!";
@@ -126,7 +126,7 @@ class ProjectMembersController extends ControllerBase
       $name = Projects::findFirst($project)->title;
 
       # Log What Happend
-      $this->logManager($this->logs->delete,"Removeu {$member} do projeto {$name}.",$project);
+      $this->logManager($this->logs->delete,"Removeu o membro {$member}",$project);
 
       $this->flags['status'] = true ;
       $this->flags['title']  = "Removido Com Sucesso!";

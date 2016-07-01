@@ -117,7 +117,7 @@ class ProjectTasksController extends ControllerBase
 
       $name = Projects::findFirst($project)->title;
       # Log What Happend
-      $this->logManager($this->logs->create,"Cadastrou uma nova tarefa ( {$title} ) ao projeto {$name}.",$project);
+      $this->logManager($this->logs->create,"Cadastrou uma nova tarefa ( {$title} )",$project);
 
       $this->flags['status']     = true ;
       $this->flags['title']      = "Adicionado Com Sucesso!";
@@ -173,7 +173,7 @@ class ProjectTasksController extends ControllerBase
 
       $name = Projects::findFirst($project)->title;
       # Log What Happend
-      $this->logManager($this->logs->update,"Alterou informações de uma tarefa ( {$title} ) do projeto {$name}.",$project);
+      $this->logManager($this->logs->update,"Alterou informações da tarefa ( {$title} )",$project);
 
       $this->flags['status']     = true ;
       $this->flags['title']      = "Alterado Com Sucesso!";
@@ -219,7 +219,7 @@ class ProjectTasksController extends ControllerBase
       $name = Projects::findFirst($project)->title;
 
       # Log What Happend
-      $this->logManager($this->logs->delete,"Removeu uma tarefa ( {$task->title} ) do projeto {$name}.",$project);
+      $this->logManager($this->logs->delete,"Removeu a tarefa ( {$task->title} )",$project);
 
       $task->delete();
 

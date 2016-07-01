@@ -102,7 +102,7 @@ class TasksController extends ControllerBase
 
         $this->flags['title']  = "Tarefa Aberta!";
         $this->flags['text']   = "Tarefa foi aberta e homologada.";
-        $description = "Abriu a tarefa ({$task->title}).";
+        $description = "Abriu a tarefa ( {$task->title} )";
       }
       $task->save();
 
@@ -146,19 +146,21 @@ class TasksController extends ControllerBase
     endif;
 
     if($this->flags['status']):
+      $project = $this->request->getPost("project","int");
+      $title = $this->request->getPost('title','string');
 
       $task = new Tasks;
-        $task->title        = $this->request->getPost("title","string");
+        $task->title        = $title;
         $task->description  = $this->request->getPost("description","string");
         $task->project      = $this->request->getPost("project","int");
         $task->created      = (new \DateTime())->format("Y-m-d H:i:s");
         $task->deadline     = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
-        $task->assigned     = $this->request->getPost("assigned","int");
+        $task->assigned     = $project;
         $task->status       = 1;
       $task->save();
 
     # Log What Happend
-      $this->logManager($this->logs->create,"Adicionou uma nova tarefa ( {$this->request->getPost('title','string')} )",$this->request->getPost("project","int"));
+      $this->logManager($this->logs->create,"Adicionou uma nova tarefa ( {$title} )",$project);
 
       $this->flags['title']    = "Cadastrado com Sucesso!";
       $this->flags['text']     = "Tarefa cadastrada com sucesso!";
@@ -200,17 +202,19 @@ class TasksController extends ControllerBase
     endif;
 
     if($this->flags['status']):
+      $project = $this->request->getPost("project","int");
+      $title = $this->request->getPost("title","string");
 
       $task = Tasks::findFirst($this->dispatcher->getParam("task"));
-        $task->title        = $this->request->getPost("title","string");
+        $task->title        = $title;
         $task->description  = $this->request->getPost("description","string");
-        $task->project      = $this->request->getPost("project","int");
+        $task->project      = $project;
         $task->deadline     = (new \DateTime($this->request->getPost("deadline","string")))->format("Y-m-d H:i:s");
         $task->assigned     = $this->request->getPost("assigned","int");
       $task->save();
 
     # Log What Happend
-      $this->logManager($this->logs->create,"Alterou uma tarefa ( {$this->request->getPost('title','string')} )",$this->request->getPost("project","int"));
+      $this->logManager($this->logs->create,"Alterou uma tarefa ( {$title} )",$project);
 
       $this->flags['title']    = "Alterado com Sucesso!";
       $this->flags['text']     = "Tarefa Alterada com sucesso!";
