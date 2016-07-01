@@ -230,13 +230,11 @@ class ProjectsController extends ControllerBase
         "Manager\Models\Team.name",
         "Manager\Models\Logs.action",
         "Manager\Models\Logs.date",
-        "Manager\Models\Logs.description",
+        "Manager\Models\Logs.description"
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
-      ->where("project = :project:")
-      ->orderBy("date DESC")
-      ->bind([ "project" => $urlrequest ])
       ->execute();
+
 
       $form = new Form();
 

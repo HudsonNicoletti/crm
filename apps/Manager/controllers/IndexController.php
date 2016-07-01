@@ -29,7 +29,6 @@ class IndexController extends ControllerBase
         "Manager\Models\Logs.description",
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
-      ->where()
       ->limit(120)
       ->execute();
 

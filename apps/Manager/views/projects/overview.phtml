@@ -114,7 +114,7 @@
                         case $this->logs->info   : $cl = "info-activity"; break;
                       }
                     ?>
-                      <li class="<?php echo $cl; ?>">
+                      <li class="">
                         <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
                         <p>
                           <span class="text-primary"><?php echo $log->name; ?></span>
