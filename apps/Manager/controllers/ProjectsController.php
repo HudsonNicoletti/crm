@@ -223,6 +223,7 @@ class ProjectsController extends ControllerBase
       ])
       ->innerJoin('Manager\Models\Team', 'Manager\Models\Logs.user = Manager\Models\Team.uid')
       ->where("Manager\Models\Logs.project = :project:")
+      ->orderBy("date DESC")
       ->bind([
         "project" =>  $urlrequest
       ])

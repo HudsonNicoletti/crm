@@ -80,7 +80,7 @@
                           <?php foreach ($members as $member): ?>
                             <tr>
                               <td class="avtar">
-                                <img src="/assets/manager/images/avtar/<?php echo $uinfo->image ?: 'placeholder.jpg' ; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" />
+                                <img src="/assets/manager/images/avtar/<?php echo $member->image ?: 'placeholder.jpg' ; ?>" alt="<?php echo $member->name; ?>" class="img-circle avtar" />
                               </td>
                               <td>
                                 <?php echo $member->name; ?><br>
@@ -114,7 +114,7 @@
                         case $this->logs->info   : $cl = "info-activity"; break;
                       }
                     ?>
-                      <li class="">
+                      <li class="<?php echo $cl; ?>">
                         <span class="time"><?php echo (new \Datetime($log->date))->format("d-m-Y \a\s H:i:s"); ?></span>
                         <p>
                           <span class="text-primary"><?php echo $log->name; ?></span>
